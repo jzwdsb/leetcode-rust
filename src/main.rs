@@ -1,5 +1,16 @@
-pub mod strings_problem;
+pub mod strings;
+pub mod list;
+
+use clap::Parser;
+
+
+#[derive(Debug, Parser)]
+#[command(author, version, about)]
+struct Args {
+    function_name: Option<String>
+}
 
 fn main() {
-    println!("Hello, world!");
+    // TODO: should be able to pass in a function name to run
+    //       if function name is none, run all functions
 }
