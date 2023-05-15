@@ -11,5 +11,3 @@ Here are the purpose of this project:
 5. be able to run specified solution by using the command line arguments.
 
 here are the thought I can think of so far, update this when I have more ideas.
-
-
