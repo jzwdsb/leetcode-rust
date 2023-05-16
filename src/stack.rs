@@ -1,5 +1,3 @@
-use std::env::join_paths;
-
 pub struct StackSolution {}
 
 impl StackSolution {
