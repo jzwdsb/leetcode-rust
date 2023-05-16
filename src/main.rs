@@ -1,6 +1,8 @@
+pub mod basic_types;
+pub mod stack;
 pub mod strings;
 pub mod list;
-pub mod basic_types;
+
 
 use clap::Parser;
 
