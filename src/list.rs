@@ -47,7 +47,14 @@ impl ListSolution {
         prev.unwrap().next = prev.as_mut().unwrap().next.as_mut().unwrap().next.take();
         dummy.unwrap().next
     }
-
+    
+    /*
+    link: https://leetcode.com/problems/add-two-numbers/
+    solve this problem by recursion
+    new node.Val = (l1.Val + l2.Val) % 10
+    new node.Next = add_two_numbers(l1.Next, l2.Next) if l1.Val + l2.Val < 10
+                    add_two_numbers(add_two_numbers(l1.Next, 1), l2.Next) if l1.Val + l2.Val >= 10
+     */
     pub fn add_two_numbers(l1: Option<Box<ListNode>>, l2: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
         match (l1, l2) {
             (None, None) => None,
