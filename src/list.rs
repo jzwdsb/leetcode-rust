@@ -47,6 +47,27 @@ impl ListSolution {
         prev.unwrap().next = prev.as_mut().unwrap().next.as_mut().unwrap().next.take();
         dummy.unwrap().next
     }
+
+    pub fn add_two_numbers(l1: Option<Box<ListNode>>, l2: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+        match (l1, l2) {
+            (None, None) => None,
+            (Some(l1), None) => Some(l1),
+            (None, Some(l2)) => Some(l2),
+            (Some(l1), Some(l2)) => {
+                let val = l1.val + l2.val;
+                if val < 10 {
+                    let mut node = ListNode::new(val);
+                    node.next = ListSolution::add_two_numbers(l1.next, l2.next);
+                    Some(Box::new(node))
+                } else {
+                    let mut node = ListNode::new(val - 10);
+                    node.next = ListSolution::add_two_numbers(
+                        ListSolution::add_two_numbers(l1.next, Some(Box::new(ListNode::new(1)))), l2.next);
+                    Some(Box::new(node))
+                }
+            }
+        } 
+    }
 }
 
 #[test]
@@ -60,4 +81,20 @@ fn test_remove_nth_from_end() {
     let head = ListNode::from_vec(vec![1, 2]);
     let ans = ListNode::from_vec(vec![2]);
     assert_eq!(ListSolution::remove_nth_from_end(head, 2), ans);
+}
+
+#[test]
+fn test_add_two_numbers() {
+    let l1 = ListNode::from_vec(vec![2, 4, 3]);
+    let l2 = ListNode::from_vec(vec![5, 6, 4]);
+    assert_eq!(ListSolution::add_two_numbers(l1, l2), ListNode::from_vec(vec![7, 0, 8]));
+
+    let l1 = ListNode::from_vec(vec![0]);
+    let l2 = ListNode::from_vec(vec![0]);
+    assert_eq!(ListSolution::add_two_numbers(l1, l2), ListNode::from_vec(vec![0]));
+
+    let l1 = ListNode::from_vec(vec![9, 9, 9, 9, 9, 9, 9]);
+    let l2 = ListNode::from_vec(vec![9, 9, 9, 9]);
+    assert_eq!(ListSolution::add_two_numbers(l1, l2), ListNode::from_vec(vec![8, 9, 9, 9, 0, 0, 0, 1]));
+    
 }
