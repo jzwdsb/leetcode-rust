@@ -25,15 +25,16 @@ impl BasicTypes {
     we can use binary search to search the [0, dividend] to find the answer
     time complexity O(log(dividend))
      */    
-    pub fn divide(dividend: i32, divsor: i32) -> i32 {
-        if dividend == divsor {
+    pub fn divide(dividend: i32, divisor: i32) -> i32 {
+        if dividend == divisor {
             return 1
         }
-        let is_neg = dividend.is_negative() ^ divsor.is_negative();
-        let (mut left, mut right) = (0i64, dividend as i64);
+        let is_neg = dividend.is_negative() ^ divisor.is_negative();
+        let (dividend, divisor) = ((dividend as i64).abs(), (divisor as i64).abs());
+        let (mut left, mut right) = (0i64, dividend);
         while left < right {
             let mid = left + ((right+1-left) >> 1);
-            if dividend as i64 >= BasicTypes::simulate_multiple(divsor.abs() as i64, mid) {
+            if dividend >= BasicTypes::simulate_multiple(divisor, mid) {
                 left = mid;
             } else {
                 right = mid-1;
@@ -50,7 +51,6 @@ impl BasicTypes {
             return i32::MIN;
         }
         ans as i32
-
     }
 
     fn simulate_multiple(x: i64, y: i64) -> i64 {
@@ -84,4 +84,7 @@ fn test_divide() {
     assert_eq!(BasicTypes::divide(7, -3), -2);
     assert_eq!(BasicTypes::divide(0, 1), 0);
     assert_eq!(BasicTypes::divide(1, 1), 1);
+    assert_eq!(BasicTypes::divide(-1, 1), -1);
+    assert_eq!(BasicTypes::divide(-2147483648, -1), 2147483647);
+    assert_eq!(BasicTypes::divide(-1010369383, -2147483648), 0);
 }

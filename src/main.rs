@@ -3,6 +3,8 @@ pub mod stack;
 pub mod strings;
 pub mod list;
 
+pub mod dynamic_programming;
+
 
 use clap::Parser;
 
