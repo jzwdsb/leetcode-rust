@@ -2,6 +2,7 @@ pub mod basic_types;
 pub mod stack;
 pub mod strings;
 pub mod list;
+pub mod array;
 
 pub mod dynamic_programming;
 
