@@ -1,13 +1,13 @@
 #[derive(PartialEq, Eq, Clone, Debug)]
-pub struct ListNode {
-    pub val: i32,
-    pub next: Option<Box<ListNode>>,
+pub struct ListNode<T> {
+    pub val: T,
+    pub next: Option<Box<ListNode<T>>>,
 }
 
-impl ListNode {
+impl<T> ListNode<T> {
     #[inline]
     #[allow(dead_code)]
-    fn new(val: i32) -> Self {
+    fn new(val: T) -> Self {
         ListNode {
             next: None,
             val: val,
@@ -15,7 +15,7 @@ impl ListNode {
     }
     #[inline]
     #[allow(dead_code)]
-    fn from_vec(v: Vec<i32>) -> Option<Box<ListNode>> {
+    fn from_vec(v: Vec<T>) -> Option<Box<ListNode<T>>> {
         let mut head = None;
         for i in v.into_iter().rev() {
             let mut node = ListNode::new(i);
@@ -26,6 +26,7 @@ impl ListNode {
     }
 }
 
+
 pub struct ListSolution {}
 
 impl ListSolution {
@@ -33,7 +34,7 @@ impl ListSolution {
     leetcode link: https://leetcode.com/problems/remove-nth-node-from-end-of-list/
     we can use two pointers to solve this problem in one pass
      */
-    pub fn remove_nth_from_end(head: Option<Box<ListNode>>, n: i32) -> Option<Box<ListNode>> {
+    pub fn remove_nth_from_end(head: Option<Box<ListNode<i32>>>, n: i32) -> Option<Box<ListNode<i32>>> {
         // calculate the length of the list by using std::iter::successors, time complexity O(n)
         let cnt = std::iter::successors(head.as_ref(),
         |last| last.next.as_ref()).count();
@@ -55,7 +56,7 @@ impl ListSolution {
     new node.Next = add_two_numbers(l1.Next, l2.Next) if l1.Val + l2.Val < 10
                     add_two_numbers(add_two_numbers(l1.Next, 1), l2.Next) if l1.Val + l2.Val >= 10
      */
-    pub fn add_two_numbers(l1: Option<Box<ListNode>>, l2: Option<Box<ListNode>>) -> Option<Box<ListNode>> {
+    pub fn add_two_numbers(l1: Option<Box<ListNode<i32>>>, l2: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
         match (l1, l2) {
             (None, None) => None,
             (Some(l1), None) => Some(l1),
@@ -74,6 +75,20 @@ impl ListSolution {
                 }
             }
         } 
+    }
+
+    pub fn swap_pairs(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+        let mut dummy = Some(Box::new(ListNode{val: 0, next: head}));
+        let mut prev = dummy.as_mut();
+        while prev.as_ref().unwrap().next.is_some() && prev.as_ref().unwrap().next.as_ref().unwrap().next.is_some() {
+            let mut first = prev.as_mut().unwrap().next.take();
+            let mut second = first.as_mut().unwrap().next.take();
+            first.as_mut().unwrap().next = second.as_mut().unwrap().next.take();
+            second.as_mut().unwrap().next = first;
+            prev.as_mut().unwrap().next = second;
+            prev = prev.unwrap().next.as_mut().unwrap().next.as_mut();
+        }
+        dummy.unwrap().next
     }
 }
 
@@ -104,4 +119,20 @@ fn test_add_two_numbers() {
     let l2 = ListNode::from_vec(vec![9, 9, 9, 9]);
     assert_eq!(ListSolution::add_two_numbers(l1, l2), ListNode::from_vec(vec![8, 9, 9, 9, 0, 0, 0, 1]));
     
+}
+
+#[test]
+fn test_swap_pairs() {
+    let head = ListNode::from_vec(vec![1, 2, 3, 4]);
+    let ans = ListNode::from_vec(vec![2, 1, 4, 3]);
+    assert_eq!(ListSolution::swap_pairs(head), ans);
+    let head = ListNode::from_vec(vec![]);
+    let ans = ListNode::from_vec(vec![]);
+    assert_eq!(ListSolution::swap_pairs(head), ans);
+    let head = ListNode::from_vec(vec![1]);
+    let ans = ListNode::from_vec(vec![1]);
+    assert_eq!(ListSolution::swap_pairs(head), ans);
+    let head = ListNode::from_vec(vec![1, 2, 3]);
+    let ans = ListNode::from_vec(vec![2, 1, 3]);
+    assert_eq!(ListSolution::swap_pairs(head), ans);
 }
