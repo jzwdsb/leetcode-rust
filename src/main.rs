@@ -5,6 +5,7 @@ pub mod list;
 pub mod array;
 
 pub mod dynamic_programming;
+pub mod search;
 
 // pub mod http;
 // pub mod postgres;
