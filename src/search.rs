@@ -35,6 +35,40 @@ impl SearchSolution {
         }
         -1
     }
+
+    /*
+    link: https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/
+    we can solve this with binary search
+    expand the first and last position of the target
+    normally we can use the [)  to cover the edge case
+     */
+    pub fn search_range(nums: Vec<i32>, target: i32) -> Vec<i32> {
+        let mut left = 0;
+        let mut right = nums.len();
+        while left < right {
+            let mid = (left+right)/2;
+            if nums[mid] == target {
+                let mut start = mid;
+                let mut end = mid;
+                while start > 0 && nums[start-1] == target {
+                    start -= 1;
+                }
+                while end < nums.len()-1 && nums[end+1] == target {
+                    end += 1;
+                }
+                return vec![start as i32, end as i32];
+            } else {
+                if nums[mid] < target {
+                    left = mid + 1;
+                } else {
+                    right = mid;
+                }
+            }
+        }
+
+        vec![-1, -1]
+    }
+
 }
 
 #[test]
@@ -43,4 +77,14 @@ fn test_search_in_rotated_sorted_arrary() {
     assert_eq!(SearchSolution::search_in_rotated_sorted_array(vec![4, 5, 6, 7, 0, 1, 2], 3), -1);
     assert_eq!(SearchSolution::search_in_rotated_sorted_array(vec![1], 0), -1);
     assert_eq!(SearchSolution::search_in_rotated_sorted_array(vec![1, 3], 3), 1);
+}
+
+#[test]
+fn test_search_range() {
+    assert_eq!(SearchSolution::search_range(vec![5,7,7,8,8,10], 8), vec![3, 4]);
+    assert_eq!(SearchSolution::search_range(vec![5,7,7,8,8,10], 6), vec![-1, -1]);
+    assert_eq!(SearchSolution::search_range(vec![], 0), vec![-1, -1]);
+    assert_eq!(SearchSolution::search_range(vec![1], 1), vec![0, 0]);
+    assert_eq!(SearchSolution::search_range(vec![1], 0), vec![-1, -1]); 
+    assert_eq!(SearchSolution::search_range(vec![5,7,7,8,8,10], 6), vec![-1, -1]);
 }
