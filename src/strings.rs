@@ -39,6 +39,34 @@ impl StringSolution {
 
         ans
     }
+    /*
+    link: https://leetcode.com/problems/count-and-say/
+    fn(1) = "1"
+    fn(n) = count nums of fn(n-1)
+    count nums = count each char in fn(n-1) and print the times and value
+     */
+
+    pub fn count_and_say(n: i32) -> String {
+        if n == 1 {
+            return "1".to_string();
+        }
+        let mut ans = String::new();
+        let prev = StringSolution::count_and_say(n-1);
+        let mut count = 1;
+        let mut i = 0;
+        while i < prev.len() {
+            if i == prev.len()-1 || prev.chars().nth(i).unwrap() != prev.chars().nth(i+1).unwrap() {
+                ans.push_str(count.to_string().as_str());
+                ans.push_str(prev.as_str().chars().nth(i).unwrap().to_string().as_str());
+                count = 1;
+            } else {
+                count += 1;
+            }
+            i += 1;
+        }
+        ans
+    }
+
 }
 
 #[test]
@@ -46,4 +74,14 @@ fn test_count_good_string() {
     assert_eq!(StringSolution::count_good_string(3, 3, 1, 1), 8);
     assert_eq!(StringSolution::count_good_string(2, 3, 1, 2), 5);
     assert_eq!(StringSolution::count_good_string(10, 10, 2, 1), 89);
+}
+
+#[test]
+fn test_count_and_say() {
+    assert_eq!(StringSolution::count_and_say(1), "1");
+    assert_eq!(StringSolution::count_and_say(2), "11");
+    assert_eq!(StringSolution::count_and_say(3), "21");
+    assert_eq!(StringSolution::count_and_say(4), "1211");
+    assert_eq!(StringSolution::count_and_say(5), "111221");
+    assert_eq!(StringSolution::count_and_say(6), "312211");
 }
