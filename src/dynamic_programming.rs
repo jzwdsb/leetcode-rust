@@ -1,3 +1,5 @@
+use std::collections::HashSet;
+
 
 pub struct DPSolution {}
 
@@ -52,6 +54,34 @@ impl DPSolution {
 
         min.abs().max(max)
     }
+
+    /*
+    link: https://leetcode.com/problems/new-21-game/description
+    leave it here for now.
+
+     */
+
+    pub fn new21_game(n: i32, k: i32, max_pts: i32) -> f64 {
+        let mut cases = HashSet::new();
+        DPSolution::calculate_prob(&mut cases, 0, k, max_pts);
+        let len = cases.len() as f64;
+        let mut count = 0;
+        for i in cases.into_iter() {
+            if i <= n {
+                count += 1;
+            }
+        }
+        return count as f64 / len;
+    }
+    fn calculate_prob(set: &mut HashSet<i32>, sum: i32, k: i32, max_pts: i32){
+        if sum >= k {
+            set.insert(sum);
+            return;
+        }
+        for i in 1..max_pts+1 {
+            DPSolution::calculate_prob(set, sum + i, k, max_pts);
+        }
+    }
     
 }
 
@@ -62,4 +92,11 @@ fn test_max_absolute_sum() {
 
     assert_eq!(DPSolution::max_absolute_sum_optimized(vec![1, -3, 2, 3, -4]), 5);
     assert_eq!(DPSolution::max_absolute_sum_optimized(vec![2, -5, 1, -4, 3, -2]), 8);
+}
+
+#[test]
+fn test_new21_game() {
+    assert_eq!(DPSolution::new21_game(10, 1, 10), 1.0);
+    assert_eq!(DPSolution::new21_game(6, 1, 10), 0.6);
+    assert_eq!(DPSolution::new21_game(21, 17, 10), 0.73278);
 }

@@ -23,9 +23,16 @@
 
 	// Use 'forwardPorts' to make a list of ports inside the container available locally.
 	// "forwardPorts": [],
+	"onCreateCommand": {
+		"update": "apt update && yes | apt upgrade"
+	},
 
+	"updateContentCommand": {
+		
+	},
 	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "rustc --version",
+	"postCreateCommand": {
+		"rust": "rustc --version"},
 
 	// Configure tool-specific properties.
 	// "customizations": {},
