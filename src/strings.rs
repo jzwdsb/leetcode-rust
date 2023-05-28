@@ -66,6 +66,50 @@ impl StringSolution {
         }
         ans
     }
+    /*
+    link: https://leetcode.com/problems/multiply-strings/description/
+    we need to simulate the process of multiplication
+    123 * 456 = 123 * 6 + 123 * 50 + 123 * 400
+    123 * 6 = 3 * 6 + 20 * 6 + 100 * 6
+    123 * 50 = 3 * 50 + 20 * 50 + 100 * 50
+    123 * 400 = 3 * 400 + 20 * 400 + 100 * 400
+
+     */
+
+    pub fn multiply(num1: String, num2: String) -> String {
+        let mut res  = String::new();
+        let num1 = num1.chars().rev().collect::<Vec<char>>();
+        let num2 = num2.chars().rev().collect::<Vec<char>>();
+        
+        // num_res defines the result of each multiplication
+        // num_res[i, j] = num1[i] * num2[j]
+        let mut num_res = vec![0; num1.len() + num2.len()];
+        for i in 0..num1.len() {
+            let mut carry = 0;
+            let n1 = num1[i] as i32 - '0' as i32;
+            for j in 0..num2.len() {
+                let n2 = num2[j] as i32 - '0' as i32;
+                let mut sum = n1 * n2 + carry + num_res[i+j];
+                carry = sum / 10;
+                sum = sum % 10;
+                num_res[i+j] = sum;
+            }
+            if carry > 0 {
+                num_res[i+num2.len()] += carry;
+            }
+        }
+        let mut i = num_res.len() - 1;
+
+        while i > 0 && num_res[i] == 0 {
+            i -= 1;
+        }
+        for j in (0..=i).rev() {
+            res.push_str(num_res[j].to_string().as_str());
+        }
+
+
+        res
+    }
 
 }
 
@@ -84,4 +128,11 @@ fn test_count_and_say() {
     assert_eq!(StringSolution::count_and_say(4), "1211");
     assert_eq!(StringSolution::count_and_say(5), "111221");
     assert_eq!(StringSolution::count_and_say(6), "312211");
+}
+
+#[test]
+fn test_multiply() {
+    assert_eq!(StringSolution::multiply("2".to_string(), "3".to_string()), "6");
+    assert_eq!(StringSolution::multiply("123".to_string(), "456".to_string()), "56088");
+    assert_eq!(StringSolution::multiply("123456789".to_string(), "987654321".to_string()), "121932631112635269");
 }
