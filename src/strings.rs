@@ -69,11 +69,29 @@ impl StringSolution {
     /*
     link: https://leetcode.com/problems/multiply-strings/description/
     we need to simulate the process of multiplication
-    123 * 456 = 123 * 6 + 123 * 50 + 123 * 400
-    123 * 6 = 3 * 6 + 20 * 6 + 100 * 6
-    123 * 50 = 3 * 50 + 20 * 50 + 100 * 50
-    123 * 400 = 3 * 400 + 20 * 400 + 100 * 400
+    the process of 123 x 456 can be described as
+        123
+        456
+        ---
+        738
+       615
+      492
+        ---
+      56088
+    we can see that the result of each multiplication is stored in a matrix
+    for position mat[i,j] = num1[i] * num2[j] + carry
+                 carry = mat[i-1,j-1] / 10
 
+    we define the input as Vec<char> nums1 and Vec<char> nums2
+    the maximum length of the output is len(num1) + len(nums2)
+    the we can define a vector to store the result of each multiplication
+    we don't need to define a matrix with size of len(num1) * len(num2)
+    we can just define a vector with size of len(num1) + len(num2)
+    we iterate each char in num1 and num2 and calculate the result of each multiplication
+    for i in num1 and j in num2
+    vec[i,j] = num1[i] * num2[j] + carry + vec[i,j]
+    
+    we connect the element in the vector to a string and return it
      */
 
     pub fn multiply(num1: String, num2: String) -> String {
