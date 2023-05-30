@@ -68,7 +68,40 @@ impl SearchSolution {
 
         vec![-1, -1]
     }
-
+    pub fn search_insert(nums: Vec<i32>, target: i32) -> i32 {
+        let mut left = 0;
+        let mut right = nums.len();
+        while left < right {
+            let mid = (left+right)/2;
+            if nums[mid] == target {
+                return mid as i32;
+            } else {
+                if nums[mid] < target {
+                    left = mid+1;
+                } else {
+                    right = mid;
+                }
+            }
+        }
+        left as i32
+    }
+    pub fn binary_search(nums: Vec<i32>, target: i32) -> i32 {
+        let mut left = 0;
+        let mut right = nums.len();
+        while left < right {
+            let mid = (left+right)/2;
+            if nums[mid] == target {
+                return mid as i32;
+            } else {
+                if nums[mid] < target {
+                    left = mid+1;
+                } else {
+                    right = mid;
+                }
+            }
+        }
+        -1
+    }
 }
 
 #[test]
@@ -87,4 +120,12 @@ fn test_search_range() {
     assert_eq!(SearchSolution::search_range(vec![1], 1), vec![0, 0]);
     assert_eq!(SearchSolution::search_range(vec![1], 0), vec![-1, -1]); 
     assert_eq!(SearchSolution::search_range(vec![5,7,7,8,8,10], 6), vec![-1, -1]);
+}
+
+#[test]
+fn test_search_insert() {
+    assert_eq!(SearchSolution::search_insert(vec![1,3,5,6], 5), 2);
+    assert_eq!(SearchSolution::search_insert(vec![1,3,5,6], 2), 1);
+    assert_eq!(SearchSolution::search_insert(vec![1,3,5,6], 7), 4);
+    assert_eq!(SearchSolution::search_insert(vec![1,3,5,6], 0), 0);
 }
