@@ -52,6 +52,11 @@ impl ArrarySolution {
     }
 }
 
+
+pub fn main() {
+    
+}
+
 #[test]
 fn test_next_permutation() {
     let mut input = vec![1];

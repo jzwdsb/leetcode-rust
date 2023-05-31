@@ -69,6 +69,10 @@ impl BasicTypes {
     }
 }
 
+pub fn main() {
+
+}
+
 #[test]
 fn test_reverse() {
     assert_eq!(BasicTypes::reverse(123), 321);

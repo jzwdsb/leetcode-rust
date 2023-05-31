@@ -80,6 +80,9 @@ impl BackStrackSolution {
     }
 }
 
+pub fn main() {
+    
+}
 
 #[test]
 fn test_combination_sum() {

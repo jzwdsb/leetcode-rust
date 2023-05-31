@@ -92,6 +92,10 @@ impl ListSolution {
     }
 }
 
+pub fn main() {
+    
+}
+
 #[test]
 fn test_remove_nth_from_end() {
     let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);

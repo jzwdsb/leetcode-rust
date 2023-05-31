@@ -84,6 +84,10 @@ impl DPSolution {
     
 }
 
+pub fn main() {
+    
+}
+
 #[test]
 fn test_max_absolute_sum() {
     assert_eq!(DPSolution::max_absolute_sum(vec![1, -3, 2, 3, -4]), 5);

@@ -102,6 +102,29 @@ impl SearchSolution {
         }
         -1
     }
+
+    /*
+    link: https://leetcode.com/problems/median-of-two-sorted-arrays/
+    search the median of two sorted arrays, time complexity O(log(m+n))
+     */
+
+    pub fn find_median_of_two_sorted_arrays(nums1: Vec<i32>, nums2: Vec<i32>) -> f64 {
+        // merge two sorted arrays and find the median
+        // this solution is not O(log(m+n)) but it won't exceed the time limit
+        // TODO: need to find a O(log(m+n)) solution
+        let mut new_vec = [nums1, nums2].concat();
+        new_vec.sort();
+        let new_len = new_vec.len();
+        if new_len % 2 == 0 {
+            (new_vec[new_len/2] + new_vec[new_len/2-1]) as f64 / 2.0
+        } else {
+            new_vec[new_len/2] as f64
+        }
+    }
+}
+
+pub fn main() {
+    
 }
 
 #[test]
@@ -128,4 +151,21 @@ fn test_search_insert() {
     assert_eq!(SearchSolution::search_insert(vec![1,3,5,6], 2), 1);
     assert_eq!(SearchSolution::search_insert(vec![1,3,5,6], 7), 4);
     assert_eq!(SearchSolution::search_insert(vec![1,3,5,6], 0), 0);
+}
+
+#[test]
+fn test_binary_search() {
+    assert_eq!(SearchSolution::binary_search(vec![1,3,5,6], 5), 2);
+    assert_eq!(SearchSolution::binary_search(vec![1,3,5,6], 2), -1);
+    assert_eq!(SearchSolution::binary_search(vec![1,3,5,6], 7), -1);
+    assert_eq!(SearchSolution::binary_search(vec![1,3,5,6], 0), -1);
+}
+
+#[test]
+fn test_find_median_of_two_sorted_arrays() {
+    assert_eq!(SearchSolution::find_median_of_two_sorted_arrays(vec![1, 3], vec![2]), 2.0);
+    assert_eq!(SearchSolution::find_median_of_two_sorted_arrays(vec![1, 2], vec![3, 4]), 2.5);
+    assert_eq!(SearchSolution::find_median_of_two_sorted_arrays(vec![0, 0], vec![0, 0]), 0.0);
+    assert_eq!(SearchSolution::find_median_of_two_sorted_arrays(vec![], vec![1]), 1.0);
+    assert_eq!(SearchSolution::find_median_of_two_sorted_arrays(vec![2], vec![]), 2.0);
 }

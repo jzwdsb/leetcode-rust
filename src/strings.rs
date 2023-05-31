@@ -131,6 +131,11 @@ impl StringSolution {
 
 }
 
+
+pub fn main() {
+    
+}
+
 #[test]
 fn test_count_good_string() {
     assert_eq!(StringSolution::count_good_string(3, 3, 1, 1), 8);

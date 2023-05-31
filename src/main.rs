@@ -21,6 +21,21 @@ struct Args {
 }
 
 fn main() {
-    // TODO: should be able to pass in a function name to run
-    //       if function name is none, run all functions
+    let args = Args::parse();
+    match args.function_name {
+        Some(function_name) => {
+            match function_name.as_str() {
+                "basic_types" => basic_types::main(),
+                "stack" => stack::main(),
+                "strings" => strings::main(),
+                "list" => list::main(),
+                "array" => array::main(),
+                "dynamic_programming" => dynamic_programming::main(),
+                "search" => search::main(),
+                "backtrack" => backtrack::main(),
+                _ => println!("No function found with name {}", function_name)
+            }
+        },
+        None => println!("No function name provided")
+    }
 }
