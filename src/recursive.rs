@@ -23,28 +23,28 @@ impl RecursiveSolution {
 
     fn match_helper(s: &Vec<char>, p: &Vec<char>, s_index: usize, p_index: usize) -> bool {
         if s_index == s.len() && p_index == p.len() {
-            return true
+            return true;
         }
         if s_index == s.len() && p_index < p.len() {
-            if p_index + 1 < p.len() && p[p_index+1] == '*' {
-                return RecursiveSolution::match_helper(s, p, s_index, p_index+2);
+            if p_index + 1 < p.len() && p[p_index + 1] == '*' {
+                return RecursiveSolution::match_helper(s, p, s_index, p_index + 2);
             } else {
-                return false
+                return false;
             }
         }
 
         // still input chars after the end of pattern
         if s_index < s.len() && p_index == p.len() {
-            return false
+            return false;
         }
 
         // if next char is *
-        if p_index + 1 < p.len() && p[p_index+1] == '*' {
+        if p_index + 1 < p.len() && p[p_index + 1] == '*' {
             // current chat is matched or pattern char is .
             if p[p_index] == '.' || s[s_index] == p[p_index] {
                 // move to next char in input string or move to next pattern char
-                return RecursiveSolution::match_helper(s, p, s_index+1, p_index)
-                || RecursiveSolution::match_helper(s, p, s_index, p_index+2);
+                return RecursiveSolution::match_helper(s, p, s_index + 1, p_index)
+                    || RecursiveSolution::match_helper(s, p, s_index, p_index + 2);
             }
         }
         // current char is matched or pattern char is .
