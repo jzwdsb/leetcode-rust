@@ -44,7 +44,9 @@ impl RecursiveSolution {
             if p[p_index] == '.' || s[s_index] == p[p_index] {
                 // move to next char in input string or move to next pattern char
                 return RecursiveSolution::match_helper(s, p, s_index + 1, p_index)
-                    || RecursiveSolution::match_helper(s, p, s_index, p_index + 2);
+            } else {
+                // current char is not matched
+                return RecursiveSolution::match_helper(s, p, s_index, p_index + 2);
             }
         }
         // current char is matched or pattern char is .
