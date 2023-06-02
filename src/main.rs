@@ -8,7 +8,7 @@ pub mod dynamic_programming;
 pub mod search;
 pub mod backtrack;
 pub mod recursive;
-
+pub mod sort;
 // pub mod http;
 // pub mod postgres;
 
@@ -35,6 +35,7 @@ fn main() {
                 "search" => search::main(),
                 "backtrack" => backtrack::main(),
                 "recursive" => recursive::main(),
+                "sort" => sort::main(),
                 _ => println!("No function found with name {}", function_name)
             }
         },
