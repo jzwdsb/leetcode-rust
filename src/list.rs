@@ -65,12 +65,12 @@ impl ListSolution {
                 let val = l1.val + l2.val;
                 if val < 10 {
                     let mut node = ListNode::new(val);
-                    node.next = ListSolution::add_two_numbers(l1.next, l2.next);
+                    node.next = Self::add_two_numbers(l1.next, l2.next);
                     Some(Box::new(node))
                 } else {
                     let mut node = ListNode::new(val - 10);
-                    node.next = ListSolution::add_two_numbers(
-                        ListSolution::add_two_numbers(l1.next, Some(Box::new(ListNode::new(1)))), l2.next);
+                    node.next = Self::add_two_numbers(
+                        Self::add_two_numbers(l1.next, Some(Box::new(ListNode::new(1)))), l2.next);
                     Some(Box::new(node))
                 }
             }

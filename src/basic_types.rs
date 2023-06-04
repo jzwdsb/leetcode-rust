@@ -34,7 +34,7 @@ impl BasicTypes {
         let (mut left, mut right) = (0i64, dividend);
         while left < right {
             let mid = left + ((right+1-left) >> 1);
-            if dividend >= BasicTypes::simulate_multiple(divisor, mid) {
+            if dividend >= Self::simulate_multiple(divisor, mid) {
                 left = mid;
             } else {
                 right = mid-1;

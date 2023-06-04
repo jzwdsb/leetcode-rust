@@ -9,6 +9,7 @@ pub mod search;
 pub mod backtrack;
 pub mod recursive;
 pub mod sort;
+pub mod sliding_window;
 // pub mod http;
 // pub mod postgres;
 

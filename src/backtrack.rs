@@ -12,7 +12,7 @@ impl BackStrackSolution {
     pub fn combination_sum(candidates: Vec<i32>, target: i32) -> Vec<Vec<i32>> {
         let mut result = vec![];
         let mut path = vec![];
-        BackStrackSolution::backtrack(&mut result, &mut path, &candidates, target, 0);
+        Self::backtrack(&mut result, &mut path, &candidates, target, 0);
         result
     }
     fn backtrack(
@@ -30,7 +30,7 @@ impl BackStrackSolution {
         }
         for i in start..candidates.len() {
             path.push(candidates[i]);
-            BackStrackSolution::backtrack(result, path, candidates, target-candidates[i], i);
+            Self::backtrack(result, path, candidates, target-candidates[i], i);
             path.pop();
         }
         return 
@@ -47,7 +47,7 @@ impl BackStrackSolution {
         let mut path = vec![];
         let mut candidates = candidates;
         candidates.sort();
-        BackStrackSolution::backtrack2(&mut result, &mut path, &candidates, target, 0);
+        Self::backtrack2(&mut result, &mut path, &candidates, target, 0);
         result
     }
 
@@ -73,7 +73,7 @@ impl BackStrackSolution {
                 break
             }
             path.push(candidates[i]);
-            BackStrackSolution::backtrack2(result, path, candidates, target-candidates[i], i+1);
+            Self::backtrack2(result, path, candidates, target-candidates[i], i+1);
             path.pop();
         }
         return

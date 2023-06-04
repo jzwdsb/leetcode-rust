@@ -62,7 +62,7 @@ impl DPSolution {
 
     pub fn new21_game(n: i32, k: i32, max_pts: i32) -> f64 {
         let mut cases = Vec::new();
-        DPSolution::calculate_prob(&mut cases, 0, k, max_pts);
+        Self::calculate_prob(&mut cases, 0, k, max_pts);
         let len = cases.len() as f64;
         let mut count = 0;
         for i in cases.into_iter() {
@@ -78,7 +78,7 @@ impl DPSolution {
             return;
         }
         for i in 1..max_pts+1 {
-            DPSolution::calculate_prob(set, sum + i, k, max_pts);
+            Self::calculate_prob(set, sum + i, k, max_pts);
         }
     }
     

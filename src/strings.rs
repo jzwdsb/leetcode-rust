@@ -51,7 +51,7 @@ impl StringSolution {
             return "1".to_string();
         }
         let mut ans = String::new();
-        let prev = StringSolution::count_and_say(n-1);
+        let prev = Self::count_and_say(n-1);
         let mut count = 1;
         let mut i = 0;
         while i < prev.len() {
