@@ -74,6 +74,22 @@ impl ArrarySolution {
         }
         max_profit
     }
+    /*
+    link: https://leetcode.com/problems/average-salary-excluding-the-minimum-and-maximum-salary/
+     */
+
+    pub fn average(nums: Vec<i32>) -> f64 {
+        let mut min = i32::MAX;
+        let mut max = i32::MIN;
+        let mut sum = 0;
+        let len = nums.len()-2;
+        for num in nums {
+            min = min.min(num);
+            max = max.max(num);
+            sum += num;
+        }
+        (sum - min - max) as f64 / len as f64
+    }
 }
 
 pub fn main() {}
