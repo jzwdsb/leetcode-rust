@@ -90,6 +90,31 @@ impl ArrarySolution {
         }
         (sum - min - max) as f64 / len as f64
     }
+
+    /*
+    link: https://leetcode.com/problems/remove-element/
+    remove all the element that is equal to val in place
+    we can use two pointers to travel the array
+    pointer i is the slow pointer points to the element that is not equal to val
+    pointer j is the fast pointer points to the element that is equal to val
+    every time nums[j] != val, we copy nums[j] to nums[i] and i += 1
+    so that we can remove all the element that is equal to val
+    time complexity: O(n) space complexity: O(1)
+     */
+
+    pub fn remove_element(nums: &mut Vec<i32>, val: i32) -> i32 {
+        let mut i = 0;
+        let mut j = 0;
+        while j < nums.len() {
+            if nums[j] != val {
+                nums[i] = nums[j];
+                i += 1;
+            }
+            j += 1;
+        }
+        i as i32
+    }
+
 }
 
 pub fn main() {}
@@ -149,4 +174,14 @@ fn test_array_sign() {
 fn test_max_profits() {
     assert_eq!(ArrarySolution::max_profits(vec![7, 1, 5, 3, 6, 4]), 5);
     assert_eq!(ArrarySolution::max_profits(vec![7, 6, 4, 3, 1]), 0);
+}
+
+#[test]
+fn test_remove_element() {
+    let mut input = vec![3, 2, 2, 3];
+    assert_eq!(ArrarySolution::remove_element(&mut input, 3), 2);
+    assert_eq!(input[0..2], vec![2, 2]);
+    let mut input = vec![0, 1, 2, 2, 3, 0, 4, 2];
+    assert_eq!(ArrarySolution::remove_element(&mut input, 2), 5);
+    assert_eq!(input[0..5], vec![0, 1, 3, 0, 4]);
 }
