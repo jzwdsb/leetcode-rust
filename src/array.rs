@@ -1,3 +1,5 @@
+use std::ops::Div;
+
 pub struct ArrarySolution {}
 
 impl ArrarySolution {
@@ -54,7 +56,7 @@ impl ArrarySolution {
     pub fn array_sign(nums: Vec<i32>) -> i32 {
         nums.iter().map(|x| x.signum()).product()
     }
-    
+
     /*
     link: https://leetcode.com/problems/best-time-to-buy-and-sell-stock/description/
      */
@@ -82,7 +84,7 @@ impl ArrarySolution {
         let mut min = i32::MAX;
         let mut max = i32::MIN;
         let mut sum = 0;
-        let len = nums.len()-2;
+        let len = nums.len() - 2;
         for num in nums {
             min = min.min(num);
             max = max.max(num);
@@ -115,6 +117,29 @@ impl ArrarySolution {
         i as i32
     }
 
+    /*
+    link: https://leetcode.com/problems/rotate-image/description/
+    rotate the image in place
+    we can use two steps to solve this problem
+    1. reverse up to down
+    2. swap the symmetry
+     */
+
+    pub fn rotate(image: &mut Vec<Vec<i32>>) {
+        let n = image.len();
+        // transpose
+        for i in 0..n.div(2) {
+            image.swap(i, n - i - 1);
+        }
+        // swap the symmetry
+        for i in 0..n {
+            for j in i + 1..n {
+                image[i][j] ^= image[j][i];
+                image[j][i] ^= image[i][j];
+                image[i][j] ^= image[j][i];
+            }
+        }
+    }
 }
 
 pub fn main() {}
@@ -184,4 +209,27 @@ fn test_remove_element() {
     let mut input = vec![0, 1, 2, 2, 3, 0, 4, 2];
     assert_eq!(ArrarySolution::remove_element(&mut input, 2), 5);
     assert_eq!(input[0..5], vec![0, 1, 3, 0, 4]);
+}
+
+#[test]
+fn test_rotate() {
+    let mut input = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
+    ArrarySolution::rotate(&mut input);
+    assert_eq!(input, vec![vec![7, 4, 1], vec![8, 5, 2], vec![9, 6, 3]]);
+    let mut input = vec![
+        vec![5, 1, 9, 11],
+        vec![2, 4, 8, 10],
+        vec![13, 3, 6, 7],
+        vec![15, 14, 12, 16],
+    ];
+    ArrarySolution::rotate(&mut input);
+    assert_eq!(
+        input,
+        vec![
+            vec![15, 13, 2, 5],
+            vec![14, 3, 4, 1],
+            vec![12, 6, 8, 9],
+            vec![16, 7, 10, 11]
+        ]
+    );
 }

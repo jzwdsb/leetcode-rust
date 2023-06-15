@@ -136,7 +136,15 @@ impl StringSolution {
         t.sort();
         s == t
     }
-
+    
+    /*
+    link: https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/description/
+    the default String does not implement the Pattern trait
+    need to convert the String to &str
+     */
+    pub fn str_str(haystack: String, needle: String) -> i32 {
+        haystack.find(&needle).map(|i| i as i32).unwrap_or(-1)
+    }
 }
 
 
@@ -166,4 +174,14 @@ fn test_multiply() {
     assert_eq!(StringSolution::multiply("2".to_string(), "3".to_string()), "6");
     assert_eq!(StringSolution::multiply("123".to_string(), "456".to_string()), "56088");
     assert_eq!(StringSolution::multiply("123456789".to_string(), "987654321".to_string()), "121932631112635269");
+}
+
+#[test]
+fn test_str_str() {
+    assert_eq!(StringSolution::str_str("hello".to_string(), "ll".to_string()), 2);
+    assert_eq!(StringSolution::str_str("aaaaa".to_string(), "bba".to_string()), -1);
+    assert_eq!(StringSolution::str_str("".to_string(), "".to_string()), 0);
+    assert_eq!(StringSolution::str_str("".to_string(), "a".to_string()), -1);
+    assert_eq!(StringSolution::str_str("a".to_string(), "".to_string()), 0);
+    assert_eq!(StringSolution::str_str("mississippi".to_string(), "issip".to_string()), 4);
 }
