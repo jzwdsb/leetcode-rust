@@ -145,6 +145,30 @@ impl StringSolution {
     pub fn str_str(haystack: String, needle: String) -> i32 {
         haystack.find(&needle).map(|i| i as i32).unwrap_or(-1)
     }
+
+    /*
+    link: https://leetcode.com/problems/group-anagrams/description/
+    we can sort each string and use the sorted string as the key of the hashmap
+    push the string to the value of the hashmap
+    return the values of the hashmap
+     */
+
+    pub fn group_anagrams(strs: Vec<String>) -> Vec<Vec<String>> {
+        let mut map: std::collections::HashMap<String, Vec<String>> = std::collections::HashMap::new();
+        for s in strs {
+            let mut s_ = s.chars().collect::<Vec<char>>();
+            s_.sort();
+            let key = s_.iter().collect::<String>();
+            if map.contains_key(&key) {
+                map.get_mut(&key).unwrap().push(s);
+            } else {
+                map.insert(key, vec![s]);
+            }
+        }
+
+        map.into_values().collect()
+    }
+
 }
 
 
@@ -184,4 +208,19 @@ fn test_str_str() {
     assert_eq!(StringSolution::str_str("".to_string(), "a".to_string()), -1);
     assert_eq!(StringSolution::str_str("a".to_string(), "".to_string()), 0);
     assert_eq!(StringSolution::str_str("mississippi".to_string(), "issip".to_string()), 4);
+}
+
+#[test]
+fn test_group_anagrams() {
+    let mut result = StringSolution::group_anagrams(vec!["eat".to_string(), "tea".to_string(), "tan".to_string(), "ate".to_string(), "nat".to_string(), "bat".to_string()]);
+    for r in result.iter_mut() {
+        r.sort();
+    }
+    result.sort();
+    let mut expect = vec![vec!["ate".to_string(), "eat".to_string(), "tea".to_string()], vec!["bat".to_string()], vec!["nat".to_string(), "tan".to_string()]];
+    for e in expect.iter_mut() {
+        e.sort();
+    }
+    expect.sort();
+    assert_eq!(result, expect);
 }
