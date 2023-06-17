@@ -1,4 +1,3 @@
-
 pub struct DPSolution {}
 
 impl DPSolution {
@@ -72,29 +71,62 @@ impl DPSolution {
         }
         return count as f64 / len;
     }
-    fn calculate_prob(set: &mut Vec<i32>, sum: i32, k: i32, max_pts: i32){
+    fn calculate_prob(set: &mut Vec<i32>, sum: i32, k: i32, max_pts: i32) {
         if sum >= k {
             set.push(sum);
             return;
         }
-        for i in 1..max_pts+1 {
+        for i in 1..max_pts + 1 {
             Self::calculate_prob(set, sum + i, k, max_pts);
         }
     }
-    
+    /*
+    link: https://leetcode.com/problems/jump-game-ii/
+    we can use greedy algorithm to solve this problem with time complexity O(n)
+    create a vector named steps, steps[i] represents the minimum steps to reach the end from i
+    initialize the steps from the end, steps[end] = 0
+    steps[i] = steps[j] + 1, j is the index of the minimum value in nums[i, i+nums[i]]
+    return steps[0] as result
+     */
+
+    pub fn jump(nums: Vec<i32>) -> i32 {
+        let mut steps = vec![i32::MAX; nums.len()];
+        steps[nums.len() - 1] = 0;
+        for i in (0..nums.len() - 1).rev() {
+            if nums[i] == 0 {
+                continue;
+            }
+            let mut min = i32::MAX;
+            for j in i + 1..=i + nums[i] as usize {
+                if j >= nums.len() {
+                    break;
+                }
+                min = min.min(steps[j]);
+            }
+            if min != i32::MAX {
+                steps[i] = min + 1;
+            }
+        }
+
+        steps[0]
+    }
 }
 
-pub fn main() {
-    
-}
+pub fn main() {}
 
 #[test]
 fn test_max_absolute_sum() {
     assert_eq!(DPSolution::max_absolute_sum(vec![1, -3, 2, 3, -4]), 5);
     assert_eq!(DPSolution::max_absolute_sum(vec![2, -5, 1, -4, 3, -2]), 8);
 
-    assert_eq!(DPSolution::max_absolute_sum_optimized(vec![1, -3, 2, 3, -4]), 5);
-    assert_eq!(DPSolution::max_absolute_sum_optimized(vec![2, -5, 1, -4, 3, -2]), 8);
+    assert_eq!(
+        DPSolution::max_absolute_sum_optimized(vec![1, -3, 2, 3, -4]),
+        5
+    );
+    assert_eq!(
+        DPSolution::max_absolute_sum_optimized(vec![2, -5, 1, -4, 3, -2]),
+        8
+    );
 }
 
 #[test]
@@ -102,4 +134,14 @@ fn test_new21_game() {
     assert_eq!(DPSolution::new21_game(10, 1, 10), 1.0);
     assert_eq!(DPSolution::new21_game(6, 1, 10), 0.6);
     // assert_eq!(DPSolution::new21_game(21, 17, 10), 0.73278); test failed
+}
+
+#[test]
+fn test_jump() {
+    assert_eq!(DPSolution::jump(vec![2, 3, 1, 1, 4]), 2);
+    assert_eq!(DPSolution::jump(vec![2, 3, 0, 1, 4]), 2);
+    assert_eq!(
+        DPSolution::jump(vec![5, 9, 3, 2, 1, 0, 2, 3, 3, 1, 0, 0]),
+        3
+    );
 }
