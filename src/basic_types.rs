@@ -67,6 +67,40 @@ impl BasicTypes {
         
         ans
     }
+    /*
+    link: https://leetcode.com/problems/powx-n/
+     */
+
+    pub fn pow(x: f64, n: i32) -> f64 {
+        if x == 0.0 {
+            return 0.0;
+        }
+        if n == 0 {
+            return 1.0;
+        }
+        if x.abs() == 1.0 {
+            return if n&1 == 1 && x.is_sign_negative() { -1.0 } else { 1.0 };
+        }
+        if n == i32::MIN {
+            return 0.0;
+        }
+
+        let mut res = 1.0;
+        let is_neg = n.is_negative();
+        let mut n = n.abs() as u32;
+        let mut x = x;
+        while n > 0 {
+            if n & 1 == 1 {
+                res *= x;
+            }
+            x *= x;
+            n >>= 1;
+        }
+        if is_neg {
+            res = 1.0 / res;
+        }
+        res
+    }
 }
 
 pub fn main() {
@@ -91,4 +125,15 @@ fn test_divide() {
     assert_eq!(BasicTypes::divide(-1, 1), -1);
     assert_eq!(BasicTypes::divide(-2147483648, -1), 2147483647);
     assert_eq!(BasicTypes::divide(-1010369383, -2147483648), 0);
+}
+
+#[test]
+fn test_pow() {
+    assert!(BasicTypes::pow(2.0, 10)-1024.0 < 0.00001);
+    assert!(BasicTypes::pow(2.1, 3)- 9.261 < 0.00001);
+    assert!(BasicTypes::pow(2.0, -2)-0.25 < 0.00001);
+    assert!(BasicTypes::pow(0.00001, 2147483647) - 0.0 < 0.00001);
+    assert!(BasicTypes::pow(1.0, 2147483647)-1.0 < 0.00001);
+
+    assert!(BasicTypes::pow(2.0, -2147483648)-0.0 < 0.00001);
 }
