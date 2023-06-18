@@ -140,6 +140,105 @@ impl ArrarySolution {
             }
         }
     }
+
+    /*
+    link: https://leetcode.com/problems/maximum-subarray/
+    for nums[i], we have 2 options, either add it to the previous subarray or start a new subarray
+    1. add to the previous subarray: sum = sum + nums[i]
+    2. start a new subarray: sum = nums[i]
+    this two options can be represented by sum = max(sum, 0) + nums[i]
+    if sum < 0, we can start a new subarray, else we can add it to the previous subarray
+    time complexity: O(n) space complexity: O(1)
+     */
+    pub fn max_sub_array(nums: Vec<i32>) -> i32 {
+        let mut max_sum = i32::MIN;
+        let mut sum = 0;
+        for num in nums {
+            sum = sum.max(0) + num;
+            max_sum = max_sum.max(sum);
+        }
+        max_sum
+    }
+
+    /*
+    link: https://leetcode.com/problems/spiral-matrix/
+
+     */
+    pub fn spiral_order(matrix: Vec<Vec<i32>>) -> Vec<i32> {
+        let mut res = vec![];
+        if matrix.is_empty() {
+            return res;
+        }
+        let mut length_y = matrix[0].len();
+        let mut length_x = matrix.len();
+        let total_num = length_x * length_y;
+        let (mut x, mut y) = (0, 0); // pointing to the current pos
+        loop {
+            // 4 steps in a loop
+            // 1. to the right, y++ until y == length_y-1
+            // 2. to the down, x++ until x == length_x-1
+            // 3. to the left, y-- until y == (y+1)(when the loop starts)
+            // 4. to the up, x-- until x == (x) (when the loop starts)
+            // if result.len() == length_x * length_y, we can break the loop
+            if res.len() >= total_num {
+                break;
+            }
+
+            // to the right
+            while y < length_y {
+                res.push(matrix[x][y]);
+                y += 1;
+            }
+            y -= 1;
+
+            if res.len() >= total_num {
+                break;
+            }
+
+            // to the down
+            x += 1;
+            while x < length_x {
+                res.push(matrix[x][y]);
+                x += 1;
+            }
+            x -= 1;
+
+            if res.len() >= total_num {
+                break;
+            }
+
+            // to the left
+            y -= 1;
+            while y > matrix[0].len() - length_y {
+                res.push(matrix[x][y]);
+                y -= 1;
+            }
+            res.push(matrix[x][y]);
+
+            if res.len() >= total_num {
+                break;
+            }
+
+            // to the up
+            x -= 1;
+            while x > matrix.len() - length_x {
+                res.push(matrix[x][y]);
+                x -= 1;
+            }
+            x += 1;
+            y += 1;
+
+            if res.len() >= total_num {
+                break;
+            }
+
+            // update the length_x and length_y
+            length_x -= 1;
+            length_y -= 1;
+        }
+
+        res
+    }
 }
 
 pub fn main() {}
@@ -231,5 +330,33 @@ fn test_rotate() {
             vec![12, 6, 8, 9],
             vec![16, 7, 10, 11]
         ]
+    );
+}
+
+#[test]
+fn test_max_sub_array() {
+    assert_eq!(
+        ArrarySolution::max_sub_array(vec![-2, 1, -3, 4, -1, 2, 1, -5, 4]),
+        6
+    );
+    assert_eq!(ArrarySolution::max_sub_array(vec![1]), 1);
+    assert_eq!(ArrarySolution::max_sub_array(vec![0]), 0);
+    assert_eq!(ArrarySolution::max_sub_array(vec![-1]), -1);
+    assert_eq!(ArrarySolution::max_sub_array(vec![-100000]), -100000);
+}
+
+#[test]
+fn test_spiral_order() {
+    assert_eq!(
+        ArrarySolution::spiral_order(vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]]),
+        vec![1, 2, 3, 6, 9, 8, 7, 4, 5]
+    );
+    assert_eq!(
+        ArrarySolution::spiral_order(vec![
+            vec![1, 2, 3, 4],
+            vec![5, 6, 7, 8],
+            vec![9, 10, 11, 12]
+        ]),
+        vec![1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]
     );
 }
