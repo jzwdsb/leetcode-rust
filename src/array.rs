@@ -239,6 +239,23 @@ impl ArrarySolution {
 
         res
     }
+
+    /*
+    link: https://leetcode.com/problems/jump-game/description/
+    max val represents the max index we can reach at current position
+    if i > max_val, that means we can't reach the end
+     */
+
+    pub fn can_jump(steps: Vec<i32>) -> bool {
+        let mut max_val = 0;
+        for (i, v) in steps.iter().enumerate() {
+            if i > max_val {
+                return false;
+            }
+            max_val = max_val.max(i + *v as usize);
+        }
+        true
+    }
 }
 
 pub fn main() {}
@@ -359,4 +376,14 @@ fn test_spiral_order() {
         ]),
         vec![1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]
     );
+}
+
+#[test]
+fn test_can_jump() {
+    assert_eq!(ArrarySolution::can_jump(vec![2, 3, 1, 1, 4]), true);
+    assert_eq!(ArrarySolution::can_jump(vec![3, 2, 1, 0, 4]), false);
+    assert_eq!(ArrarySolution::can_jump(vec![0]), true);
+    assert_eq!(ArrarySolution::can_jump(vec![2, 0, 0]), true);
+    assert_eq!(ArrarySolution::can_jump(vec![1, 1, 2, 2, 0, 1, 1]), true);
+    assert_eq!(ArrarySolution::can_jump(vec![1,2,0,1]), true);
 }
