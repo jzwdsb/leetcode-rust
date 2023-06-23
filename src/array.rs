@@ -256,6 +256,34 @@ impl ArrarySolution {
         }
         true
     }
+
+    /*
+    link: https://leetcode.com/problems/merge-intervals/
+     */
+
+    pub fn merge(intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+        let mut res = Vec::new();
+        if intervals.is_empty() {
+            return res;
+        }
+        let mut intervals = intervals;
+        intervals.sort_unstable_by_key(|val| val[0]);
+        let mut prev = intervals[0].clone();
+        for i in intervals.iter().skip(1) {
+            if i[0] <= prev[1] {
+                prev = ArrarySolution::merge_intervals(prev, i.clone());
+            } else {
+                res.push(prev);
+                prev = i.clone();
+            }
+        }
+        res.push(prev);
+        res
+    }
+
+    fn merge_intervals(a: Vec<i32>, b: Vec<i32>) -> Vec<i32> {
+        vec![a[0].min(b[0]), a[1].max(b[1])]
+    }
 }
 
 pub fn main() {}
@@ -385,5 +413,13 @@ fn test_can_jump() {
     assert_eq!(ArrarySolution::can_jump(vec![0]), true);
     assert_eq!(ArrarySolution::can_jump(vec![2, 0, 0]), true);
     assert_eq!(ArrarySolution::can_jump(vec![1, 1, 2, 2, 0, 1, 1]), true);
-    assert_eq!(ArrarySolution::can_jump(vec![1,2,0,1]), true);
+    assert_eq!(ArrarySolution::can_jump(vec![1, 2, 0, 1]), true);
+}
+
+#[test]
+fn test_merge() {
+    assert_eq!(
+        ArrarySolution::merge(vec![vec![1, 3], vec![2, 6], vec![8, 10], vec![15, 18]]),
+        vec![vec![1, 6], vec![8, 10], vec![15, 18]]
+    );
 }
