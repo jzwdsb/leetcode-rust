@@ -110,6 +110,30 @@ impl DPSolution {
 
         steps[0]
     }
+
+    pub fn unique_paths(m: i32, n: i32) -> i32 {
+        let mut steps = vec![vec![0; n as usize]; m as usize];
+        Self::solve_unique_path(0, 0, &m, &n, &mut steps)
+    }
+
+    fn solve_unique_path(i: i32, j: i32, m: &i32, n: &i32, steps: &mut Vec<Vec<i32>>) -> i32 {
+        if i < 0 || j < 0 || i >= *m || j >= *n {
+            return 0;
+        }
+        if i == *m-1 && j == *n-1 {
+            return 1;
+        }
+        if steps[i as usize][j as usize] != 0 {
+            return steps[i as usize][j as usize];
+        }
+        let right = Self::solve_unique_path(i, j+1, m, n, steps);
+        let down = Self::solve_unique_path(i+1, j, m, n, steps);
+
+        steps[i as usize][j as usize] = right + down;
+
+        steps[i as usize][j as usize]
+    }
+    
 }
 
 pub fn main() {}
@@ -144,4 +168,10 @@ fn test_jump() {
         DPSolution::jump(vec![5, 9, 3, 2, 1, 0, 2, 3, 3, 1, 0, 0]),
         3
     );
+}
+
+#[test]
+fn test_unique_paths() {
+    assert_eq!(DPSolution::unique_paths(3, 2), 3);
+    assert_eq!(DPSolution::unique_paths(7, 3), 28);
 }

@@ -284,6 +284,10 @@ impl ArrarySolution {
     fn merge_intervals(a: Vec<i32>, b: Vec<i32>) -> Vec<i32> {
         vec![a[0].min(b[0]), a[1].max(b[1])]
     }
+
+    pub fn length_of_last_word(s: String) -> i32 {
+        s.split_ascii_whitespace().last().unwrap_or("").len() as i32
+    }
 }
 
 pub fn main() {}
@@ -422,4 +426,14 @@ fn test_merge() {
         ArrarySolution::merge(vec![vec![1, 3], vec![2, 6], vec![8, 10], vec![15, 18]]),
         vec![vec![1, 6], vec![8, 10], vec![15, 18]]
     );
+}
+
+#[test]
+fn test_length_of_last_word() {
+    assert_eq!(
+        ArrarySolution::length_of_last_word("Hello World".to_string()),
+        5
+    );
+    assert_eq!(ArrarySolution::length_of_last_word(" ".to_string()), 0);
+    assert_eq!(ArrarySolution::length_of_last_word("a ".to_string()), 1);
 }
