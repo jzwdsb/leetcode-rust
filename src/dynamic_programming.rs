@@ -115,6 +115,12 @@ impl DPSolution {
         let mut steps = vec![vec![0; n as usize]; m as usize];
         Self::solve_unique_path(0, 0, &m, &n, &mut steps)
     }
+    /*
+    link: https://leetcode.com/problems/unique-paths/
+    define a matrix named steps, steps[i,j] represents the unique paths from (i,j) to (m-1,n-1)
+    steps[i,j] = steps[i+1,j] + steps[i,j+1]
+    if i == m-1 && j == n-1, steps[i,j] = 1
+     */
 
     fn solve_unique_path(i: i32, j: i32, m: &i32, n: &i32, steps: &mut Vec<Vec<i32>>) -> i32 {
         if i < 0 || j < 0 || i >= *m || j >= *n {
