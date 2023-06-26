@@ -139,7 +139,30 @@ impl DPSolution {
 
         steps[i as usize][j as usize]
     }
-    
+
+    pub fn unique_path_with_obstacle(grids: Vec<Vec<i32>>) -> i32 {
+        let mut steps = vec![vec![0; grids[0].len()]; grids.len()];
+        Self::solve_unique_path_with_obstacle(0, 0, &grids, &mut steps)
+    }
+    fn solve_unique_path_with_obstacle(i: i32, j:i32, grids: &Vec<Vec<i32>>, steps: &mut Vec<Vec<i32>>) -> i32 {
+        if i < 0 || j < 0 || i >= grids.len() as i32 || j >= grids[0].len() as i32 {
+            return 0;
+        }
+        if grids[i as usize][j as usize] == 1 {
+            return 0;
+        }
+        if i == grids.len() as i32 - 1 && j == grids[0].len() as i32 - 1 {
+            return 1;
+        }
+
+        if steps[i as usize][j as usize] != 0 {
+            return steps[i as usize][j as usize];
+        }
+        let right = Self::solve_unique_path_with_obstacle(i, j+1, grids, steps);
+        let down = Self::solve_unique_path_with_obstacle(i+1, j, grids, steps);
+        steps[i as usize][j as usize] = right + down;
+        steps[i as usize][j as usize]
+    }
 }
 
 pub fn main() {}
@@ -180,4 +203,20 @@ fn test_jump() {
 fn test_unique_paths() {
     assert_eq!(DPSolution::unique_paths(3, 2), 3);
     assert_eq!(DPSolution::unique_paths(7, 3), 28);
+}
+
+#[test]
+fn test_unique_path_with_obstacle() {
+    assert_eq!(
+        DPSolution::unique_path_with_obstacle(vec![
+            vec![0, 0, 0],
+            vec![0, 1, 0],
+            vec![0, 0, 0]
+        ]),
+        2
+    );
+    assert_eq!(
+        DPSolution::unique_path_with_obstacle(vec![vec![0, 1], vec![0, 0]]),
+        1
+    );
 }
