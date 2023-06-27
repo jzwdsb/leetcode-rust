@@ -163,6 +163,35 @@ impl DPSolution {
         steps[i as usize][j as usize] = right + down;
         steps[i as usize][j as usize]
     }
+
+    /*
+    link: https://leetcode.com/problems/minimum-path-sum/
+    dp solve
+    define a matrix named steps, steps[i,j] represents the minimum path sum from (i,j) to (m-1,n-1)
+    steps[i,j] = min(steps[i+1,j], steps[i,j+1]) + grid[i,j]
+    if i == m-1 && j == n-1, steps[i,j] = grid[i,j]
+     */
+
+    pub fn minimum_path_sum(grid: Vec<Vec<i32>>) -> i32 {
+        let mut steps = vec![vec![0; grid[0].len()]; grid.len()];
+        Self::solve_minimum_path_sum(0, 0, &grid, &mut steps)
+    }
+
+    fn solve_minimum_path_sum(i: usize, j: usize, grid: &Vec<Vec<i32>>, steps: &mut Vec<Vec<i32>>) -> i32 {
+        if i >= grid.len() || j >= grid[0].len()  {
+            return i32::MAX;
+        }
+        if i == grid.len() - 1 && j == grid[0].len() - 1 {
+            return grid[i as usize][j as usize];
+        }
+        if steps[i][j] != 0 {
+            return steps[i][j];
+        }
+        let right = Self::solve_minimum_path_sum(i, j+1, grid, steps);
+        let down = Self::solve_minimum_path_sum(i+1, j, grid, steps);
+        steps[i][j] = grid[i][j] + right.min(down);
+        steps[i][j]
+    }
 }
 
 pub fn main() {}
@@ -218,5 +247,25 @@ fn test_unique_path_with_obstacle() {
     assert_eq!(
         DPSolution::unique_path_with_obstacle(vec![vec![0, 1], vec![0, 0]]),
         1
+    );
+}
+
+
+#[test]
+fn test_minimum_path_sum() {
+    assert_eq!(
+        DPSolution::minimum_path_sum(vec![
+            vec![1, 3, 1],
+            vec![1, 5, 1],
+            vec![4, 2, 1]
+        ]),
+        7
+    );
+    assert_eq!(
+        DPSolution::minimum_path_sum(vec![
+            vec![1, 2, 3],
+            vec![4, 5, 6]
+        ]),
+        12
     );
 }
