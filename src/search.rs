@@ -121,6 +121,15 @@ impl SearchSolution {
             new_vec[new_len/2] as f64
         }
     }
+
+    /*
+    link: https://leetcode.com/problems/find-smallest-letter-greater-than-target
+     */
+
+    pub fn next_greatest_letter(letters: Vec<char>, target: char) -> char {
+        let partition = letters.partition_point(|&letter| letter <= target);
+        letters[partition % letters.len()]
+    }
 }
 
 pub fn main() {
@@ -168,4 +177,14 @@ fn test_find_median_of_two_sorted_arrays() {
     assert_eq!(SearchSolution::find_median_of_two_sorted_arrays(vec![0, 0], vec![0, 0]), 0.0);
     assert_eq!(SearchSolution::find_median_of_two_sorted_arrays(vec![], vec![1]), 1.0);
     assert_eq!(SearchSolution::find_median_of_two_sorted_arrays(vec![2], vec![]), 2.0);
+}
+
+#[test]
+fn test_next_great_char() {
+    assert_eq!(SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'a'), 'c');
+    assert_eq!(SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'c'), 'f');
+    assert_eq!(SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'd'), 'f');
+    assert_eq!(SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'g'), 'j');
+    assert_eq!(SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'j'), 'c');
+    assert_eq!(SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'k'), 'c');
 }
