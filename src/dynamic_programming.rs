@@ -192,6 +192,19 @@ impl DPSolution {
         steps[i][j] = grid[i][j] + right.min(down);
         steps[i][j]
     }
+
+    pub fn climb_stairs(n: i32) -> i32 {
+        if n == 1 {
+            return 1;
+        }
+        let mut steps = vec![0; n as usize];
+        steps[0] = 1;
+        steps[1] = 2;
+        for i in 2..n as usize {
+            steps[i] = steps[i-1] + steps[i-2];
+        }
+        steps[n as usize - 1]
+    }
 }
 
 pub fn main() {}
@@ -268,4 +281,11 @@ fn test_minimum_path_sum() {
         ]),
         12
     );
+}
+
+#[test]
+fn test_climb_stairs() {
+    assert_eq!(DPSolution::climb_stairs(2), 2);
+    assert_eq!(DPSolution::climb_stairs(3), 3);
+    assert_eq!(DPSolution::climb_stairs(4), 5);
 }
