@@ -1,8 +1,8 @@
 use std::ops::Div;
 
-pub struct ArrarySolution {}
+pub struct ArraySolution {}
 
-impl ArrarySolution {
+impl ArraySolution {
     /*
     link: https://leetcode.com/problems/next-permutation/
     next lexicographically greater permutation of its integer.
@@ -42,7 +42,7 @@ impl ArrarySolution {
 
         loop {
             let mut nums_copy = prev_nums.clone();
-            ArrarySolution::next_permutation(&mut nums_copy);
+            Self::next_permutation(&mut nums_copy);
             res.push(nums_copy.clone());
             prev_nums = nums_copy;
             if prev_nums == nums {
@@ -241,6 +241,84 @@ impl ArrarySolution {
     }
 
     /*
+    link: https://leetcode.com/problems/spiral-matrix-ii/
+     */
+
+    pub fn spiral_matrix_ii(n: i32) -> Vec<Vec<i32>> {
+        let mut matrix = vec![vec![0 as i32; n as usize];n as usize];
+        let mut length_y = n as usize;
+        let mut length_x = n as usize;
+        let total_num = n*n;
+        let (mut x, mut y) = (0, 0); // pointing to the current pos
+        let mut num = 1 as i32;
+        loop {
+            // 4 steps in a loop
+            // 1. to the right, y++ until y == length_y-1
+            // 2. to the down, x++ until x == length_x-1
+            // 3. to the left, y-- until y == (y+1)(when the loop starts)
+            // 4. to the up, x-- until x == (x) (when the loop starts)
+            // if result.len() == length_x * length_y, we can break the loop
+            if num > total_num {
+                break;
+            }
+
+            // to the right
+            while y < length_y {
+                matrix[x][y] = num;
+                num += 1;
+                y += 1;
+            }
+            y -= 1;
+
+            if num > total_num {
+                break;
+            }
+
+            // to the down
+            x += 1;
+            while x < length_x {
+                matrix[x][y] = num;
+                num += 1;
+                x += 1;
+            }
+            x -= 1;
+
+            if num > total_num {
+                break;
+            }
+
+            // to the left
+            y -= 1;
+            while y > matrix[0].len() - length_y {
+                matrix[x][y] = num;
+                num += 1;
+                y -= 1;
+            }
+            matrix[x][y] = num;
+            num += 1;
+
+            if num > total_num {
+                break;
+            }
+
+            // to the up
+            x -= 1;
+            while x > matrix.len() - length_x {
+                matrix[x][y] = num;
+                num += 1;
+                x -= 1;
+            }
+            x += 1;
+            y += 1;
+
+            // update the length_x and length_y
+            length_x -= 1;
+            length_y -= 1;
+        }
+        matrix
+    }
+
+    /*
     link: https://leetcode.com/problems/jump-game/description/
     max val represents the max index we can reach at current position
     if i > max_val, that means we can't reach the end
@@ -271,7 +349,7 @@ impl ArrarySolution {
         let mut prev = intervals[0].clone();
         for i in intervals.iter().skip(1) {
             if i[0] <= prev[1] {
-                prev = ArrarySolution::merge_intervals(prev, i.clone());
+                prev = Self::merge_intervals(prev, i.clone());
             } else {
                 res.push(prev);
                 prev = i.clone();
@@ -307,6 +385,24 @@ impl ArrarySolution {
         }
         digits
     }
+
+    pub fn insert_interval(intervals: Vec<Vec<i32>>, new_intervals: Vec<i32>) -> Vec<Vec<i32>> {
+        let mut res = Vec::new();
+        let mut intervals = intervals;
+        intervals.push(new_intervals);
+        intervals.sort_unstable_by_key(|val| val[0]);
+        let mut prev = intervals[0].clone();
+        for i in intervals.iter().skip(1) {
+            if i[0] <= prev[1] {
+                prev = Self::merge_intervals(prev, i.clone());
+            } else {
+                res.push(prev);
+                prev = i.clone();
+            }
+        }
+        res.push(prev);
+        res
+    }
 }
 
 pub fn main() {}
@@ -314,23 +410,23 @@ pub fn main() {}
 #[test]
 fn test_next_permutation() {
     let mut input = vec![1];
-    ArrarySolution::next_permutation(&mut input);
+    ArraySolution::next_permutation(&mut input);
     assert_eq!(input, vec![1]);
     let mut input = vec![1, 2, 3];
-    ArrarySolution::next_permutation(&mut input);
+    ArraySolution::next_permutation(&mut input);
     assert_eq!(input, vec![1, 3, 2]);
     let mut input = vec![3, 2, 1];
-    ArrarySolution::next_permutation(&mut input);
+    ArraySolution::next_permutation(&mut input);
     assert_eq!(input, vec![1, 2, 3]);
     let mut input = vec![1, 1, 5];
-    ArrarySolution::next_permutation(&mut input);
+    ArraySolution::next_permutation(&mut input);
     assert_eq!(input, vec![1, 5, 1]);
 }
 
 #[test]
 fn test_permutation() {
     let input = vec![1, 2, 3];
-    let mut output = ArrarySolution::permute(input);
+    let mut output = ArraySolution::permute(input);
     output.sort();
     let mut expected = vec![
         vec![1, 2, 3],
@@ -343,7 +439,7 @@ fn test_permutation() {
     expected.sort();
     assert_eq!(output, expected);
     let input = vec![0, 1];
-    let mut output = ArrarySolution::permute(input);
+    let mut output = ArraySolution::permute(input);
     output.sort();
     let mut expected = vec![vec![0, 1], vec![1, 0]];
     expected.sort();
@@ -353,35 +449,35 @@ fn test_permutation() {
 
 #[test]
 fn test_array_sign() {
-    assert_eq!(ArrarySolution::array_sign(vec![-1, -2, -3, -4, 3, 2, 1]), 1);
-    assert_eq!(ArrarySolution::array_sign(vec![1, 5, 0, 2, -3]), 0);
-    assert_eq!(ArrarySolution::array_sign(vec![-1, 1, -1, 1, -1]), -1);
+    assert_eq!(ArraySolution::array_sign(vec![-1, -2, -3, -4, 3, 2, 1]), 1);
+    assert_eq!(ArraySolution::array_sign(vec![1, 5, 0, 2, -3]), 0);
+    assert_eq!(ArraySolution::array_sign(vec![-1, 1, -1, 1, -1]), -1);
     assert_eq!(
-        ArrarySolution::array_sign(vec![i32::MAX / 2, i32::MAX / 2, i32::MIN]),
+        ArraySolution::array_sign(vec![i32::MAX / 2, i32::MAX / 2, i32::MIN]),
         -1
     );
 }
 
 #[test]
 fn test_max_profits() {
-    assert_eq!(ArrarySolution::max_profits(vec![7, 1, 5, 3, 6, 4]), 5);
-    assert_eq!(ArrarySolution::max_profits(vec![7, 6, 4, 3, 1]), 0);
+    assert_eq!(ArraySolution::max_profits(vec![7, 1, 5, 3, 6, 4]), 5);
+    assert_eq!(ArraySolution::max_profits(vec![7, 6, 4, 3, 1]), 0);
 }
 
 #[test]
 fn test_remove_element() {
     let mut input = vec![3, 2, 2, 3];
-    assert_eq!(ArrarySolution::remove_element(&mut input, 3), 2);
+    assert_eq!(ArraySolution::remove_element(&mut input, 3), 2);
     assert_eq!(input[0..2], vec![2, 2]);
     let mut input = vec![0, 1, 2, 2, 3, 0, 4, 2];
-    assert_eq!(ArrarySolution::remove_element(&mut input, 2), 5);
+    assert_eq!(ArraySolution::remove_element(&mut input, 2), 5);
     assert_eq!(input[0..5], vec![0, 1, 3, 0, 4]);
 }
 
 #[test]
 fn test_rotate() {
     let mut input = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
-    ArrarySolution::rotate(&mut input);
+    ArraySolution::rotate(&mut input);
     assert_eq!(input, vec![vec![7, 4, 1], vec![8, 5, 2], vec![9, 6, 3]]);
     let mut input = vec![
         vec![5, 1, 9, 11],
@@ -389,7 +485,7 @@ fn test_rotate() {
         vec![13, 3, 6, 7],
         vec![15, 14, 12, 16],
     ];
-    ArrarySolution::rotate(&mut input);
+    ArraySolution::rotate(&mut input);
     assert_eq!(
         input,
         vec![
@@ -404,23 +500,23 @@ fn test_rotate() {
 #[test]
 fn test_max_sub_array() {
     assert_eq!(
-        ArrarySolution::max_sub_array(vec![-2, 1, -3, 4, -1, 2, 1, -5, 4]),
+        ArraySolution::max_sub_array(vec![-2, 1, -3, 4, -1, 2, 1, -5, 4]),
         6
     );
-    assert_eq!(ArrarySolution::max_sub_array(vec![1]), 1);
-    assert_eq!(ArrarySolution::max_sub_array(vec![0]), 0);
-    assert_eq!(ArrarySolution::max_sub_array(vec![-1]), -1);
-    assert_eq!(ArrarySolution::max_sub_array(vec![-100000]), -100000);
+    assert_eq!(ArraySolution::max_sub_array(vec![1]), 1);
+    assert_eq!(ArraySolution::max_sub_array(vec![0]), 0);
+    assert_eq!(ArraySolution::max_sub_array(vec![-1]), -1);
+    assert_eq!(ArraySolution::max_sub_array(vec![-100000]), -100000);
 }
 
 #[test]
 fn test_spiral_order() {
     assert_eq!(
-        ArrarySolution::spiral_order(vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]]),
+        ArraySolution::spiral_order(vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]]),
         vec![1, 2, 3, 6, 9, 8, 7, 4, 5]
     );
     assert_eq!(
-        ArrarySolution::spiral_order(vec![
+        ArraySolution::spiral_order(vec![
             vec![1, 2, 3, 4],
             vec![5, 6, 7, 8],
             vec![9, 10, 11, 12]
@@ -431,18 +527,18 @@ fn test_spiral_order() {
 
 #[test]
 fn test_can_jump() {
-    assert_eq!(ArrarySolution::can_jump(vec![2, 3, 1, 1, 4]), true);
-    assert_eq!(ArrarySolution::can_jump(vec![3, 2, 1, 0, 4]), false);
-    assert_eq!(ArrarySolution::can_jump(vec![0]), true);
-    assert_eq!(ArrarySolution::can_jump(vec![2, 0, 0]), true);
-    assert_eq!(ArrarySolution::can_jump(vec![1, 1, 2, 2, 0, 1, 1]), true);
-    assert_eq!(ArrarySolution::can_jump(vec![1, 2, 0, 1]), true);
+    assert_eq!(ArraySolution::can_jump(vec![2, 3, 1, 1, 4]), true);
+    assert_eq!(ArraySolution::can_jump(vec![3, 2, 1, 0, 4]), false);
+    assert_eq!(ArraySolution::can_jump(vec![0]), true);
+    assert_eq!(ArraySolution::can_jump(vec![2, 0, 0]), true);
+    assert_eq!(ArraySolution::can_jump(vec![1, 1, 2, 2, 0, 1, 1]), true);
+    assert_eq!(ArraySolution::can_jump(vec![1, 2, 0, 1]), true);
 }
 
 #[test]
 fn test_merge() {
     assert_eq!(
-        ArrarySolution::merge(vec![vec![1, 3], vec![2, 6], vec![8, 10], vec![15, 18]]),
+        ArraySolution::merge(vec![vec![1, 3], vec![2, 6], vec![8, 10], vec![15, 18]]),
         vec![vec![1, 6], vec![8, 10], vec![15, 18]]
     );
 }
@@ -450,19 +546,53 @@ fn test_merge() {
 #[test]
 fn test_length_of_last_word() {
     assert_eq!(
-        ArrarySolution::length_of_last_word("Hello World".to_string()),
+        ArraySolution::length_of_last_word("Hello World".to_string()),
         5
     );
-    assert_eq!(ArrarySolution::length_of_last_word(" ".to_string()), 0);
-    assert_eq!(ArrarySolution::length_of_last_word("a ".to_string()), 1);
+    assert_eq!(ArraySolution::length_of_last_word(" ".to_string()), 0);
+    assert_eq!(ArraySolution::length_of_last_word("a ".to_string()), 1);
 }
 
 #[test]
 fn test_plus_one() {
-    assert_eq!(ArrarySolution::plus_one(vec![1, 2, 3]), vec![1, 2, 4]);
-    assert_eq!(ArrarySolution::plus_one(vec![4, 3, 2, 1]), vec![4, 3, 2, 2]);
-    assert_eq!(ArrarySolution::plus_one(vec![0]), vec![1]);
-    assert_eq!(ArrarySolution::plus_one(vec![9]), vec![1, 0]);
-    assert_eq!(ArrarySolution::plus_one(vec![9, 9]), vec![1, 0, 0]);
-    assert_eq!(ArrarySolution::plus_one(vec![9, 9, 9]), vec![1, 0, 0, 0]);
+    assert_eq!(ArraySolution::plus_one(vec![1, 2, 3]), vec![1, 2, 4]);
+    assert_eq!(ArraySolution::plus_one(vec![4, 3, 2, 1]), vec![4, 3, 2, 2]);
+    assert_eq!(ArraySolution::plus_one(vec![0]), vec![1]);
+    assert_eq!(ArraySolution::plus_one(vec![9]), vec![1, 0]);
+    assert_eq!(ArraySolution::plus_one(vec![9, 9]), vec![1, 0, 0]);
+    assert_eq!(ArraySolution::plus_one(vec![9, 9, 9]), vec![1, 0, 0, 0]);
+}
+
+#[test]
+fn test_insert_interval() {
+    assert_eq!(
+        ArraySolution::insert_interval(vec![vec![1, 3], vec![6, 9]], vec![2, 5],),
+        vec![vec![1, 5], vec![6, 9]]
+    );
+    assert_eq!(
+        ArraySolution::insert_interval(
+            vec![
+                vec![1, 2],
+                vec![3, 5],
+                vec![6, 7],
+                vec![8, 10],
+                vec![12, 16]
+            ],
+            vec![4, 8],
+        ),
+        vec![vec![1, 2], vec![3, 10], vec![12, 16]]
+    );
+    assert_eq!(
+        ArraySolution::insert_interval(vec![vec![1, 5]], vec![2, 3],),
+        vec![vec![1, 5]]
+    );
+}
+
+#[test]
+fn test_sprial_matrix_ii() {
+    assert_eq!(
+        ArraySolution::spiral_matrix_ii(3),
+        vec![vec![1, 2, 3], vec![8, 9, 4], vec![7, 6, 5]]
+    );
+    assert_eq!(ArraySolution::spiral_matrix_ii(1), vec![vec![1]]);
 }
