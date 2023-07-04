@@ -1,4 +1,3 @@
-use std::ops::Deref;
 
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode<T> {
@@ -313,7 +312,7 @@ fn test_rotate_right() {
     assert_eq!(ListSolution::rotate_right(head, 1), ans);
     let head = ListNode::from_vec(vec![1, 2]);
     let ans = ListNode::from_vec(vec![1, 2]);
-    assert_eq!(ListSolution::rotate_ight(head, 0), ans);
+    assert_eq!(ListSolution::rotate_right(head, 0), ans);
     let head = ListNode::from_vec(vec![1, 2]);
     let ans = ListNode::from_vec(vec![1, 2]);
     assert_eq!(ListSolution::rotate_right(head, 2), ans);
