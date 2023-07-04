@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode<T> {
     pub val: T,
@@ -26,19 +28,18 @@ impl<T> ListNode<T> {
     }
 }
 
-// TODO: implement Iterator for ListNode
-// impl<T> Iterator for ListNode<T> {
-//     type Item = T;
-//     fn next(&mut self) -> Option<T> {
-//         let mut node = self;
-//         let mut res = None;
-//         std::mem::swap(&mut node.next, &mut res);
-//         res.map(|n| {
-//             self.next = n.next;
-//             n.val
-//         })
-//     }
-// }
+impl<T> Iterator for ListNode<T> {
+    type Item = T;
+    fn next<'a>(&'a mut self) -> Option<Self::Item> {
+        let node = self;
+        let mut res = None;
+        std::mem::swap(&mut node.next, &mut res);
+        res.map(|n| {
+            node.next = n.next;
+            n.val
+        })
+    }
+}
 
 
 
@@ -125,13 +126,83 @@ impl ListSolution {
 
     /*
     link: https://leetcode.com/problems/reverse-nodes-in-k-group/
-    TODO: Solve this
      */
-    pub fn reverse_k_group(_head: Option<Box<ListNode<i32>>>, _k: i32) -> Option<Box<ListNode<i32>>> {
-        None
+    pub fn reverse_k_group(head: Option<Box<ListNode<i32>>>, k: i32) -> Option<Box<ListNode<i32>>> {
+        if k == 0 {
+            return head;
+        }
+        let mut head = head;
+        let mut node = &mut head;
+        // check if there are k nodes left
+        // find the next group's head
+        for _ in 0..k {
+            if let Some(n) = node {
+                node = &mut n.next;
+            } else {
+                return head;
+            }
+        }
+        // reserve the next group
+        let mut ret = Self::reverse_k_group(node.take(), k);
+        // append the current list to the head of the reversed next group
+        // ret will be the new head of the current group
+        while let Some(h) = head.take() {
+            ret = Some(Box::new(ListNode {
+                val: h.val,
+                next: ret,
+            }));
+            head = h.next;
+        }
+        ret
     }
 
+    pub fn rotate_right(head: Option<Box<ListNode<i32>>>, k: i32) -> Option<Box<ListNode<i32>>>  {
+        if k == 0 {
+            return head;
+        }
+        if let None = head {
+            return head;
+        }
+
+        // count the length of the list
+        let mut len = 0;
+        {
+            let mut node = head.as_ref();
+            while let Some(n) = node {
+                len += 1;
+                node = n.next.as_ref();
+            }
+        }
+
+
+        if len == 0 {
+            return head;
+        }
+
+        let k = k%len;
+        if k == 0 {
+            return head;
+        }
+
+        let mut head = head;
+        let mut node = head.as_deref_mut().unwrap();
+        
+        // find the node before the kth node from the end
+        for _ in 0..len-k-1 {
+            node = node.next.as_deref_mut().unwrap();
+        }
+        // take the kth node from the end
+        let mut new_head = node.next.take().unwrap();
+
+        // find the end the of list and link it to the head
+        node = new_head.as_mut();
+        while node.next.is_some() {
+            node = node.next.as_mut().unwrap();
+        }
+        node.next = head;
     
+        Some(new_head)
+    }
 
 }
 
@@ -202,28 +273,54 @@ fn test_merge_two_lists() {
 
 #[test]
 fn test_reverse_k_group() {
-    // let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    // let ans = ListNode::from_vec(vec![2, 1, 4, 3, 5]);
-    // assert_eq!(ListSolution::reverse_k_group(head, 2), ans);
-    // let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    // let ans = ListNode::from_vec(vec![3, 2, 1, 4, 5]);
-    // assert_eq!(ListSolution::reverse_k_group(head, 3), ans);
-    // let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    // let ans = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    // assert_eq!(ListSolution::reverse_k_group(head, 1), ans);
-    // let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    // let ans = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    // assert_eq!(ListSolution::reverse_k_group(head, 5), ans);
-    // let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    // let ans = ListNode::from_vec(vec![5, 4, 3, 2, 1]);
-    // assert_eq!(ListSolution::reverse_k_group(head, 6), ans);
-    // let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    // let ans = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    // assert_eq!(ListSolution::reverse_k_group(head, 0), ans);
-    // let head = ListNode::from_vec(vec![1]);
-    // let ans = ListNode::from_vec(vec![1]);
-    // assert_eq!(ListSolution::reverse_k_group(head, 1), ans);
-    // let head = ListNode::from_vec(vec![1, 2]);
-    // let ans = ListNode::from_vec(vec![2, 1]);
-    // assert_eq!(ListSolution::reverse_k_group(head, 2), ans);
+    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+    let ans = ListNode::from_vec(vec![2, 1, 4, 3, 5]);
+    assert_eq!(ListSolution::reverse_k_group(head, 2), ans);
+    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+    let ans = ListNode::from_vec(vec![3, 2, 1, 4, 5]);
+    assert_eq!(ListSolution::reverse_k_group(head, 3), ans);
+    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+    let ans = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+    assert_eq!(ListSolution::reverse_k_group(head, 1), ans);
+    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+    let ans = ListNode::from_vec(vec![5, 4, 3, 2, 1]);
+    assert_eq!(ListSolution::reverse_k_group(head, 5), ans);
+    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+    let ans = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+    assert_eq!(ListSolution::reverse_k_group(head, 6), ans);
+    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+    let ans = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+    assert_eq!(ListSolution::reverse_k_group(head, 0), ans);
+    let head = ListNode::from_vec(vec![1]);
+    let ans = ListNode::from_vec(vec![1]);
+    assert_eq!(ListSolution::reverse_k_group(head, 1), ans);
+    let head = ListNode::from_vec(vec![1, 2]);
+    let ans = ListNode::from_vec(vec![2, 1]);
+    assert_eq!(ListSolution::reverse_k_group(head, 2), ans);
+}
+
+
+#[test]
+fn test_rotate_right() {
+    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+    let ans = ListNode::from_vec(vec![4, 5, 1, 2, 3]);
+    assert_eq!(ListSolution::rotate_right(head, 2), ans);
+    let head = ListNode::from_vec(vec![0, 1, 2]);
+    let ans = ListNode::from_vec(vec![2, 0, 1]);
+    assert_eq!(ListSolution::rotate_right(head, 4), ans);
+    let head = ListNode::from_vec(vec![1, 2]);
+    let ans = ListNode::from_vec(vec![2, 1]);
+    assert_eq!(ListSolution::rotate_right(head, 1), ans);
+    let head = ListNode::from_vec(vec![1, 2]);
+    let ans = ListNode::from_vec(vec![1, 2]);
+    assert_eq!(ListSolution::rotate_ight(head, 0), ans);
+    let head = ListNode::from_vec(vec![1, 2]);
+    let ans = ListNode::from_vec(vec![1, 2]);
+    assert_eq!(ListSolution::rotate_right(head, 2), ans);
+    let head = ListNode::from_vec(vec![1]);
+    let ans = ListNode::from_vec(vec![1]);
+    assert_eq!(ListSolution::rotate_right(head, 1), ans);
+    let head = ListNode::from_vec(vec![]);
+    let ans = ListNode::from_vec(vec![]);
+    assert_eq!(ListSolution::rotate_right(head, 1), ans);
 }
