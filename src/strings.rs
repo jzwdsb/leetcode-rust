@@ -1,5 +1,39 @@
 pub struct StringSolution {}
 
+// Solution from https://leetcode.com/problems/valid-number/solutions/3461898/finite-state-machine/
+// use state machine to solve check is number problem
+enum CheckState {
+    FloatSign, // ACCEPTS: '+' | '-' | '.' | '0'..='9'
+    FloatInit, // ACCEPTS: '.' | '0'..='9'
+    FloatNum,  // ACCEPTS: '.' | 'e' | 'E' | '0'..='9'
+    IntInit,   // ACCEPTS: '0'..='9'
+    IntNum,    // ACCEPTS: 'e' | 'E' | '0'..='9'
+    ExpSign,   // ACCEPTS: '+' | '-' | '0'..='9'
+    ExpInit,   // ACCEPTS: '0'..='9'
+    ExpNum,    // ACCEPTS: '0'..='9'
+}
+
+// use state machine to solve check is number problem
+// by enumerate all possible state and transition
+impl CheckState {
+    pub fn accept(&self, c: char) -> Result<Self, ()> {
+        match (c, self) {
+            ('+' | '-', Self::FloatSign) => Ok(Self::FloatInit),
+            ('+' | '-', Self::ExpSign) => Ok(Self::ExpInit),
+            ('.', Self::FloatSign | Self::FloatInit) => Ok(Self::IntInit),
+            ('.', Self::FloatNum) => Ok(Self::IntNum),
+            ('e' | 'E', Self::FloatNum | Self::IntNum) => Ok(Self::ExpSign),
+            ('0'..='9', Self::FloatSign | Self::FloatInit | Self::FloatNum) => Ok(Self::FloatNum),
+            ('0'..='9', Self::IntInit | Self::IntNum) => Ok(Self::IntNum),
+            ('0'..='9', Self::ExpSign | Self::ExpInit | Self::ExpNum) => Ok(Self::ExpNum),
+            _ => Err(()),
+        }
+    }
+    pub fn is_valid_end_state(&self) -> bool {
+        matches!(self, Self::FloatNum | Self::IntNum | Self::ExpNum)
+    }
+}
+
 impl StringSolution {
     /*
     leetcode link: https://leetcode.com/problems/count-ways-to-build-good-strings/
@@ -51,11 +85,13 @@ impl StringSolution {
             return "1".to_string();
         }
         let mut ans = String::new();
-        let prev = Self::count_and_say(n-1);
+        let prev = Self::count_and_say(n - 1);
         let mut count = 1;
         let mut i = 0;
         while i < prev.len() {
-            if i == prev.len()-1 || prev.chars().nth(i).unwrap() != prev.chars().nth(i+1).unwrap() {
+            if i == prev.len() - 1
+                || prev.chars().nth(i).unwrap() != prev.chars().nth(i + 1).unwrap()
+            {
                 ans.push_str(count.to_string().as_str());
                 ans.push_str(prev.as_str().chars().nth(i).unwrap().to_string().as_str());
                 count = 1;
@@ -90,15 +126,15 @@ impl StringSolution {
     we iterate each char in num1 and num2 and calculate the result of each multiplication
     for i in num1 and j in num2
     vec[i,j] = num1[i] * num2[j] + carry + vec[i,j]
-    
+
     we connect the element in the vector to a string and return it
      */
 
     pub fn multiply(num1: String, num2: String) -> String {
-        let mut res  = String::new();
+        let mut res = String::new();
         let num1 = num1.chars().rev().collect::<Vec<char>>();
         let num2 = num2.chars().rev().collect::<Vec<char>>();
-        
+
         // num_res defines the result of each multiplication
         // num_res[i, j] = num1[i] * num2[j]
         let mut num_res = vec![0; num1.len() + num2.len()];
@@ -107,13 +143,13 @@ impl StringSolution {
             let n1 = num1[i] as i32 - '0' as i32;
             for j in 0..num2.len() {
                 let n2 = num2[j] as i32 - '0' as i32;
-                let mut sum = n1 * n2 + carry + num_res[i+j];
+                let mut sum = n1 * n2 + carry + num_res[i + j];
                 carry = sum / 10;
                 sum = sum % 10;
-                num_res[i+j] = sum;
+                num_res[i + j] = sum;
             }
             if carry > 0 {
-                num_res[i+num2.len()] += carry;
+                num_res[i + num2.len()] += carry;
             }
         }
         let mut i = num_res.len() - 1;
@@ -125,7 +161,6 @@ impl StringSolution {
             res.push_str(num_res[j].to_string().as_str());
         }
 
-
         res
     }
 
@@ -136,7 +171,7 @@ impl StringSolution {
         t.sort();
         s == t
     }
-    
+
     /*
     link: https://leetcode.com/problems/find-the-index-of-the-first-occurrence-in-a-string/description/
     the default String does not implement the Pattern trait
@@ -154,7 +189,8 @@ impl StringSolution {
      */
 
     pub fn group_anagrams(strs: Vec<String>) -> Vec<Vec<String>> {
-        let mut map: std::collections::HashMap<String, Vec<String>> = std::collections::HashMap::new();
+        let mut map: std::collections::HashMap<String, Vec<String>> =
+            std::collections::HashMap::new();
         for s in strs {
             let mut s_ = s.chars().collect::<Vec<char>>();
             s_.sort();
@@ -169,12 +205,98 @@ impl StringSolution {
         map.into_values().collect()
     }
 
-}
+    /*
+    link: https://leetcode.com/problems/valid-number/
+    brute search did work but it got time limit exceeded
+    need to optimize the solution
+     */
+
+    pub fn is_number(s: String) -> bool {
+        let s = s.trim();
+        let mut state = CheckState::FloatSign;
+        for c in s.chars() {
+            state = match state.accept(c) {
+                Ok(s) => s,
+                Err(()) => return false,
+            }
+        }
+        return state.is_valid_end_state();
+    }
 
 
-pub fn main() {
-    
+    pub fn is_number_brute(s: String) -> bool {
+        // trim leading and trailing whitespace
+        let s = s.trim().to_string();
+        if s.len() == 0 {
+            return false;
+        }
+        return Self::check_exp(&s) || Self::check_decimal(&s) || Self::check_integer(&s, false);
+    }
+
+    fn check_exp(s: &String) -> bool {
+        if s.len() == 0 {
+            return false;
+        }
+        if !s.contains('e') {
+            return false;
+        }
+
+        let strs: Vec<&str> = s.split("e").collect();
+        if strs.len() != 2 {
+            return false;
+        }
+        if strs[0].len() == 0 || strs[1].len() == 0 {
+            return false;
+        }
+        return (Self::check_decimal(&strs[0].to_string())
+            || Self::check_integer(&strs[0].to_string(), false))
+            && Self::check_integer(&strs[1].to_string(), true);
+    }
+
+    fn check_decimal(s: &String) -> bool {
+        if s.len() == 0 {
+            return false;
+        }
+        if !s.contains('.') {
+            return false;
+        } 
+        let strs: Vec<&str> = s.split(".").collect();
+        if strs.len() == 1 {
+            return Self::check_integer(&strs[0].to_string(), true);
+        }
+        if strs.len() == 2 {
+            return Self::check_integer(&strs[0].to_string(), false)
+                && Self::check_integer(&strs[1].to_string(), true);
+        }
+        return false;
+    }
+
+    fn check_integer(s: &String, is_sub: bool) -> bool {
+        if s.len() == 0 {
+            return false;
+        }
+        let mut i = 0;
+
+        if s.chars().nth(i).unwrap() == '+' || s.chars().nth(i).unwrap() == '-' {
+            if is_sub {
+                return false;
+            }
+            i += 1;
+        }
+        if i == s.len() {
+            return false;
+        }
+        while i < s.len() {
+            if !s.chars().nth(i).unwrap().is_digit(10) {
+                return false;
+            }
+            i += 1;
+        }
+        true
+    }
 }
+
+pub fn main() {}
 
 #[test]
 fn test_count_good_string() {
@@ -195,32 +317,82 @@ fn test_count_and_say() {
 
 #[test]
 fn test_multiply() {
-    assert_eq!(StringSolution::multiply("2".to_string(), "3".to_string()), "6");
-    assert_eq!(StringSolution::multiply("123".to_string(), "456".to_string()), "56088");
-    assert_eq!(StringSolution::multiply("123456789".to_string(), "987654321".to_string()), "121932631112635269");
+    assert_eq!(
+        StringSolution::multiply("2".to_string(), "3".to_string()),
+        "6"
+    );
+    assert_eq!(
+        StringSolution::multiply("123".to_string(), "456".to_string()),
+        "56088"
+    );
+    assert_eq!(
+        StringSolution::multiply("123456789".to_string(), "987654321".to_string()),
+        "121932631112635269"
+    );
 }
 
 #[test]
 fn test_str_str() {
-    assert_eq!(StringSolution::str_str("hello".to_string(), "ll".to_string()), 2);
-    assert_eq!(StringSolution::str_str("aaaaa".to_string(), "bba".to_string()), -1);
+    assert_eq!(
+        StringSolution::str_str("hello".to_string(), "ll".to_string()),
+        2
+    );
+    assert_eq!(
+        StringSolution::str_str("aaaaa".to_string(), "bba".to_string()),
+        -1
+    );
     assert_eq!(StringSolution::str_str("".to_string(), "".to_string()), 0);
     assert_eq!(StringSolution::str_str("".to_string(), "a".to_string()), -1);
     assert_eq!(StringSolution::str_str("a".to_string(), "".to_string()), 0);
-    assert_eq!(StringSolution::str_str("mississippi".to_string(), "issip".to_string()), 4);
+    assert_eq!(
+        StringSolution::str_str("mississippi".to_string(), "issip".to_string()),
+        4
+    );
 }
 
 #[test]
 fn test_group_anagrams() {
-    let mut result = StringSolution::group_anagrams(vec!["eat".to_string(), "tea".to_string(), "tan".to_string(), "ate".to_string(), "nat".to_string(), "bat".to_string()]);
+    let mut result = StringSolution::group_anagrams(vec![
+        "eat".to_string(),
+        "tea".to_string(),
+        "tan".to_string(),
+        "ate".to_string(),
+        "nat".to_string(),
+        "bat".to_string(),
+    ]);
     for r in result.iter_mut() {
         r.sort();
     }
     result.sort();
-    let mut expect = vec![vec!["ate".to_string(), "eat".to_string(), "tea".to_string()], vec!["bat".to_string()], vec!["nat".to_string(), "tan".to_string()]];
+    let mut expect = vec![
+        vec!["ate".to_string(), "eat".to_string(), "tea".to_string()],
+        vec!["bat".to_string()],
+        vec!["nat".to_string(), "tan".to_string()],
+    ];
     for e in expect.iter_mut() {
         e.sort();
     }
     expect.sort();
     assert_eq!(result, expect);
+}
+
+#[test]
+fn test_is_number() {
+    assert_eq!(StringSolution::is_number_brute("0".to_string()), true);
+    assert_eq!(StringSolution::is_number_brute(" 0.1 ".to_string()), true);
+    assert_eq!(StringSolution::is_number_brute("abc".to_string()), false);
+    assert_eq!(StringSolution::is_number_brute("1 a".to_string()), false);
+    assert_eq!(StringSolution::is_number_brute("2e10".to_string()), true);
+    assert_eq!(StringSolution::is_number_brute(" -90e3   ".to_string()), true);
+    assert_eq!(StringSolution::is_number_brute(" 1e".to_string()), false);
+    assert_eq!(StringSolution::is_number_brute("1.+1".to_string()), false);
+
+    assert_eq!(StringSolution::is_number("0".to_string()), true);
+    assert_eq!(StringSolution::is_number(" 0.1 ".to_string()), true);
+    assert_eq!(StringSolution::is_number("abc".to_string()), false);
+    assert_eq!(StringSolution::is_number("1 a".to_string()), false);
+    assert_eq!(StringSolution::is_number("2e10".to_string()), true);
+    assert_eq!(StringSolution::is_number(" -90e3   ".to_string()), true);
+    assert_eq!(StringSolution::is_number(" 1e".to_string()), false);
+    assert_eq!(StringSolution::is_number("1.+1".to_string()), false);
 }
