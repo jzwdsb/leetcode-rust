@@ -101,6 +101,21 @@ impl BasicTypes {
         }
         res
     }
+
+    pub fn my_sqrt(x: i32) -> i32 {
+        let mut left = 0 as i64;
+        let mut right = x as i64;
+        while left < right {
+            let mid = left + ((right-left+1) >> 1);
+            if mid * mid <= x as i64 {
+                left = mid;
+            } else {
+                right = mid-1;
+            }
+        }
+        left as i32
+    }
+
 }
 
 pub fn main() {
@@ -136,4 +151,14 @@ fn test_pow() {
     assert!(BasicTypes::pow(1.0, 2147483647)-1.0 < 0.00001);
 
     assert!(BasicTypes::pow(2.0, -2147483648)-0.0 < 0.00001);
+}
+
+#[test]
+fn test_my_sqrt() {
+    assert_eq!(BasicTypes::my_sqrt(0), 0);
+    assert_eq!(BasicTypes::my_sqrt(1), 1);
+    assert_eq!(BasicTypes::my_sqrt(4), 2);
+    assert_eq!(BasicTypes::my_sqrt(8), 2);
+    assert_eq!(BasicTypes::my_sqrt(9), 3);
+    assert_eq!(BasicTypes::my_sqrt(2147395599), 46339);
 }

@@ -1,3 +1,4 @@
+
 pub struct StringSolution {}
 
 // Solution from https://leetcode.com/problems/valid-number/solutions/3461898/finite-state-machine/
@@ -294,6 +295,32 @@ impl StringSolution {
         }
         true
     }
+
+    /*
+    link: https://leetcode.com/problems/add-binary/
+     */
+
+    pub fn add_binary(a: String, b: String) -> String {
+        let mut a = a.chars().collect::<Vec<char>>();
+        let mut b = b.chars().collect::<Vec<char>>();
+        let mut res = String::new();
+        let mut carry = 0;
+        while a.len() > 0 || b.len() > 0 {
+            let mut sum = carry;
+            if a.len() > 0 {
+                sum += a.pop().unwrap().to_digit(10).unwrap();
+            }
+            if b.len() > 0 {
+                sum += b.pop().unwrap().to_digit(10).unwrap();
+            }
+            carry = sum / 2;
+            res.push_str(&(sum % 2).to_string());
+        }
+        if carry > 0 {
+            res.push_str(&carry.to_string());
+        }
+        res.chars().rev().collect::<String>()
+    }
 }
 
 pub fn main() {}
@@ -395,4 +422,10 @@ fn test_is_number() {
     assert_eq!(StringSolution::is_number(" -90e3   ".to_string()), true);
     assert_eq!(StringSolution::is_number(" 1e".to_string()), false);
     assert_eq!(StringSolution::is_number("1.+1".to_string()), false);
+}
+
+#[test]
+fn test_add_binary() {
+    assert_eq!(StringSolution::add_binary("11".to_string(), "1".to_string()), "100");
+    assert_eq!(StringSolution::add_binary("1010".to_string(), "1011".to_string()), "10101");
 }
