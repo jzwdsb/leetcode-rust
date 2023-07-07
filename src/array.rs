@@ -403,6 +403,29 @@ impl ArraySolution {
         res.push(prev);
         res
     }
+
+    /*
+    link: https://leetcode.com/problems/move-zeroes/
+    same solution at remove elelement
+     */
+
+    pub fn move_zeros(nums: &mut Vec<i32>) {
+        let mut i = 0;
+        let mut j = 0;
+        while j < nums.len() {
+            if nums[j] != 0 {
+                nums[i] = nums[j];
+                i += 1;
+            }
+            j+=1;
+        }
+        while i < nums.len() {
+            nums[i] = 0;
+            i += 1;
+        }
+        
+    }
+
 }
 
 pub fn main() {}
@@ -595,4 +618,15 @@ fn test_sprial_matrix_ii() {
         vec![vec![1, 2, 3], vec![8, 9, 4], vec![7, 6, 5]]
     );
     assert_eq!(ArraySolution::spiral_matrix_ii(1), vec![vec![1]]);
+}
+
+
+#[test]
+fn test_move_zeros() {
+    let mut input = vec![0, 1, 0, 3, 12];
+    ArraySolution::move_zeros(&mut input);
+    assert_eq!(input, vec![1, 3, 12, 0, 0]);
+    input = vec![0, 0, 1];
+    ArraySolution::move_zeros(&mut input);
+    assert_eq!(input, vec![1, 0, 0]);
 }
