@@ -132,6 +132,23 @@ impl SearchSolution {
         }
         letters[left % letters.len()]
     }
+
+    pub fn search_matrix(matrix: Vec<Vec<i32>>, target: i32) -> bool {
+        let mut left = 0;
+        let mut right = matrix.len() * matrix[0].len();
+        while left < right {
+            let mid = (left + right) / 2;
+            let row = mid / matrix[0].len();
+            let col = mid % matrix[0].len();
+            match matrix[row][col].cmp(&target) {
+                std::cmp::Ordering::Equal => return true,
+                std::cmp::Ordering::Less => left = mid + 1,
+                std::cmp::Ordering::Greater => right = mid,
+            }
+        }
+        false
+    }
+
 }
 
 pub fn main() {}
@@ -241,4 +258,36 @@ fn test_next_great_char() {
         SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'k'),
         'c'
     );
+}
+
+#[test]
+fn test_search_matrix() {
+    assert_eq!(
+        SearchSolution::search_matrix(
+            vec![
+                vec![1, 4, 7, 11, 15],
+                vec![2, 5, 8, 12, 19],
+                vec![3, 6, 9, 16, 22],
+                vec![10, 13, 14, 17, 24],
+                vec![18, 21, 23, 26, 30]
+            ],
+            5
+        ),
+        true
+    );
+    assert_eq!(
+        SearchSolution::search_matrix(
+            vec![
+                vec![1, 4, 7, 11, 15],
+                vec![2, 5, 8, 12, 19],
+                vec![3, 6, 9, 16, 22],
+                vec![10, 13, 14, 17, 24],
+                vec![18, 21, 23, 26, 30]
+            ],
+            20
+        ),
+        false
+    );
+    assert_eq!(SearchSolution::search_matrix(vec![vec![1]], 1), true);
+    assert_eq!(SearchSolution::search_matrix(vec![vec![1]], 2), false);
 }
