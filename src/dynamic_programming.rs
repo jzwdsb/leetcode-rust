@@ -205,6 +205,33 @@ impl DPSolution {
         }
         steps[n as usize - 1]
     }
+
+    /*
+    link: https://leetcode.com/problems/longest-arithmetic-subsequence/
+    dp solve
+    define a matrix of Vec<HashMap<i32,i32>>
+    dp[i][j] represents the longest arithmetic subsequence length of nums[0..i] with difference j
+     */
+
+    pub fn longest_arith_seq_length(nums: Vec<i32>) -> i32 {
+        if nums.len() < 3 {
+            return nums.len() as i32;
+        }
+
+        let mut dp = vec![std::collections::HashMap::<i32,i32>::new(); nums.len()];
+        let mut longest = 0;
+        for i in 0..nums.len() {
+            for j in 0..i {
+                let diff = nums[i] - nums[j];
+                let count = dp[j].get(&diff).unwrap_or(&1) + 1;
+                dp[i].insert(diff, count);
+                longest = longest.max(count);
+            }
+        }
+        
+        longest
+    }
+
 }
 
 pub fn main() {}
@@ -288,4 +315,11 @@ fn test_climb_stairs() {
     assert_eq!(DPSolution::climb_stairs(2), 2);
     assert_eq!(DPSolution::climb_stairs(3), 3);
     assert_eq!(DPSolution::climb_stairs(4), 5);
+}
+
+#[test]
+fn test_longest_arith_seq_length() {
+    assert_eq!(DPSolution::longest_arith_seq_length(vec![3,6,9,12]), 4);
+    assert_eq!(DPSolution::longest_arith_seq_length(vec![9,4,7,2,10]), 3);
+    assert_eq!(DPSolution::longest_arith_seq_length(vec![20,1,15,3,10,5,8]), 4);
 }
