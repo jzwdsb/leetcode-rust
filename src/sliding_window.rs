@@ -91,6 +91,47 @@ impl SlidingWindow {
 
         res
     }
+
+    /*
+    link: https://leetcode.com/problems/maximize-the-confusion-of-an-exam/
+     */
+
+    pub fn max_consecutive_answers(answer_key: String, k: i32) -> i32 {
+        Self::consecutive_helper(&answer_key, k, 'T').max(Self::consecutive_helper(
+            &answer_key,
+            k,
+            'F',
+        ))
+    }
+
+    // find the max consecutive answers with a given char
+    // k is the number of answer that can be changed
+    // c is the char that we can change
+    // return the max consecutive answers
+    fn consecutive_helper(answer_key: &String, k: i32, c: char) -> i32 {
+        let mut res = 0;
+        let (mut left, mut right) = (0, 0); // window size = right - left
+        let mut count = 0; // the number of charachter in the window that can be changed
+        let k = k as usize;
+        let s: Vec<char> = answer_key.chars().collect();
+        
+        while right < s.len() {
+            if s[right] == c {
+                count += 1;
+            }
+            // if count > k, we need to move the left pointer
+            while count > k {
+                // if the left pointer is the char that we can change, we need to decrease the count
+                if s[left] == c {
+                    count -= 1;
+                }
+                left += 1;
+            }
+            res = res.max(right - left + 1);
+            right += 1;
+        }
+        res as i32
+    }
 }
 
 pub fn main() {}
@@ -115,4 +156,20 @@ fn test_four_sum() {
     let mut res = SlidingWindow::four_sum(vec![-2, -1, -1, 1, 1, 2, 2], 0);
     res.sort();
     assert_eq!(res, vec![vec![-2, -1, 1, 2], vec![-1, -1, 1, 1]]);
+}
+
+#[test]
+fn test_max_consecutive_answers() {
+    assert_eq!(
+        SlidingWindow::max_consecutive_answers("TTFF".to_string(), 2),
+        4
+    );
+    assert_eq!(
+        SlidingWindow::max_consecutive_answers("TFFT".to_string(), 1),
+        3
+    );
+    assert_eq!(
+        SlidingWindow::max_consecutive_answers("TTFTTFTT".to_string(), 1),
+        5
+    );
 }
