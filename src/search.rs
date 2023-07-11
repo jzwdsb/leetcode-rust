@@ -161,11 +161,11 @@ impl SearchSolution {
         let (mut left, mut right) = (1, max_sum);
 
         while left < right {
-            let mid = (left + right) / 2;
+            let mid = (left + right + 1) / 2;
             if Self::valid(n, index, max_sum, mid) {
-                left = mid + 1;
+                left = mid;
             } else {
-                right = mid;
+                right = mid - 1;
             }
         }
         left
@@ -180,7 +180,6 @@ impl SearchSolution {
         // mid is counted twice in left and right, so we need to subtract it
         left + right - mid as i64 <= max_sum as i64
     }
-
 
     // sum = mid + (mid - 1) + (mid - 2) + ... + (mid - count + 1)
     //     = count * mid - (1 + 2 + ... + count - 1)
