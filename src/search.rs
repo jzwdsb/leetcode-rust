@@ -71,9 +71,9 @@ impl SearchSolution {
         let mut left = 0;
         let mut right = nums.len();
         while left < right {
-            let mid = (left+right)/2;
+            let mid = (left + right) / 2;
             match nums[mid].cmp(&target) {
-                std::cmp::Ordering::Less => left = mid+1,
+                std::cmp::Ordering::Less => left = mid + 1,
                 std::cmp::Ordering::Equal => return mid as i32,
                 std::cmp::Ordering::Greater => right = mid,
             }
@@ -149,6 +149,49 @@ impl SearchSolution {
         false
     }
 
+    /*
+    link: https://leetcode.com/problems/maximum-value-at-a-given-index-in-a-bounded-array/
+    find the max value at index i, given the length of array is n, and the max sum of array is max_sum
+    the max value shoud be in range [1, max_sum]
+    to satisfy the condition, we can use binary search to find the max value
+    the sum of the array is a arithmetic progression
+    sum = (a1 + an) * n / 2
+     */
+    pub fn max_value(n: i32, index: i32, max_sum: i32) -> i32 {
+        let (mut left, mut right) = (1, max_sum);
+
+        while left < right {
+            let mid = (left + right) / 2;
+            if Self::valid(n, index, max_sum, mid) {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        left
+    }
+
+    // check the sum of the array with max value mid is less than max_sum
+    fn valid(n: i32, index: i32, max_sum: i32, mid: i32) -> bool {
+        let count = index as i64 + 1;
+        let left = Self::get_sum(mid as i64, count);
+        let right = Self::get_sum(mid as i64, (n - index) as i64);
+
+        // mid is counted twice in left and right, so we need to subtract it
+        left + right - mid as i64 <= max_sum as i64
+    }
+
+
+    // sum = mid + (mid - 1) + (mid - 2) + ... + (mid - count + 1)
+    //     = count * mid - (1 + 2 + ... + count - 1)
+    //     = count * mid - count * (count - 1) / 2
+    fn get_sum(mid: i64, count: i64) -> i64 {
+        if count >= mid {
+            count - mid + (mid + 1) * mid / 2
+        } else {
+            (2 * mid - count + 1) * count / 2
+        }
+    }
 }
 
 pub fn main() {}
@@ -290,4 +333,10 @@ fn test_search_matrix() {
     );
     assert_eq!(SearchSolution::search_matrix(vec![vec![1]], 1), true);
     assert_eq!(SearchSolution::search_matrix(vec![vec![1]], 2), false);
+}
+
+#[test]
+fn test_max_value() {
+    assert_eq!(SearchSolution::max_value(4, 2, 6), 2);
+    assert_eq!(SearchSolution::max_value(6, 1, 10), 3)
 }

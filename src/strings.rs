@@ -321,6 +321,21 @@ impl StringSolution {
         }
         res.chars().rev().collect::<String>()
     }
+
+    pub fn is_subsequence(s: String, t: String) -> bool {
+        let mut i = 0;
+        let mut j = 0;
+        let s = s.chars().collect::<Vec<char>>();
+        let t = t.chars().collect::<Vec<char>>();
+        while i < s.len() && j < t.len() {
+            if s[i] == t[j] {
+                i += 1;
+            }
+            j += 1;
+        }
+        i == s.len()
+    } 
+
 }
 
 pub fn main() {}
@@ -428,4 +443,10 @@ fn test_is_number() {
 fn test_add_binary() {
     assert_eq!(StringSolution::add_binary("11".to_string(), "1".to_string()), "100");
     assert_eq!(StringSolution::add_binary("1010".to_string(), "1011".to_string()), "10101");
+}
+
+#[test]
+fn test_is_subsequence() {
+    assert_eq!(StringSolution::is_subsequence("abc".to_string(), "ahbgdc".to_string()), true);
+    assert_eq!(StringSolution::is_subsequence("axc".to_string(), "ahbgdc".to_string()), false);
 }
