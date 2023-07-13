@@ -1,4 +1,4 @@
-pub mod basic_types;
+pub mod math;
 pub mod stack;
 pub mod strings;
 pub mod list;
@@ -28,7 +28,7 @@ fn main() {
     match args.function_name {
         Some(function_name) => {
             match function_name.as_str() {
-                "basic_types" => basic_types::main(),
+                "basic_types" => math::main(),
                 "stack" => stack::main(),
                 "strings" => strings::main(),
                 "list" => list::main(),

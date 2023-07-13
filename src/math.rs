@@ -1,7 +1,7 @@
 
-pub struct BasicTypes {}
+pub struct MathSolution {}
 
-impl BasicTypes {
+impl MathSolution {
     pub fn reverse(x: i32) -> i32 {
         let mut x = x;
         let mut ans: i32 = 0;
@@ -116,6 +116,10 @@ impl BasicTypes {
         left as i32
     }
 
+    pub fn distance_traveled(main_tank: i32, additional_tank: i32) -> i32 {
+        (main_tank+((main_tank-1)/4).min(additional_tank))*10
+    }
+
 }
 
 pub fn main() {
@@ -124,41 +128,48 @@ pub fn main() {
 
 #[test]
 fn test_reverse() {
-    assert_eq!(BasicTypes::reverse(123), 321);
-    assert_eq!(BasicTypes::reverse(-123), -321);
-    assert_eq!(BasicTypes::reverse(120), 21);
-    assert_eq!(BasicTypes::reverse(0), 0);
-    assert_eq!(BasicTypes::reverse(900000), 9);
+    assert_eq!(MathSolution::reverse(123), 321);
+    assert_eq!(MathSolution::reverse(-123), -321);
+    assert_eq!(MathSolution::reverse(120), 21);
+    assert_eq!(MathSolution::reverse(0), 0);
+    assert_eq!(MathSolution::reverse(900000), 9);
 }
 
 #[test]
 fn test_divide() {
-    assert_eq!(BasicTypes::divide(10, 3), 3);
-    assert_eq!(BasicTypes::divide(7, -3), -2);
-    assert_eq!(BasicTypes::divide(0, 1), 0);
-    assert_eq!(BasicTypes::divide(1, 1), 1);
-    assert_eq!(BasicTypes::divide(-1, 1), -1);
-    assert_eq!(BasicTypes::divide(-2147483648, -1), 2147483647);
-    assert_eq!(BasicTypes::divide(-1010369383, -2147483648), 0);
+    assert_eq!(MathSolution::divide(10, 3), 3);
+    assert_eq!(MathSolution::divide(7, -3), -2);
+    assert_eq!(MathSolution::divide(0, 1), 0);
+    assert_eq!(MathSolution::divide(1, 1), 1);
+    assert_eq!(MathSolution::divide(-1, 1), -1);
+    assert_eq!(MathSolution::divide(-2147483648, -1), 2147483647);
+    assert_eq!(MathSolution::divide(-1010369383, -2147483648), 0);
 }
 
 #[test]
 fn test_pow() {
-    assert!(BasicTypes::pow(2.0, 10)-1024.0 < 0.00001);
-    assert!(BasicTypes::pow(2.1, 3)- 9.261 < 0.00001);
-    assert!(BasicTypes::pow(2.0, -2)-0.25 < 0.00001);
-    assert!(BasicTypes::pow(0.00001, 2147483647) - 0.0 < 0.00001);
-    assert!(BasicTypes::pow(1.0, 2147483647)-1.0 < 0.00001);
+    assert!(MathSolution::pow(2.0, 10)-1024.0 < 0.00001);
+    assert!(MathSolution::pow(2.1, 3)- 9.261 < 0.00001);
+    assert!(MathSolution::pow(2.0, -2)-0.25 < 0.00001);
+    assert!(MathSolution::pow(0.00001, 2147483647) - 0.0 < 0.00001);
+    assert!(MathSolution::pow(1.0, 2147483647)-1.0 < 0.00001);
 
-    assert!(BasicTypes::pow(2.0, -2147483648)-0.0 < 0.00001);
+    assert!(MathSolution::pow(2.0, -2147483648)-0.0 < 0.00001);
 }
 
 #[test]
 fn test_my_sqrt() {
-    assert_eq!(BasicTypes::my_sqrt(0), 0);
-    assert_eq!(BasicTypes::my_sqrt(1), 1);
-    assert_eq!(BasicTypes::my_sqrt(4), 2);
-    assert_eq!(BasicTypes::my_sqrt(8), 2);
-    assert_eq!(BasicTypes::my_sqrt(9), 3);
-    assert_eq!(BasicTypes::my_sqrt(2147395599), 46339);
+    assert_eq!(MathSolution::my_sqrt(0), 0);
+    assert_eq!(MathSolution::my_sqrt(1), 1);
+    assert_eq!(MathSolution::my_sqrt(4), 2);
+    assert_eq!(MathSolution::my_sqrt(8), 2);
+    assert_eq!(MathSolution::my_sqrt(9), 3);
+    assert_eq!(MathSolution::my_sqrt(2147395599), 46339);
+}
+
+#[test]
+fn test_distance_traveled(){
+    assert_eq!(MathSolution::distance_traveled(5, 10), 60);
+    assert_eq!(MathSolution::distance_traveled(1, 2), 10);
+    assert_eq!(MathSolution::distance_traveled(9, 2), 110);
 }
