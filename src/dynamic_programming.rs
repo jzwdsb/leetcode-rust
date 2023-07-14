@@ -232,6 +232,38 @@ impl DPSolution {
         longest
     }
 
+    /*
+    link: https://leetcode.com/problems/house-robber/description/
+    follow the explaination from 
+    https://leetcode.com/problems/house-robber/solutions/156523/from-good-to-great-how-to-approach-most-of-dp-problems/
+     */
+    
+    pub fn rob(nums: Vec<i32>) -> i32 {
+        if nums.len() == 0 {
+            return 0;
+        }
+        let (mut prev1, mut prev2) = (0, 0);
+        for i in 0..nums.len() {
+            let tmp = prev1;
+            prev1 = prev1.max(prev2 + nums[i]);
+            prev2 = tmp;
+        }
+        return prev1;
+    }
+
+    #[allow(dead_code)]
+    fn rob_helper(nums: &Vec<i32>, memo: &mut Vec<i32>, i: i32) -> i32 {
+        if i < 0 {
+            return 0;
+        }
+        if memo[i as usize] > 0 {
+            return memo[i as usize];
+        }
+        let val = (nums[i as usize] + Self::rob_helper(nums, memo, i-2)).max(Self::rob_helper(nums, memo, i-1));
+        memo[i as usize] = val;
+        val
+    }
+
 }
 
 pub fn main() {}
@@ -322,4 +354,10 @@ fn test_longest_arith_seq_length() {
     assert_eq!(DPSolution::longest_arith_seq_length(vec![3,6,9,12]), 4);
     assert_eq!(DPSolution::longest_arith_seq_length(vec![9,4,7,2,10]), 3);
     assert_eq!(DPSolution::longest_arith_seq_length(vec![20,1,15,3,10,5,8]), 4);
+}
+
+#[test]
+fn test_rob(){
+    assert_eq!(DPSolution::rob(vec![1,2,3,1]), 4);
+    assert_eq!(DPSolution::rob(vec![2,7,9,3,1]), 12);
 }
