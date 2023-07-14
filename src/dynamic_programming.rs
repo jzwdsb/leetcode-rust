@@ -126,14 +126,14 @@ impl DPSolution {
         if i < 0 || j < 0 || i >= *m || j >= *n {
             return 0;
         }
-        if i == *m-1 && j == *n-1 {
+        if i == *m - 1 && j == *n - 1 {
             return 1;
         }
         if steps[i as usize][j as usize] != 0 {
             return steps[i as usize][j as usize];
         }
-        let right = Self::solve_unique_path(i, j+1, m, n, steps);
-        let down = Self::solve_unique_path(i+1, j, m, n, steps);
+        let right = Self::solve_unique_path(i, j + 1, m, n, steps);
+        let down = Self::solve_unique_path(i + 1, j, m, n, steps);
 
         steps[i as usize][j as usize] = right + down;
 
@@ -144,7 +144,12 @@ impl DPSolution {
         let mut steps = vec![vec![0; grids[0].len()]; grids.len()];
         Self::solve_unique_path_with_obstacle(0, 0, &grids, &mut steps)
     }
-    fn solve_unique_path_with_obstacle(i: i32, j:i32, grids: &Vec<Vec<i32>>, steps: &mut Vec<Vec<i32>>) -> i32 {
+    fn solve_unique_path_with_obstacle(
+        i: i32,
+        j: i32,
+        grids: &Vec<Vec<i32>>,
+        steps: &mut Vec<Vec<i32>>,
+    ) -> i32 {
         if i < 0 || j < 0 || i >= grids.len() as i32 || j >= grids[0].len() as i32 {
             return 0;
         }
@@ -158,8 +163,8 @@ impl DPSolution {
         if steps[i as usize][j as usize] != 0 {
             return steps[i as usize][j as usize];
         }
-        let right = Self::solve_unique_path_with_obstacle(i, j+1, grids, steps);
-        let down = Self::solve_unique_path_with_obstacle(i+1, j, grids, steps);
+        let right = Self::solve_unique_path_with_obstacle(i, j + 1, grids, steps);
+        let down = Self::solve_unique_path_with_obstacle(i + 1, j, grids, steps);
         steps[i as usize][j as usize] = right + down;
         steps[i as usize][j as usize]
     }
@@ -177,8 +182,13 @@ impl DPSolution {
         Self::solve_minimum_path_sum(0, 0, &grid, &mut steps)
     }
 
-    fn solve_minimum_path_sum(i: usize, j: usize, grid: &Vec<Vec<i32>>, steps: &mut Vec<Vec<i32>>) -> i32 {
-        if i >= grid.len() || j >= grid[0].len()  {
+    fn solve_minimum_path_sum(
+        i: usize,
+        j: usize,
+        grid: &Vec<Vec<i32>>,
+        steps: &mut Vec<Vec<i32>>,
+    ) -> i32 {
+        if i >= grid.len() || j >= grid[0].len() {
             return i32::MAX;
         }
         if i == grid.len() - 1 && j == grid[0].len() - 1 {
@@ -187,8 +197,8 @@ impl DPSolution {
         if steps[i][j] != 0 {
             return steps[i][j];
         }
-        let right = Self::solve_minimum_path_sum(i, j+1, grid, steps);
-        let down = Self::solve_minimum_path_sum(i+1, j, grid, steps);
+        let right = Self::solve_minimum_path_sum(i, j + 1, grid, steps);
+        let down = Self::solve_minimum_path_sum(i + 1, j, grid, steps);
         steps[i][j] = grid[i][j] + right.min(down);
         steps[i][j]
     }
@@ -201,7 +211,7 @@ impl DPSolution {
         steps[0] = 1;
         steps[1] = 2;
         for i in 2..n as usize {
-            steps[i] = steps[i-1] + steps[i-2];
+            steps[i] = steps[i - 1] + steps[i - 2];
         }
         steps[n as usize - 1]
     }
@@ -218,7 +228,7 @@ impl DPSolution {
             return nums.len() as i32;
         }
 
-        let mut dp = vec![std::collections::HashMap::<i32,i32>::new(); nums.len()];
+        let mut dp = vec![std::collections::HashMap::<i32, i32>::new(); nums.len()];
         let mut longest = 0;
         for i in 0..nums.len() {
             for j in 0..i {
@@ -228,26 +238,28 @@ impl DPSolution {
                 longest = longest.max(count);
             }
         }
-        
+
         longest
     }
 
     /*
     link: https://leetcode.com/problems/house-robber/description/
-    follow the explaination from 
+    follow the explaination from
     https://leetcode.com/problems/house-robber/solutions/156523/from-good-to-great-how-to-approach-most-of-dp-problems/
      */
-    
+
     pub fn rob(nums: Vec<i32>) -> i32 {
         if nums.len() == 0 {
             return 0;
         }
         let (mut prev1, mut prev2) = (0, 0);
-        for i in 0..nums.len() {
+
+        for num in nums {
             let tmp = prev1;
-            prev1 = prev1.max(prev2 + nums[i]);
+            prev1 = prev1.max(prev2 + num);
             prev2 = tmp;
         }
+
         return prev1;
     }
 
@@ -259,11 +271,14 @@ impl DPSolution {
         if memo[i as usize] > 0 {
             return memo[i as usize];
         }
-        let val = (nums[i as usize] + Self::rob_helper(nums, memo, i-2)).max(Self::rob_helper(nums, memo, i-1));
+        let val = (nums[i as usize] + Self::rob_helper(nums, memo, i - 2)).max(Self::rob_helper(
+            nums,
+            memo,
+            i - 1,
+        ));
         memo[i as usize] = val;
         val
     }
-
 }
 
 pub fn main() {}
@@ -309,11 +324,7 @@ fn test_unique_paths() {
 #[test]
 fn test_unique_path_with_obstacle() {
     assert_eq!(
-        DPSolution::unique_path_with_obstacle(vec![
-            vec![0, 0, 0],
-            vec![0, 1, 0],
-            vec![0, 0, 0]
-        ]),
+        DPSolution::unique_path_with_obstacle(vec![vec![0, 0, 0], vec![0, 1, 0], vec![0, 0, 0]]),
         2
     );
     assert_eq!(
@@ -322,22 +333,14 @@ fn test_unique_path_with_obstacle() {
     );
 }
 
-
 #[test]
 fn test_minimum_path_sum() {
     assert_eq!(
-        DPSolution::minimum_path_sum(vec![
-            vec![1, 3, 1],
-            vec![1, 5, 1],
-            vec![4, 2, 1]
-        ]),
+        DPSolution::minimum_path_sum(vec![vec![1, 3, 1], vec![1, 5, 1], vec![4, 2, 1]]),
         7
     );
     assert_eq!(
-        DPSolution::minimum_path_sum(vec![
-            vec![1, 2, 3],
-            vec![4, 5, 6]
-        ]),
+        DPSolution::minimum_path_sum(vec![vec![1, 2, 3], vec![4, 5, 6]]),
         12
     );
 }
@@ -351,13 +354,19 @@ fn test_climb_stairs() {
 
 #[test]
 fn test_longest_arith_seq_length() {
-    assert_eq!(DPSolution::longest_arith_seq_length(vec![3,6,9,12]), 4);
-    assert_eq!(DPSolution::longest_arith_seq_length(vec![9,4,7,2,10]), 3);
-    assert_eq!(DPSolution::longest_arith_seq_length(vec![20,1,15,3,10,5,8]), 4);
+    assert_eq!(DPSolution::longest_arith_seq_length(vec![3, 6, 9, 12]), 4);
+    assert_eq!(
+        DPSolution::longest_arith_seq_length(vec![9, 4, 7, 2, 10]),
+        3
+    );
+    assert_eq!(
+        DPSolution::longest_arith_seq_length(vec![20, 1, 15, 3, 10, 5, 8]),
+        4
+    );
 }
 
 #[test]
-fn test_rob(){
-    assert_eq!(DPSolution::rob(vec![1,2,3,1]), 4);
-    assert_eq!(DPSolution::rob(vec![2,7,9,3,1]), 12);
+fn test_rob() {
+    assert_eq!(DPSolution::rob(vec![1, 2, 3, 1]), 4);
+    assert_eq!(DPSolution::rob(vec![2, 7, 9, 3, 1]), 12);
 }
