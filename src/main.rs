@@ -4,6 +4,7 @@ pub mod strings;
 pub mod list;
 pub mod array;
 pub mod tree;
+pub mod graph;
 
 pub mod dynamic_programming;
 pub mod search;

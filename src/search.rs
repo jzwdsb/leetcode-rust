@@ -191,151 +191,157 @@ impl SearchSolution {
             (2 * mid - count + 1) * count / 2
         }
     }
+
 }
 
 pub fn main() {}
 
-#[test]
-fn test_search_in_rotated_sorted_arrary() {
-    assert_eq!(
-        SearchSolution::search_in_rotated_sorted_array(vec![4, 5, 6, 7, 0, 1, 2], 0),
-        4
-    );
-    assert_eq!(
-        SearchSolution::search_in_rotated_sorted_array(vec![4, 5, 6, 7, 0, 1, 2], 3),
-        -1
-    );
-    assert_eq!(
-        SearchSolution::search_in_rotated_sorted_array(vec![1], 0),
-        -1
-    );
-    assert_eq!(
-        SearchSolution::search_in_rotated_sorted_array(vec![1, 3], 3),
-        1
-    );
-}
+#[cfg(test)]
+mod search_test {
+    use super::*;
+    #[test]
+    fn test_search_in_rotated_sorted_arrary() {
+        assert_eq!(
+            SearchSolution::search_in_rotated_sorted_array(vec![4, 5, 6, 7, 0, 1, 2], 0),
+            4
+        );
+        assert_eq!(
+            SearchSolution::search_in_rotated_sorted_array(vec![4, 5, 6, 7, 0, 1, 2], 3),
+            -1
+        );
+        assert_eq!(
+            SearchSolution::search_in_rotated_sorted_array(vec![1], 0),
+            -1
+        );
+        assert_eq!(
+            SearchSolution::search_in_rotated_sorted_array(vec![1, 3], 3),
+            1
+        );
+    }
 
-#[test]
-fn test_search_range() {
-    assert_eq!(
-        SearchSolution::search_range(vec![5, 7, 7, 8, 8, 10], 8),
-        vec![3, 4]
-    );
-    assert_eq!(
-        SearchSolution::search_range(vec![5, 7, 7, 8, 8, 10], 6),
-        vec![-1, -1]
-    );
-    assert_eq!(SearchSolution::search_range(vec![], 0), vec![-1, -1]);
-    assert_eq!(SearchSolution::search_range(vec![1], 1), vec![0, 0]);
-    assert_eq!(SearchSolution::search_range(vec![1], 0), vec![-1, -1]);
-    assert_eq!(
-        SearchSolution::search_range(vec![5, 7, 7, 8, 8, 10], 6),
-        vec![-1, -1]
-    );
-}
+    #[test]
+    fn test_search_range() {
+        assert_eq!(
+            SearchSolution::search_range(vec![5, 7, 7, 8, 8, 10], 8),
+            vec![3, 4]
+        );
+        assert_eq!(
+            SearchSolution::search_range(vec![5, 7, 7, 8, 8, 10], 6),
+            vec![-1, -1]
+        );
+        assert_eq!(SearchSolution::search_range(vec![], 0), vec![-1, -1]);
+        assert_eq!(SearchSolution::search_range(vec![1], 1), vec![0, 0]);
+        assert_eq!(SearchSolution::search_range(vec![1], 0), vec![-1, -1]);
+        assert_eq!(
+            SearchSolution::search_range(vec![5, 7, 7, 8, 8, 10], 6),
+            vec![-1, -1]
+        );
+    }
 
-#[test]
-fn test_search_insert() {
-    assert_eq!(SearchSolution::search_insert(vec![1, 3, 5, 6], 5), 2);
-    assert_eq!(SearchSolution::search_insert(vec![1, 3, 5, 6], 2), 1);
-    assert_eq!(SearchSolution::search_insert(vec![1, 3, 5, 6], 7), 4);
-    assert_eq!(SearchSolution::search_insert(vec![1, 3, 5, 6], 0), 0);
-}
+    #[test]
+    fn test_search_insert() {
+        assert_eq!(SearchSolution::search_insert(vec![1, 3, 5, 6], 5), 2);
+        assert_eq!(SearchSolution::search_insert(vec![1, 3, 5, 6], 2), 1);
+        assert_eq!(SearchSolution::search_insert(vec![1, 3, 5, 6], 7), 4);
+        assert_eq!(SearchSolution::search_insert(vec![1, 3, 5, 6], 0), 0);
+    }
 
-#[test]
-fn test_binary_search() {
-    assert_eq!(SearchSolution::binary_search(vec![1, 3, 5, 6], 5), 2);
-    assert_eq!(SearchSolution::binary_search(vec![1, 3, 5, 6], 2), -1);
-    assert_eq!(SearchSolution::binary_search(vec![1, 3, 5, 6], 7), -1);
-    assert_eq!(SearchSolution::binary_search(vec![1, 3, 5, 6], 0), -1);
-}
+    #[test]
+    fn test_binary_search() {
+        assert_eq!(SearchSolution::binary_search(vec![1, 3, 5, 6], 5), 2);
+        assert_eq!(SearchSolution::binary_search(vec![1, 3, 5, 6], 2), -1);
+        assert_eq!(SearchSolution::binary_search(vec![1, 3, 5, 6], 7), -1);
+        assert_eq!(SearchSolution::binary_search(vec![1, 3, 5, 6], 0), -1);
+    }
 
-#[test]
-fn test_find_median_of_two_sorted_arrays() {
-    assert_eq!(
-        SearchSolution::find_median_of_two_sorted_arrays(vec![1, 3], vec![2]),
-        2.0
-    );
-    assert_eq!(
-        SearchSolution::find_median_of_two_sorted_arrays(vec![1, 2], vec![3, 4]),
-        2.5
-    );
-    assert_eq!(
-        SearchSolution::find_median_of_two_sorted_arrays(vec![0, 0], vec![0, 0]),
-        0.0
-    );
-    assert_eq!(
-        SearchSolution::find_median_of_two_sorted_arrays(vec![], vec![1]),
-        1.0
-    );
-    assert_eq!(
-        SearchSolution::find_median_of_two_sorted_arrays(vec![2], vec![]),
-        2.0
-    );
-}
+    #[test]
+    fn test_find_median_of_two_sorted_arrays() {
+        assert_eq!(
+            SearchSolution::find_median_of_two_sorted_arrays(vec![1, 3], vec![2]),
+            2.0
+        );
+        assert_eq!(
+            SearchSolution::find_median_of_two_sorted_arrays(vec![1, 2], vec![3, 4]),
+            2.5
+        );
+        assert_eq!(
+            SearchSolution::find_median_of_two_sorted_arrays(vec![0, 0], vec![0, 0]),
+            0.0
+        );
+        assert_eq!(
+            SearchSolution::find_median_of_two_sorted_arrays(vec![], vec![1]),
+            1.0
+        );
+        assert_eq!(
+            SearchSolution::find_median_of_two_sorted_arrays(vec![2], vec![]),
+            2.0
+        );
+    }
 
-#[test]
-fn test_next_great_char() {
-    assert_eq!(
-        SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'a'),
-        'c'
-    );
-    assert_eq!(
-        SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'c'),
-        'f'
-    );
-    assert_eq!(
-        SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'd'),
-        'f'
-    );
-    assert_eq!(
-        SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'g'),
-        'j'
-    );
-    assert_eq!(
-        SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'j'),
-        'c'
-    );
-    assert_eq!(
-        SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'k'),
-        'c'
-    );
-}
+    #[test]
+    fn test_next_great_char() {
+        assert_eq!(
+            SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'a'),
+            'c'
+        );
+        assert_eq!(
+            SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'c'),
+            'f'
+        );
+        assert_eq!(
+            SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'd'),
+            'f'
+        );
+        assert_eq!(
+            SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'g'),
+            'j'
+        );
+        assert_eq!(
+            SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'j'),
+            'c'
+        );
+        assert_eq!(
+            SearchSolution::next_greatest_letter(vec!['c', 'f', 'j'], 'k'),
+            'c'
+        );
+    }
 
-#[test]
-fn test_search_matrix() {
-    assert_eq!(
-        SearchSolution::search_matrix(
-            vec![
-                vec![1, 4, 7, 11, 15],
-                vec![2, 5, 8, 12, 19],
-                vec![3, 6, 9, 16, 22],
-                vec![10, 13, 14, 17, 24],
-                vec![18, 21, 23, 26, 30]
-            ],
-            5
-        ),
-        true
-    );
-    assert_eq!(
-        SearchSolution::search_matrix(
-            vec![
-                vec![1, 4, 7, 11, 15],
-                vec![2, 5, 8, 12, 19],
-                vec![3, 6, 9, 16, 22],
-                vec![10, 13, 14, 17, 24],
-                vec![18, 21, 23, 26, 30]
-            ],
-            20
-        ),
-        false
-    );
-    assert_eq!(SearchSolution::search_matrix(vec![vec![1]], 1), true);
-    assert_eq!(SearchSolution::search_matrix(vec![vec![1]], 2), false);
-}
+    #[test]
+    fn test_search_matrix() {
+        assert_eq!(
+            SearchSolution::search_matrix(
+                vec![
+                    vec![1, 4, 7, 11, 15],
+                    vec![2, 5, 8, 12, 19],
+                    vec![3, 6, 9, 16, 22],
+                    vec![10, 13, 14, 17, 24],
+                    vec![18, 21, 23, 26, 30]
+                ],
+                5
+            ),
+            true
+        );
+        assert_eq!(
+            SearchSolution::search_matrix(
+                vec![
+                    vec![1, 4, 7, 11, 15],
+                    vec![2, 5, 8, 12, 19],
+                    vec![3, 6, 9, 16, 22],
+                    vec![10, 13, 14, 17, 24],
+                    vec![18, 21, 23, 26, 30]
+                ],
+                20
+            ),
+            false
+        );
+        assert_eq!(SearchSolution::search_matrix(vec![vec![1]], 1), true);
+        assert_eq!(SearchSolution::search_matrix(vec![vec![1]], 2), false);
+    }
 
-#[test]
-fn test_max_value() {
-    assert_eq!(SearchSolution::max_value(4, 2, 6), 2);
-    assert_eq!(SearchSolution::max_value(6, 1, 10), 3)
+    #[test]
+    fn test_max_value() {
+        assert_eq!(SearchSolution::max_value(4, 2, 6), 2);
+        assert_eq!(SearchSolution::max_value(6, 1, 10), 3)
+    }
+
 }
