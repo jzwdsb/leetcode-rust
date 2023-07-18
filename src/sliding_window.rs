@@ -114,7 +114,7 @@ impl SlidingWindow {
         let mut count = 0; // the number of charachter in the window that can be changed
         let k = k as usize;
         let s: Vec<char> = answer_key.chars().collect();
-        
+
         while right < s.len() {
             if s[right] == c {
                 count += 1;
@@ -132,44 +132,79 @@ impl SlidingWindow {
         }
         res as i32
     }
+
+    pub fn get_averages(nums: Vec<i32>, k: i32) -> Vec<i32> {
+        let k = k as usize;
+        let mut res = vec![-1;nums.len()];
+        let len = k*2+1;
+        if len > res.len() {
+            return res;
+        }
+
+        let mut window = nums.iter().take(len).map(|&num| num as i64).sum::<i64>();
+        for i in k..nums.len()-k {
+            res[i] = (window / len as i64) as i32 ;
+            window -= nums[i-k] as i64;
+            if i+k+1 < nums.len() {
+                window += nums[i+k+1] as i64;
+            }
+
+        }
+
+        res 
+    }
 }
 
 pub fn main() {}
 
-#[test]
-fn test_max_vowels() {
-    assert_eq!(SlidingWindow::max_vowels("abciiidef".to_string(), 3), 3);
-    assert_eq!(SlidingWindow::max_vowels("aeiou".to_string(), 2), 2);
-    assert_eq!(SlidingWindow::max_vowels("leetcode".to_string(), 3), 2);
-    assert_eq!(SlidingWindow::max_vowels("rhythms".to_string(), 4), 0);
-    assert_eq!(SlidingWindow::max_vowels("tryhard".to_string(), 4), 1);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
+    
+    #[test]
+    fn test_max_vowels() {
+        assert_eq!(SlidingWindow::max_vowels("abciiidef".to_string(), 3), 3);
+        assert_eq!(SlidingWindow::max_vowels("aeiou".to_string(), 2), 2);
+        assert_eq!(SlidingWindow::max_vowels("leetcode".to_string(), 3), 2);
+        assert_eq!(SlidingWindow::max_vowels("rhythms".to_string(), 4), 0);
+        assert_eq!(SlidingWindow::max_vowels("tryhard".to_string(), 4), 1);
+    }
 
-#[test]
-fn test_four_sum() {
-    let mut res = SlidingWindow::four_sum(vec![1, 0, -1, 0, -2, 2], 0);
-    res.sort();
-    assert_eq!(
-        res,
-        vec![vec![-2, -1, 1, 2], vec![-2, 0, 0, 2], vec![-1, 0, 0, 1]]
-    );
-    let mut res = SlidingWindow::four_sum(vec![-2, -1, -1, 1, 1, 2, 2], 0);
-    res.sort();
-    assert_eq!(res, vec![vec![-2, -1, 1, 2], vec![-1, -1, 1, 1]]);
-}
+    #[test]
+    fn test_four_sum() {
+        let mut res = SlidingWindow::four_sum(vec![1, 0, -1, 0, -2, 2], 0);
+        res.sort();
+        assert_eq!(
+            res,
+            vec![vec![-2, -1, 1, 2], vec![-2, 0, 0, 2], vec![-1, 0, 0, 1]]
+        );
+        let mut res = SlidingWindow::four_sum(vec![-2, -1, -1, 1, 1, 2, 2], 0);
+        res.sort();
+        assert_eq!(res, vec![vec![-2, -1, 1, 2], vec![-1, -1, 1, 1]]);
+    }
 
-#[test]
-fn test_max_consecutive_answers() {
-    assert_eq!(
-        SlidingWindow::max_consecutive_answers("TTFF".to_string(), 2),
-        4
-    );
-    assert_eq!(
-        SlidingWindow::max_consecutive_answers("TFFT".to_string(), 1),
-        3
-    );
-    assert_eq!(
-        SlidingWindow::max_consecutive_answers("TTFTTFTT".to_string(), 1),
-        5
-    );
+    #[test]
+    fn test_max_consecutive_answers() {
+        assert_eq!(
+            SlidingWindow::max_consecutive_answers("TTFF".to_string(), 2),
+            4
+        );
+        assert_eq!(
+            SlidingWindow::max_consecutive_answers("TFFT".to_string(), 1),
+            3
+        );
+        assert_eq!(
+            SlidingWindow::max_consecutive_answers("TTFTTFTT".to_string(), 1),
+            5
+        );
+    }
+
+    #[test]
+    fn test_get_averages() {
+        assert_eq!(
+            SlidingWindow::get_averages(vec![7,4,3,9,1,8,5,2,6], 3),
+            vec![-1,-1,-1,5,4,4,-1,-1,-1]
+        );
+    }
+
 }
