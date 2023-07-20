@@ -245,10 +245,10 @@ impl ArraySolution {
      */
 
     pub fn spiral_matrix_ii(n: i32) -> Vec<Vec<i32>> {
-        let mut matrix = vec![vec![0 as i32; n as usize];n as usize];
+        let mut matrix = vec![vec![0 as i32; n as usize]; n as usize];
         let mut length_y = n as usize;
         let mut length_x = n as usize;
-        let total_num = n*n;
+        let total_num = n * n;
         let (mut x, mut y) = (0, 0); // pointing to the current pos
         let mut num = 1 as i32;
         loop {
@@ -417,216 +417,241 @@ impl ArraySolution {
                 nums[i] = nums[j];
                 i += 1;
             }
-            j+=1;
+            j += 1;
         }
         while i < nums.len() {
             nums[i] = 0;
             i += 1;
         }
-        
     }
 
+    /*
+    link: https://leetcode.com/problems/majority-element/
+    https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_majority_vote_algorithm
+     */
+
+    pub fn majority_element(nums: Vec<i32>) -> i32 {
+        let mut count = 0;
+        let mut candidate = 0;
+        for num in nums {
+            if count == 0 {
+                candidate = num;
+            }
+            count += if num == candidate { 1 } else { -1 };
+        }
+        candidate
+    }
 }
 
 pub fn main() {}
 
-#[test]
-fn test_next_permutation() {
-    let mut input = vec![1];
-    ArraySolution::next_permutation(&mut input);
-    assert_eq!(input, vec![1]);
-    let mut input = vec![1, 2, 3];
-    ArraySolution::next_permutation(&mut input);
-    assert_eq!(input, vec![1, 3, 2]);
-    let mut input = vec![3, 2, 1];
-    ArraySolution::next_permutation(&mut input);
-    assert_eq!(input, vec![1, 2, 3]);
-    let mut input = vec![1, 1, 5];
-    ArraySolution::next_permutation(&mut input);
-    assert_eq!(input, vec![1, 5, 1]);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_permutation() {
-    let input = vec![1, 2, 3];
-    let mut output = ArraySolution::permute(input);
-    output.sort();
-    let mut expected = vec![
-        vec![1, 2, 3],
-        vec![1, 3, 2],
-        vec![2, 1, 3],
-        vec![2, 3, 1],
-        vec![3, 1, 2],
-        vec![3, 2, 1],
-    ];
-    expected.sort();
-    assert_eq!(output, expected);
-    let input = vec![0, 1];
-    let mut output = ArraySolution::permute(input);
-    output.sort();
-    let mut expected = vec![vec![0, 1], vec![1, 0]];
-    expected.sort();
+    #[test]
+    fn test_next_permutation() {
+        let mut input = vec![1];
+        ArraySolution::next_permutation(&mut input);
+        assert_eq!(input, vec![1]);
+        let mut input = vec![1, 2, 3];
+        ArraySolution::next_permutation(&mut input);
+        assert_eq!(input, vec![1, 3, 2]);
+        let mut input = vec![3, 2, 1];
+        ArraySolution::next_permutation(&mut input);
+        assert_eq!(input, vec![1, 2, 3]);
+        let mut input = vec![1, 1, 5];
+        ArraySolution::next_permutation(&mut input);
+        assert_eq!(input, vec![1, 5, 1]);
+    }
 
-    assert_eq!(output, expected);
-}
+    #[test]
+    fn test_permutation() {
+        let input = vec![1, 2, 3];
+        let mut output = ArraySolution::permute(input);
+        output.sort();
+        let mut expected = vec![
+            vec![1, 2, 3],
+            vec![1, 3, 2],
+            vec![2, 1, 3],
+            vec![2, 3, 1],
+            vec![3, 1, 2],
+            vec![3, 2, 1],
+        ];
+        expected.sort();
+        assert_eq!(output, expected);
+        let input = vec![0, 1];
+        let mut output = ArraySolution::permute(input);
+        output.sort();
+        let mut expected = vec![vec![0, 1], vec![1, 0]];
+        expected.sort();
 
-#[test]
-fn test_array_sign() {
-    assert_eq!(ArraySolution::array_sign(vec![-1, -2, -3, -4, 3, 2, 1]), 1);
-    assert_eq!(ArraySolution::array_sign(vec![1, 5, 0, 2, -3]), 0);
-    assert_eq!(ArraySolution::array_sign(vec![-1, 1, -1, 1, -1]), -1);
-    assert_eq!(
-        ArraySolution::array_sign(vec![i32::MAX / 2, i32::MAX / 2, i32::MIN]),
-        -1
-    );
-}
+        assert_eq!(output, expected);
+    }
 
-#[test]
-fn test_max_profits() {
-    assert_eq!(ArraySolution::max_profits(vec![7, 1, 5, 3, 6, 4]), 5);
-    assert_eq!(ArraySolution::max_profits(vec![7, 6, 4, 3, 1]), 0);
-}
+    #[test]
+    fn test_array_sign() {
+        assert_eq!(ArraySolution::array_sign(vec![-1, -2, -3, -4, 3, 2, 1]), 1);
+        assert_eq!(ArraySolution::array_sign(vec![1, 5, 0, 2, -3]), 0);
+        assert_eq!(ArraySolution::array_sign(vec![-1, 1, -1, 1, -1]), -1);
+        assert_eq!(
+            ArraySolution::array_sign(vec![i32::MAX / 2, i32::MAX / 2, i32::MIN]),
+            -1
+        );
+    }
 
-#[test]
-fn test_remove_element() {
-    let mut input = vec![3, 2, 2, 3];
-    assert_eq!(ArraySolution::remove_element(&mut input, 3), 2);
-    assert_eq!(input[0..2], vec![2, 2]);
-    let mut input = vec![0, 1, 2, 2, 3, 0, 4, 2];
-    assert_eq!(ArraySolution::remove_element(&mut input, 2), 5);
-    assert_eq!(input[0..5], vec![0, 1, 3, 0, 4]);
-}
+    #[test]
+    fn test_max_profits() {
+        assert_eq!(ArraySolution::max_profits(vec![7, 1, 5, 3, 6, 4]), 5);
+        assert_eq!(ArraySolution::max_profits(vec![7, 6, 4, 3, 1]), 0);
+    }
 
-#[test]
-fn test_rotate() {
-    let mut input = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
-    ArraySolution::rotate(&mut input);
-    assert_eq!(input, vec![vec![7, 4, 1], vec![8, 5, 2], vec![9, 6, 3]]);
-    let mut input = vec![
-        vec![5, 1, 9, 11],
-        vec![2, 4, 8, 10],
-        vec![13, 3, 6, 7],
-        vec![15, 14, 12, 16],
-    ];
-    ArraySolution::rotate(&mut input);
-    assert_eq!(
-        input,
-        vec![
-            vec![15, 13, 2, 5],
-            vec![14, 3, 4, 1],
-            vec![12, 6, 8, 9],
-            vec![16, 7, 10, 11]
-        ]
-    );
-}
+    #[test]
+    fn test_remove_element() {
+        let mut input = vec![3, 2, 2, 3];
+        assert_eq!(ArraySolution::remove_element(&mut input, 3), 2);
+        assert_eq!(input[0..2], vec![2, 2]);
+        let mut input = vec![0, 1, 2, 2, 3, 0, 4, 2];
+        assert_eq!(ArraySolution::remove_element(&mut input, 2), 5);
+        assert_eq!(input[0..5], vec![0, 1, 3, 0, 4]);
+    }
 
-#[test]
-fn test_max_sub_array() {
-    assert_eq!(
-        ArraySolution::max_sub_array(vec![-2, 1, -3, 4, -1, 2, 1, -5, 4]),
-        6
-    );
-    assert_eq!(ArraySolution::max_sub_array(vec![1]), 1);
-    assert_eq!(ArraySolution::max_sub_array(vec![0]), 0);
-    assert_eq!(ArraySolution::max_sub_array(vec![-1]), -1);
-    assert_eq!(ArraySolution::max_sub_array(vec![-100000]), -100000);
-}
-
-#[test]
-fn test_spiral_order() {
-    assert_eq!(
-        ArraySolution::spiral_order(vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]]),
-        vec![1, 2, 3, 6, 9, 8, 7, 4, 5]
-    );
-    assert_eq!(
-        ArraySolution::spiral_order(vec![
-            vec![1, 2, 3, 4],
-            vec![5, 6, 7, 8],
-            vec![9, 10, 11, 12]
-        ]),
-        vec![1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]
-    );
-}
-
-#[test]
-fn test_can_jump() {
-    assert_eq!(ArraySolution::can_jump(vec![2, 3, 1, 1, 4]), true);
-    assert_eq!(ArraySolution::can_jump(vec![3, 2, 1, 0, 4]), false);
-    assert_eq!(ArraySolution::can_jump(vec![0]), true);
-    assert_eq!(ArraySolution::can_jump(vec![2, 0, 0]), true);
-    assert_eq!(ArraySolution::can_jump(vec![1, 1, 2, 2, 0, 1, 1]), true);
-    assert_eq!(ArraySolution::can_jump(vec![1, 2, 0, 1]), true);
-}
-
-#[test]
-fn test_merge() {
-    assert_eq!(
-        ArraySolution::merge(vec![vec![1, 3], vec![2, 6], vec![8, 10], vec![15, 18]]),
-        vec![vec![1, 6], vec![8, 10], vec![15, 18]]
-    );
-}
-
-#[test]
-fn test_length_of_last_word() {
-    assert_eq!(
-        ArraySolution::length_of_last_word("Hello World".to_string()),
-        5
-    );
-    assert_eq!(ArraySolution::length_of_last_word(" ".to_string()), 0);
-    assert_eq!(ArraySolution::length_of_last_word("a ".to_string()), 1);
-}
-
-#[test]
-fn test_plus_one() {
-    assert_eq!(ArraySolution::plus_one(vec![1, 2, 3]), vec![1, 2, 4]);
-    assert_eq!(ArraySolution::plus_one(vec![4, 3, 2, 1]), vec![4, 3, 2, 2]);
-    assert_eq!(ArraySolution::plus_one(vec![0]), vec![1]);
-    assert_eq!(ArraySolution::plus_one(vec![9]), vec![1, 0]);
-    assert_eq!(ArraySolution::plus_one(vec![9, 9]), vec![1, 0, 0]);
-    assert_eq!(ArraySolution::plus_one(vec![9, 9, 9]), vec![1, 0, 0, 0]);
-}
-
-#[test]
-fn test_insert_interval() {
-    assert_eq!(
-        ArraySolution::insert_interval(vec![vec![1, 3], vec![6, 9]], vec![2, 5],),
-        vec![vec![1, 5], vec![6, 9]]
-    );
-    assert_eq!(
-        ArraySolution::insert_interval(
+    #[test]
+    fn test_rotate() {
+        let mut input = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
+        ArraySolution::rotate(&mut input);
+        assert_eq!(input, vec![vec![7, 4, 1], vec![8, 5, 2], vec![9, 6, 3]]);
+        let mut input = vec![
+            vec![5, 1, 9, 11],
+            vec![2, 4, 8, 10],
+            vec![13, 3, 6, 7],
+            vec![15, 14, 12, 16],
+        ];
+        ArraySolution::rotate(&mut input);
+        assert_eq!(
+            input,
             vec![
-                vec![1, 2],
-                vec![3, 5],
-                vec![6, 7],
-                vec![8, 10],
-                vec![12, 16]
-            ],
-            vec![4, 8],
-        ),
-        vec![vec![1, 2], vec![3, 10], vec![12, 16]]
-    );
-    assert_eq!(
-        ArraySolution::insert_interval(vec![vec![1, 5]], vec![2, 3],),
-        vec![vec![1, 5]]
-    );
-}
+                vec![15, 13, 2, 5],
+                vec![14, 3, 4, 1],
+                vec![12, 6, 8, 9],
+                vec![16, 7, 10, 11]
+            ]
+        );
+    }
 
-#[test]
-fn test_sprial_matrix_ii() {
-    assert_eq!(
-        ArraySolution::spiral_matrix_ii(3),
-        vec![vec![1, 2, 3], vec![8, 9, 4], vec![7, 6, 5]]
-    );
-    assert_eq!(ArraySolution::spiral_matrix_ii(1), vec![vec![1]]);
-}
+    #[test]
+    fn test_max_sub_array() {
+        assert_eq!(
+            ArraySolution::max_sub_array(vec![-2, 1, -3, 4, -1, 2, 1, -5, 4]),
+            6
+        );
+        assert_eq!(ArraySolution::max_sub_array(vec![1]), 1);
+        assert_eq!(ArraySolution::max_sub_array(vec![0]), 0);
+        assert_eq!(ArraySolution::max_sub_array(vec![-1]), -1);
+        assert_eq!(ArraySolution::max_sub_array(vec![-100000]), -100000);
+    }
 
+    #[test]
+    fn test_spiral_order() {
+        assert_eq!(
+            ArraySolution::spiral_order(vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]]),
+            vec![1, 2, 3, 6, 9, 8, 7, 4, 5]
+        );
+        assert_eq!(
+            ArraySolution::spiral_order(vec![
+                vec![1, 2, 3, 4],
+                vec![5, 6, 7, 8],
+                vec![9, 10, 11, 12]
+            ]),
+            vec![1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]
+        );
+    }
 
-#[test]
-fn test_move_zeros() {
-    let mut input = vec![0, 1, 0, 3, 12];
-    ArraySolution::move_zeros(&mut input);
-    assert_eq!(input, vec![1, 3, 12, 0, 0]);
-    input = vec![0, 0, 1];
-    ArraySolution::move_zeros(&mut input);
-    assert_eq!(input, vec![1, 0, 0]);
+    #[test]
+    fn test_can_jump() {
+        assert_eq!(ArraySolution::can_jump(vec![2, 3, 1, 1, 4]), true);
+        assert_eq!(ArraySolution::can_jump(vec![3, 2, 1, 0, 4]), false);
+        assert_eq!(ArraySolution::can_jump(vec![0]), true);
+        assert_eq!(ArraySolution::can_jump(vec![2, 0, 0]), true);
+        assert_eq!(ArraySolution::can_jump(vec![1, 1, 2, 2, 0, 1, 1]), true);
+        assert_eq!(ArraySolution::can_jump(vec![1, 2, 0, 1]), true);
+    }
+
+    #[test]
+    fn test_merge() {
+        assert_eq!(
+            ArraySolution::merge(vec![vec![1, 3], vec![2, 6], vec![8, 10], vec![15, 18]]),
+            vec![vec![1, 6], vec![8, 10], vec![15, 18]]
+        );
+    }
+
+    #[test]
+    fn test_length_of_last_word() {
+        assert_eq!(
+            ArraySolution::length_of_last_word("Hello World".to_string()),
+            5
+        );
+        assert_eq!(ArraySolution::length_of_last_word(" ".to_string()), 0);
+        assert_eq!(ArraySolution::length_of_last_word("a ".to_string()), 1);
+    }
+
+    #[test]
+    fn test_plus_one() {
+        assert_eq!(ArraySolution::plus_one(vec![1, 2, 3]), vec![1, 2, 4]);
+        assert_eq!(ArraySolution::plus_one(vec![4, 3, 2, 1]), vec![4, 3, 2, 2]);
+        assert_eq!(ArraySolution::plus_one(vec![0]), vec![1]);
+        assert_eq!(ArraySolution::plus_one(vec![9]), vec![1, 0]);
+        assert_eq!(ArraySolution::plus_one(vec![9, 9]), vec![1, 0, 0]);
+        assert_eq!(ArraySolution::plus_one(vec![9, 9, 9]), vec![1, 0, 0, 0]);
+    }
+
+    #[test]
+    fn test_insert_interval() {
+        assert_eq!(
+            ArraySolution::insert_interval(vec![vec![1, 3], vec![6, 9]], vec![2, 5],),
+            vec![vec![1, 5], vec![6, 9]]
+        );
+        assert_eq!(
+            ArraySolution::insert_interval(
+                vec![
+                    vec![1, 2],
+                    vec![3, 5],
+                    vec![6, 7],
+                    vec![8, 10],
+                    vec![12, 16]
+                ],
+                vec![4, 8],
+            ),
+            vec![vec![1, 2], vec![3, 10], vec![12, 16]]
+        );
+        assert_eq!(
+            ArraySolution::insert_interval(vec![vec![1, 5]], vec![2, 3],),
+            vec![vec![1, 5]]
+        );
+    }
+
+    #[test]
+    fn test_sprial_matrix_ii() {
+        assert_eq!(
+            ArraySolution::spiral_matrix_ii(3),
+            vec![vec![1, 2, 3], vec![8, 9, 4], vec![7, 6, 5]]
+        );
+        assert_eq!(ArraySolution::spiral_matrix_ii(1), vec![vec![1]]);
+    }
+
+    #[test]
+    fn test_move_zeros() {
+        let mut input = vec![0, 1, 0, 3, 12];
+        ArraySolution::move_zeros(&mut input);
+        assert_eq!(input, vec![1, 3, 12, 0, 0]);
+        input = vec![0, 0, 1];
+        ArraySolution::move_zeros(&mut input);
+        assert_eq!(input, vec![1, 0, 0]);
+    }
+
+    #[test]
+    fn test_majority_element() {
+        assert_eq!(ArraySolution::majority_element(vec![3, 2, 3]), 3);
+        assert_eq!(ArraySolution::majority_element(vec![2, 2, 1, 1, 1, 2, 2]), 2);
+    }
 }
