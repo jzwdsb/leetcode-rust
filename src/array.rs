@@ -441,6 +441,32 @@ impl ArraySolution {
         }
         candidate
     }
+
+    /*
+    link: https://leetcode.com/problems/longest-consecutive-sequence/
+    
+     */
+
+    pub fn longest_consecutive(nums: Vec<i32>) -> i32 {
+        use std::collections::HashSet;
+        let mut set = HashSet::new();
+        for num in nums.iter() {
+            set.insert(num);
+        }
+        let mut res = 0;
+        for &num in nums.iter() {
+            if !set.contains(&(num - 1)) {
+                let mut cur = num;
+                let mut cur_len = 1;
+                while set.contains(&(cur + 1)) {
+                    cur += 1;
+                    cur_len += 1;
+                }
+                res = res.max(cur_len);
+            }
+        }
+        res
+    }
 }
 
 pub fn main() {}
@@ -654,4 +680,14 @@ mod tests {
         assert_eq!(ArraySolution::majority_element(vec![3, 2, 3]), 3);
         assert_eq!(ArraySolution::majority_element(vec![2, 2, 1, 1, 1, 2, 2]), 2);
     }
+
+    #[test]
+    fn test_longest_consecutive_sequence() {
+        assert_eq!(
+            ArraySolution::longest_consecutive(vec![100, 4, 200, 1, 3, 2]),
+            4
+        );
+        assert_eq!(ArraySolution::longest_consecutive(vec![0, 3, 7, 2, 5, 8, 4, 6, 0, 1]), 9);
+    }
 }
+
