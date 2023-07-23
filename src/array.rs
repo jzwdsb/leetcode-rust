@@ -467,6 +467,23 @@ impl ArraySolution {
         }
         res
     }
+
+    fn can_place_flowers(flowerbed: Vec<i32>, n: i32) -> bool {
+        let mut flowerbed = flowerbed;
+        let mut i = 0;
+        let mut count = 0;
+        while i < flowerbed.len() {
+            if flowerbed[i] == 0
+                && (i == 0 || flowerbed[i - 1] == 0)
+                && (i == flowerbed.len() - 1 || flowerbed[i + 1] == 0)
+            {
+                flowerbed[i] = 1;
+                count += 1;
+            }
+            i += 1
+        }
+        count >= n
+    }
 }
 
 pub fn main() {}
@@ -688,6 +705,15 @@ mod tests {
             4
         );
         assert_eq!(ArraySolution::longest_consecutive(vec![0, 3, 7, 2, 5, 8, 4, 6, 0, 1]), 9);
+    }
+
+    #[test]
+    fn test_can_place_flowers() {
+        assert_eq!(ArraySolution::can_place_flowers(vec![1, 0, 0, 0, 1], 1), true);
+        assert_eq!(ArraySolution::can_place_flowers(vec![1, 0, 0, 0, 1], 2), false);
+        assert_eq!(ArraySolution::can_place_flowers(vec![1, 0, 0, 0, 0, 1], 2), false);
+        assert_eq!(ArraySolution::can_place_flowers(vec![0, 0, 1, 0, 1], 1), true);
+        assert_eq!(ArraySolution::can_place_flowers(vec![0, 0, 1, 0, 1], 2), false);
     }
 }
 
