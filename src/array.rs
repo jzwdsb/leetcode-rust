@@ -444,7 +444,7 @@ impl ArraySolution {
 
     /*
     link: https://leetcode.com/problems/longest-consecutive-sequence/
-    
+
      */
 
     pub fn longest_consecutive(nums: Vec<i32>) -> i32 {
@@ -468,7 +468,7 @@ impl ArraySolution {
         res
     }
 
-    fn can_place_flowers(flowerbed: Vec<i32>, n: i32) -> bool {
+    pub fn can_place_flowers(flowerbed: Vec<i32>, n: i32) -> bool {
         let mut flowerbed = flowerbed;
         let mut i = 0;
         let mut count = 0;
@@ -695,7 +695,10 @@ mod tests {
     #[test]
     fn test_majority_element() {
         assert_eq!(ArraySolution::majority_element(vec![3, 2, 3]), 3);
-        assert_eq!(ArraySolution::majority_element(vec![2, 2, 1, 1, 1, 2, 2]), 2);
+        assert_eq!(
+            ArraySolution::majority_element(vec![2, 2, 1, 1, 1, 2, 2]),
+            2
+        );
     }
 
     #[test]
@@ -704,16 +707,33 @@ mod tests {
             ArraySolution::longest_consecutive(vec![100, 4, 200, 1, 3, 2]),
             4
         );
-        assert_eq!(ArraySolution::longest_consecutive(vec![0, 3, 7, 2, 5, 8, 4, 6, 0, 1]), 9);
+        assert_eq!(
+            ArraySolution::longest_consecutive(vec![0, 3, 7, 2, 5, 8, 4, 6, 0, 1]),
+            9
+        );
     }
 
     #[test]
     fn test_can_place_flowers() {
-        assert_eq!(ArraySolution::can_place_flowers(vec![1, 0, 0, 0, 1], 1), true);
-        assert_eq!(ArraySolution::can_place_flowers(vec![1, 0, 0, 0, 1], 2), false);
-        assert_eq!(ArraySolution::can_place_flowers(vec![1, 0, 0, 0, 0, 1], 2), false);
-        assert_eq!(ArraySolution::can_place_flowers(vec![0, 0, 1, 0, 1], 1), true);
-        assert_eq!(ArraySolution::can_place_flowers(vec![0, 0, 1, 0, 1], 2), false);
+        assert_eq!(
+            ArraySolution::can_place_flowers(vec![1, 0, 0, 0, 1], 1),
+            true
+        );
+        assert_eq!(
+            ArraySolution::can_place_flowers(vec![1, 0, 0, 0, 1], 2),
+            false
+        );
+        assert_eq!(
+            ArraySolution::can_place_flowers(vec![1, 0, 0, 0, 0, 1], 2),
+            false
+        );
+        assert_eq!(
+            ArraySolution::can_place_flowers(vec![0, 0, 1, 0, 1], 1),
+            true
+        );
+        assert_eq!(
+            ArraySolution::can_place_flowers(vec![0, 0, 1, 0, 1], 2),
+            false
+        );
     }
 }
-

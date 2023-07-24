@@ -135,23 +135,47 @@ impl SlidingWindow {
 
     pub fn get_averages(nums: Vec<i32>, k: i32) -> Vec<i32> {
         let k = k as usize;
-        let mut res = vec![-1;nums.len()];
-        let len = k*2+1;
+        let mut res = vec![-1; nums.len()];
+        let len = k * 2 + 1;
         if len > res.len() {
             return res;
         }
 
         let mut window = nums.iter().take(len).map(|&num| num as i64).sum::<i64>();
-        for i in k..nums.len()-k {
-            res[i] = (window / len as i64) as i32 ;
-            window -= nums[i-k] as i64;
-            if i+k+1 < nums.len() {
-                window += nums[i+k+1] as i64;
+        for i in k..nums.len() - k {
+            res[i] = (window / len as i64) as i32;
+            window -= nums[i - k] as i64;
+            if i + k + 1 < nums.len() {
+                window += nums[i + k + 1] as i64;
             }
-
         }
 
-        res 
+        res
+    }
+
+    /*
+    link: https://leetcode.com/problems/longest-subarray-of-1s-after-deleting-one-element/
+     */
+
+    pub fn longest_subarray(nums: Vec<i32>) -> i32 {
+        let mut res = 0;
+        let mut left = 0;
+        let mut right = 0;
+        let mut count = 0;
+        while right < nums.len() {
+            if nums[right] == 0 {
+                count += 1;
+            }
+            while count > 1 {
+                if nums[left] == 0 {
+                    count -= 1;
+                }
+                left += 1;
+            }
+            res = res.max(right - left);
+            right += 1;
+        }
+        res as i32
     }
 }
 
@@ -160,7 +184,7 @@ pub fn main() {}
 #[cfg(test)]
 mod tests {
     use super::*;
-    
+
     #[test]
     fn test_max_vowels() {
         assert_eq!(SlidingWindow::max_vowels("abciiidef".to_string(), 3), 3);
@@ -202,9 +226,23 @@ mod tests {
     #[test]
     fn test_get_averages() {
         assert_eq!(
-            SlidingWindow::get_averages(vec![7,4,3,9,1,8,5,2,6], 3),
-            vec![-1,-1,-1,5,4,4,-1,-1,-1]
+            SlidingWindow::get_averages(vec![7, 4, 3, 9, 1, 8, 5, 2, 6], 3),
+            vec![-1, -1, -1, 5, 4, 4, -1, -1, -1]
         );
     }
 
+    #[test]
+    fn test_longest_sub_array() {
+        assert_eq!(SlidingWindow::longest_subarray(vec![1, 1, 0, 1]), 3);
+        assert_eq!(
+            SlidingWindow::longest_subarray(vec![0, 1, 1, 1, 0, 1, 1, 0, 1]),
+            5
+        );
+        assert_eq!(SlidingWindow::longest_subarray(vec![1, 1, 1]), 2);
+        assert_eq!(
+            SlidingWindow::longest_subarray(vec![1, 1, 0, 0, 1, 1, 1, 0, 1]),
+            4
+        );
+        assert_eq!(SlidingWindow::longest_subarray(vec![0, 0, 0]), 0);
+    }
 }
