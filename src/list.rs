@@ -1,4 +1,5 @@
 
+// TODO: refactor the list node to use Rc<RefCell<ListNode<T>>> to avoid the ownership problem
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode<T> {
     pub val: T,
@@ -40,8 +41,6 @@ impl<T> Iterator for ListNode<T> {
     }
 }
 
-
-
 pub struct ListSolution {}
 
 impl ListSolution {
@@ -49,21 +48,22 @@ impl ListSolution {
     leetcode link: https://leetcode.com/problems/remove-nth-node-from-end-of-list/
     we can use two pointers to solve this problem in one pass
      */
-    pub fn remove_nth_from_end(head: Option<Box<ListNode<i32>>>, n: i32) -> Option<Box<ListNode<i32>>> {
+    pub fn remove_nth_from_end(
+        head: Option<Box<ListNode<i32>>>,
+        n: i32,
+    ) -> Option<Box<ListNode<i32>>> {
         // calculate the length of the list by using std::iter::successors, time complexity O(n)
-        let cnt = std::iter::successors(head.as_ref(),
-        |last| last.next.as_ref()).count();
+        let cnt = std::iter::successors(head.as_ref(), |last| last.next.as_ref()).count();
         // dummy node to handle the case when we need to remove the first node
         let mut dummy = Some(Box::new(ListNode { val: 0, next: head }));
         // find the previous node of the node we want to remove
         let mut prev =
-            (0..cnt - n as usize).fold(dummy.as_mut(),
-            |curr, _| curr.unwrap().next.as_mut());
+            (0..cnt - n as usize).fold(dummy.as_mut(), |curr, _| curr.unwrap().next.as_mut());
         // remove the node
         prev.unwrap().next = prev.as_mut().unwrap().next.as_mut().unwrap().next.take();
         dummy.unwrap().next
     }
-    
+
     /*
     link: https://leetcode.com/problems/add-two-numbers/
     solve this problem by recursion
@@ -71,7 +71,10 @@ impl ListSolution {
     new node.Next = add_two_numbers(l1.Next, l2.Next) if l1.Val + l2.Val < 10
                     add_two_numbers(add_two_numbers(l1.Next, 1), l2.Next) if l1.Val + l2.Val >= 10
      */
-    pub fn add_two_numbers(l1: Option<Box<ListNode<i32>>>, l2: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+    pub fn add_two_numbers(
+        l1: Option<Box<ListNode<i32>>>,
+        l2: Option<Box<ListNode<i32>>>,
+    ) -> Option<Box<ListNode<i32>>> {
         match (l1, l2) {
             (None, None) => None,
             (Some(l1), None) => Some(l1),
@@ -85,17 +88,21 @@ impl ListSolution {
                 } else {
                     let mut node = ListNode::new(val - 10);
                     node.next = Self::add_two_numbers(
-                        Self::add_two_numbers(l1.next, Some(Box::new(ListNode::new(1)))), l2.next);
+                        Self::add_two_numbers(l1.next, Some(Box::new(ListNode::new(1)))),
+                        l2.next,
+                    );
                     Some(Box::new(node))
                 }
             }
-        } 
+        }
     }
 
     pub fn swap_pairs(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
-        let mut dummy = Some(Box::new(ListNode{val: 0, next: head}));
+        let mut dummy = Some(Box::new(ListNode { val: 0, next: head }));
         let mut prev = dummy.as_mut();
-        while prev.as_ref().unwrap().next.is_some() && prev.as_ref().unwrap().next.as_ref().unwrap().next.is_some() {
+        while prev.as_ref().unwrap().next.is_some()
+            && prev.as_ref().unwrap().next.as_ref().unwrap().next.is_some()
+        {
             let mut first = prev.as_mut().unwrap().next.take();
             let mut second = first.as_mut().unwrap().next.take();
             first.as_mut().unwrap().next = second.as_mut().unwrap().next.take();
@@ -106,7 +113,10 @@ impl ListSolution {
         dummy.unwrap().next
     }
 
-    pub fn merge_two_lists(list1: Option<Box<ListNode<i32>>>, list2: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+    pub fn merge_two_lists(
+        list1: Option<Box<ListNode<i32>>>,
+        list2: Option<Box<ListNode<i32>>>,
+    ) -> Option<Box<ListNode<i32>>> {
         match (list1, list2) {
             (None, None) => None,
             (Some(list1), None) => Some(list1),
@@ -155,7 +165,7 @@ impl ListSolution {
         ret
     }
 
-    pub fn rotate_right(head: Option<Box<ListNode<i32>>>, k: i32) -> Option<Box<ListNode<i32>>>  {
+    pub fn rotate_right(head: Option<Box<ListNode<i32>>>, k: i32) -> Option<Box<ListNode<i32>>> {
         if k == 0 {
             return head;
         }
@@ -173,21 +183,20 @@ impl ListSolution {
             }
         }
 
-
         if len == 0 {
             return head;
         }
 
-        let k = k%len;
+        let k = k % len;
         if k == 0 {
             return head;
         }
 
         let mut head = head;
         let mut node = head.as_deref_mut().unwrap();
-        
+
         // find the node before the kth node from the end
-        for _ in 0..len-k-1 {
+        for _ in 0..len - k - 1 {
             node = node.next.as_deref_mut().unwrap();
         }
         // take the kth node from the end
@@ -199,127 +208,136 @@ impl ListSolution {
             node = node.next.as_mut().unwrap();
         }
         node.next = head;
-    
+
         Some(new_head)
     }
-
 }
 
-pub fn main() {
-    
-}
+pub fn main() {}
 
-#[test]
-fn test_remove_nth_from_end() {
-    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    let ans = ListNode::from_vec(vec![1, 2, 3, 5]);
-    assert_eq!(ListSolution::remove_nth_from_end(head, 2), ans);
-    let head = ListNode::from_vec(vec![1]);
-    let ans = ListNode::from_vec(vec![]);
-    assert_eq!(ListSolution::remove_nth_from_end(head, 1), ans);
-    let head = ListNode::from_vec(vec![1, 2]);
-    let ans = ListNode::from_vec(vec![2]);
-    assert_eq!(ListSolution::remove_nth_from_end(head, 2), ans);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_add_two_numbers() {
-    let l1 = ListNode::from_vec(vec![2, 4, 3]);
-    let l2 = ListNode::from_vec(vec![5, 6, 4]);
-    assert_eq!(ListSolution::add_two_numbers(l1, l2), ListNode::from_vec(vec![7, 0, 8]));
+    #[test]
+    fn test_remove_nth_from_end() {
+        let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        let ans = ListNode::from_vec(vec![1, 2, 3, 5]);
+        assert_eq!(ListSolution::remove_nth_from_end(head, 2), ans);
+        let head = ListNode::from_vec(vec![1]);
+        let ans = ListNode::from_vec(vec![]);
+        assert_eq!(ListSolution::remove_nth_from_end(head, 1), ans);
+        let head = ListNode::from_vec(vec![1, 2]);
+        let ans = ListNode::from_vec(vec![2]);
+        assert_eq!(ListSolution::remove_nth_from_end(head, 2), ans);
+    }
 
-    let l1 = ListNode::from_vec(vec![0]);
-    let l2 = ListNode::from_vec(vec![0]);
-    assert_eq!(ListSolution::add_two_numbers(l1, l2), ListNode::from_vec(vec![0]));
+    #[test]
+    fn test_add_two_numbers() {
+        let l1 = ListNode::from_vec(vec![2, 4, 3]);
+        let l2 = ListNode::from_vec(vec![5, 6, 4]);
+        assert_eq!(
+            ListSolution::add_two_numbers(l1, l2),
+            ListNode::from_vec(vec![7, 0, 8])
+        );
 
-    let l1 = ListNode::from_vec(vec![9, 9, 9, 9, 9, 9, 9]);
-    let l2 = ListNode::from_vec(vec![9, 9, 9, 9]);
-    assert_eq!(ListSolution::add_two_numbers(l1, l2), ListNode::from_vec(vec![8, 9, 9, 9, 0, 0, 0, 1]));
-    
-}
+        let l1 = ListNode::from_vec(vec![0]);
+        let l2 = ListNode::from_vec(vec![0]);
+        assert_eq!(
+            ListSolution::add_two_numbers(l1, l2),
+            ListNode::from_vec(vec![0])
+        );
 
-#[test]
-fn test_swap_pairs() {
-    let head = ListNode::from_vec(vec![1, 2, 3, 4]);
-    let ans = ListNode::from_vec(vec![2, 1, 4, 3]);
-    assert_eq!(ListSolution::swap_pairs(head), ans);
-    let head = ListNode::from_vec(vec![]);
-    let ans = ListNode::from_vec(vec![]);
-    assert_eq!(ListSolution::swap_pairs(head), ans);
-    let head = ListNode::from_vec(vec![1]);
-    let ans = ListNode::from_vec(vec![1]);
-    assert_eq!(ListSolution::swap_pairs(head), ans);
-    let head = ListNode::from_vec(vec![1, 2, 3]);
-    let ans = ListNode::from_vec(vec![2, 1, 3]);
-    assert_eq!(ListSolution::swap_pairs(head), ans);
-}
+        let l1 = ListNode::from_vec(vec![9, 9, 9, 9, 9, 9, 9]);
+        let l2 = ListNode::from_vec(vec![9, 9, 9, 9]);
+        assert_eq!(
+            ListSolution::add_two_numbers(l1, l2),
+            ListNode::from_vec(vec![8, 9, 9, 9, 0, 0, 0, 1])
+        );
+    }
 
-#[test]
-fn test_merge_two_lists() {
-    let l1 = ListNode::from_vec(vec![1, 2, 4]);
-    let l2 = ListNode::from_vec(vec![1, 3, 4]);
-    let ans = ListNode::from_vec(vec![1, 1, 2, 3, 4, 4]);
-    assert_eq!(ListSolution::merge_two_lists(l1, l2), ans);
-    let l1 = ListNode::from_vec(vec![]);
-    let l2 = ListNode::from_vec(vec![]);
-    let ans = ListNode::from_vec(vec![]);
-    assert_eq!(ListSolution::merge_two_lists(l1, l2), ans);
-    let l1 = ListNode::from_vec(vec![]);
-    let l2 = ListNode::from_vec(vec![0]);
-    let ans = ListNode::from_vec(vec![0]);
-    assert_eq!(ListSolution::merge_two_lists(l1, l2), ans);
-}
+    #[test]
+    fn test_swap_pairs() {
+        let head = ListNode::from_vec(vec![1, 2, 3, 4]);
+        let ans = ListNode::from_vec(vec![2, 1, 4, 3]);
+        assert_eq!(ListSolution::swap_pairs(head), ans);
+        let head = ListNode::from_vec(vec![]);
+        let ans = ListNode::from_vec(vec![]);
+        assert_eq!(ListSolution::swap_pairs(head), ans);
+        let head = ListNode::from_vec(vec![1]);
+        let ans = ListNode::from_vec(vec![1]);
+        assert_eq!(ListSolution::swap_pairs(head), ans);
+        let head = ListNode::from_vec(vec![1, 2, 3]);
+        let ans = ListNode::from_vec(vec![2, 1, 3]);
+        assert_eq!(ListSolution::swap_pairs(head), ans);
+    }
 
-#[test]
-fn test_reverse_k_group() {
-    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    let ans = ListNode::from_vec(vec![2, 1, 4, 3, 5]);
-    assert_eq!(ListSolution::reverse_k_group(head, 2), ans);
-    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    let ans = ListNode::from_vec(vec![3, 2, 1, 4, 5]);
-    assert_eq!(ListSolution::reverse_k_group(head, 3), ans);
-    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    let ans = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    assert_eq!(ListSolution::reverse_k_group(head, 1), ans);
-    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    let ans = ListNode::from_vec(vec![5, 4, 3, 2, 1]);
-    assert_eq!(ListSolution::reverse_k_group(head, 5), ans);
-    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    let ans = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    assert_eq!(ListSolution::reverse_k_group(head, 6), ans);
-    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    let ans = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    assert_eq!(ListSolution::reverse_k_group(head, 0), ans);
-    let head = ListNode::from_vec(vec![1]);
-    let ans = ListNode::from_vec(vec![1]);
-    assert_eq!(ListSolution::reverse_k_group(head, 1), ans);
-    let head = ListNode::from_vec(vec![1, 2]);
-    let ans = ListNode::from_vec(vec![2, 1]);
-    assert_eq!(ListSolution::reverse_k_group(head, 2), ans);
-}
+    #[test]
+    fn test_merge_two_lists() {
+        let l1 = ListNode::from_vec(vec![1, 2, 4]);
+        let l2 = ListNode::from_vec(vec![1, 3, 4]);
+        let ans = ListNode::from_vec(vec![1, 1, 2, 3, 4, 4]);
+        assert_eq!(ListSolution::merge_two_lists(l1, l2), ans);
+        let l1 = ListNode::from_vec(vec![]);
+        let l2 = ListNode::from_vec(vec![]);
+        let ans = ListNode::from_vec(vec![]);
+        assert_eq!(ListSolution::merge_two_lists(l1, l2), ans);
+        let l1 = ListNode::from_vec(vec![]);
+        let l2 = ListNode::from_vec(vec![0]);
+        let ans = ListNode::from_vec(vec![0]);
+        assert_eq!(ListSolution::merge_two_lists(l1, l2), ans);
+    }
 
+    #[test]
+    fn test_reverse_k_group() {
+        let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        let ans = ListNode::from_vec(vec![2, 1, 4, 3, 5]);
+        assert_eq!(ListSolution::reverse_k_group(head, 2), ans);
+        let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        let ans = ListNode::from_vec(vec![3, 2, 1, 4, 5]);
+        assert_eq!(ListSolution::reverse_k_group(head, 3), ans);
+        let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        let ans = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        assert_eq!(ListSolution::reverse_k_group(head, 1), ans);
+        let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        let ans = ListNode::from_vec(vec![5, 4, 3, 2, 1]);
+        assert_eq!(ListSolution::reverse_k_group(head, 5), ans);
+        let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        let ans = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        assert_eq!(ListSolution::reverse_k_group(head, 6), ans);
+        let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        let ans = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        assert_eq!(ListSolution::reverse_k_group(head, 0), ans);
+        let head = ListNode::from_vec(vec![1]);
+        let ans = ListNode::from_vec(vec![1]);
+        assert_eq!(ListSolution::reverse_k_group(head, 1), ans);
+        let head = ListNode::from_vec(vec![1, 2]);
+        let ans = ListNode::from_vec(vec![2, 1]);
+        assert_eq!(ListSolution::reverse_k_group(head, 2), ans);
+    }
 
-#[test]
-fn test_rotate_right() {
-    let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
-    let ans = ListNode::from_vec(vec![4, 5, 1, 2, 3]);
-    assert_eq!(ListSolution::rotate_right(head, 2), ans);
-    let head = ListNode::from_vec(vec![0, 1, 2]);
-    let ans = ListNode::from_vec(vec![2, 0, 1]);
-    assert_eq!(ListSolution::rotate_right(head, 4), ans);
-    let head = ListNode::from_vec(vec![1, 2]);
-    let ans = ListNode::from_vec(vec![2, 1]);
-    assert_eq!(ListSolution::rotate_right(head, 1), ans);
-    let head = ListNode::from_vec(vec![1, 2]);
-    let ans = ListNode::from_vec(vec![1, 2]);
-    assert_eq!(ListSolution::rotate_right(head, 0), ans);
-    let head = ListNode::from_vec(vec![1, 2]);
-    let ans = ListNode::from_vec(vec![1, 2]);
-    assert_eq!(ListSolution::rotate_right(head, 2), ans);
-    let head = ListNode::from_vec(vec![1]);
-    let ans = ListNode::from_vec(vec![1]);
-    assert_eq!(ListSolution::rotate_right(head, 1), ans);
-    let head = ListNode::from_vec(vec![]);
-    let ans = ListNode::from_vec(vec![]);
-    assert_eq!(ListSolution::rotate_right(head, 1), ans);
+    #[test]
+    fn test_rotate_right() {
+        let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        let ans = ListNode::from_vec(vec![4, 5, 1, 2, 3]);
+        assert_eq!(ListSolution::rotate_right(head, 2), ans);
+        let head = ListNode::from_vec(vec![0, 1, 2]);
+        let ans = ListNode::from_vec(vec![2, 0, 1]);
+        assert_eq!(ListSolution::rotate_right(head, 4), ans);
+        let head = ListNode::from_vec(vec![1, 2]);
+        let ans = ListNode::from_vec(vec![2, 1]);
+        assert_eq!(ListSolution::rotate_right(head, 1), ans);
+        let head = ListNode::from_vec(vec![1, 2]);
+        let ans = ListNode::from_vec(vec![1, 2]);
+        assert_eq!(ListSolution::rotate_right(head, 0), ans);
+        let head = ListNode::from_vec(vec![1, 2]);
+        let ans = ListNode::from_vec(vec![1, 2]);
+        assert_eq!(ListSolution::rotate_right(head, 2), ans);
+        let head = ListNode::from_vec(vec![1]);
+        let ans = ListNode::from_vec(vec![1]);
+        assert_eq!(ListSolution::rotate_right(head, 1), ans);
+        let head = ListNode::from_vec(vec![]);
+        let ans = ListNode::from_vec(vec![]);
+        assert_eq!(ListSolution::rotate_right(head, 1), ans);
+    }
 }

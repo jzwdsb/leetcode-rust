@@ -20,6 +20,7 @@ impl ArraySolution {
     use
      */
 
+    #[allow(dead_code)]
     pub fn next_permutation(nums: &mut Vec<i32>) {
         // rustic way: use windows and rposition to find the largest index k such that a[k] < a[k + 1]
         if let Some(k) = nums.windows(2).rposition(|w| w[0] < w[1]) {
@@ -36,6 +37,7 @@ impl ArraySolution {
     link: https://leetcode.com/problems/permutations/
     easily solved by the next_permutation solved before
      */
+    #[allow(dead_code)]
     pub fn permute(nums: Vec<i32>) -> Vec<Vec<i32>> {
         let mut res = vec![];
         let mut prev_nums = nums.clone();
@@ -53,6 +55,7 @@ impl ArraySolution {
         res
     }
 
+    #[allow(dead_code)]
     pub fn array_sign(nums: Vec<i32>) -> i32 {
         nums.iter().map(|x| x.signum()).product()
     }
@@ -60,6 +63,7 @@ impl ArraySolution {
     /*
     link: https://leetcode.com/problems/best-time-to-buy-and-sell-stock/description/
      */
+    #[allow(dead_code)]
     pub fn max_profits(prices: Vec<i32>) -> i32 {
         // rustic way but slower
         // prices
@@ -80,6 +84,7 @@ impl ArraySolution {
     link: https://leetcode.com/problems/average-salary-excluding-the-minimum-and-maximum-salary/
      */
 
+    #[allow(dead_code)]
     pub fn average(nums: Vec<i32>) -> f64 {
         let mut min = i32::MAX;
         let mut max = i32::MIN;
@@ -104,6 +109,7 @@ impl ArraySolution {
     time complexity: O(n) space complexity: O(1)
      */
 
+    #[allow(dead_code)]
     pub fn remove_element(nums: &mut Vec<i32>, val: i32) -> i32 {
         let mut i = 0;
         let mut j = 0;
@@ -125,6 +131,7 @@ impl ArraySolution {
     2. swap the symmetry
      */
 
+    #[allow(dead_code)]
     pub fn rotate(image: &mut Vec<Vec<i32>>) {
         let n = image.len();
         // transpose
@@ -150,6 +157,7 @@ impl ArraySolution {
     if sum < 0, we can start a new subarray, else we can add it to the previous subarray
     time complexity: O(n) space complexity: O(1)
      */
+    #[allow(dead_code)]
     pub fn max_sub_array(nums: Vec<i32>) -> i32 {
         let mut max_sum = i32::MIN;
         let mut sum = 0;
@@ -164,6 +172,7 @@ impl ArraySolution {
     link: https://leetcode.com/problems/spiral-matrix/
 
      */
+    #[allow(dead_code)]
     pub fn spiral_order(matrix: Vec<Vec<i32>>) -> Vec<i32> {
         let mut res = vec![];
         if matrix.is_empty() {
@@ -244,6 +253,7 @@ impl ArraySolution {
     link: https://leetcode.com/problems/spiral-matrix-ii/
      */
 
+    #[allow(dead_code)]
     pub fn spiral_matrix_ii(n: i32) -> Vec<Vec<i32>> {
         let mut matrix = vec![vec![0 as i32; n as usize]; n as usize];
         let mut length_y = n as usize;
@@ -324,6 +334,7 @@ impl ArraySolution {
     if i > max_val, that means we can't reach the end
      */
 
+    #[allow(dead_code)]
     pub fn can_jump(steps: Vec<i32>) -> bool {
         let mut max_val = 0;
         for (i, v) in steps.iter().enumerate() {
@@ -339,6 +350,7 @@ impl ArraySolution {
     link: https://leetcode.com/problems/merge-intervals/
      */
 
+    #[allow(dead_code)]
     pub fn merge(intervals: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
         let mut res = Vec::new();
         if intervals.is_empty() {
@@ -363,10 +375,12 @@ impl ArraySolution {
         vec![a[0].min(b[0]), a[1].max(b[1])]
     }
 
+    #[allow(dead_code)]
     pub fn length_of_last_word(s: String) -> i32 {
         s.split_ascii_whitespace().last().unwrap_or("").len() as i32
     }
 
+    #[allow(dead_code)]
     pub fn plus_one(digits: Vec<i32>) -> Vec<i32> {
         let mut digits = digits;
         let mut i = digits.len() - 1;
@@ -386,6 +400,7 @@ impl ArraySolution {
         digits
     }
 
+    #[allow(dead_code)]
     pub fn insert_interval(intervals: Vec<Vec<i32>>, new_intervals: Vec<i32>) -> Vec<Vec<i32>> {
         let mut res = Vec::new();
         let mut intervals = intervals;
@@ -409,6 +424,7 @@ impl ArraySolution {
     same solution at remove elelement
      */
 
+    #[allow(dead_code)]
     pub fn move_zeros(nums: &mut Vec<i32>) {
         let mut i = 0;
         let mut j = 0;
@@ -430,6 +446,7 @@ impl ArraySolution {
     https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_majority_vote_algorithm
      */
 
+    #[allow(dead_code)]
     pub fn majority_element(nums: Vec<i32>) -> i32 {
         let mut count = 0;
         let mut candidate = 0;
@@ -447,6 +464,7 @@ impl ArraySolution {
 
      */
 
+    #[allow(dead_code)]
     pub fn longest_consecutive(nums: Vec<i32>) -> i32 {
         use std::collections::HashSet;
         let mut set = HashSet::new();
@@ -468,6 +486,7 @@ impl ArraySolution {
         res
     }
 
+    #[allow(dead_code)]
     pub fn can_place_flowers(flowerbed: Vec<i32>, n: i32) -> bool {
         let mut flowerbed = flowerbed;
         let mut i = 0;
@@ -483,6 +502,22 @@ impl ArraySolution {
             i += 1
         }
         count >= n
+    }
+
+    #[allow(dead_code)]
+    pub fn erase_overlap_intervals(intervals: Vec<Vec<i32>>) -> i32 {
+        let mut intervals = intervals;
+        intervals.sort_unstable_by_key(|val| val[1]);
+        let mut count = 0;
+        let mut prev = intervals[0].clone();
+        for i in intervals.iter().skip(1) {
+            if i[0] < prev[1] {
+                count += 1;
+            } else {
+                prev = i.clone();
+            }
+        }
+        count
     }
 }
 
@@ -734,6 +769,31 @@ mod tests {
         assert_eq!(
             ArraySolution::can_place_flowers(vec![0, 0, 1, 0, 1], 2),
             false
+        );
+    }
+
+    #[test]
+    fn test_earse_overlap_intervals() {
+        assert_eq!(
+            ArraySolution::erase_overlap_intervals(vec![vec![1, 2], vec![2, 3], vec![3, 4],]),
+            0
+        );
+        assert_eq!(
+            ArraySolution::erase_overlap_intervals(vec![vec![1, 2], vec![1, 2], vec![1, 2],]),
+            2
+        );
+        assert_eq!(
+            ArraySolution::erase_overlap_intervals(vec![vec![1, 2], vec![2, 3],]),
+            0
+        );
+        assert_eq!(
+            ArraySolution::erase_overlap_intervals(vec![
+                vec![1, 100],
+                vec![11, 22],
+                vec![1, 11],
+                vec![2, 12],
+            ]),
+            2
         );
     }
 }
