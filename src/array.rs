@@ -519,6 +519,32 @@ impl ArraySolution {
         }
         count
     }
+
+    /*
+    link: https://leetcode.com/problems/product-of-array-except-self/
+    we use two variables to store the product of the left and right
+    res[i] = left * right
+    from the left to right with index i
+    for left side, res[i], we can get the product of the left
+    for right side, res[nums.len()-i-1], we can get the product of the right
+    update the result in two directions, we can solve it in one pass
+    when it reach to the end, we can get the result
+     */
+
+    #[allow(dead_code)]
+    pub fn product_except_self(nums: Vec<i32>) -> Vec<i32> {
+        let mut res = vec![1; nums.len()];
+        let mut left = 1;
+        let mut right = 1;
+        for i in 0..nums.len() {
+            res[i] *= left;
+            left *= nums[i];
+            res[nums.len() - i - 1] *= right;
+            right *= nums[nums.len() - i - 1];
+        }
+        res
+    }
+
 }
 
 pub fn main() {}
@@ -796,4 +822,13 @@ mod tests {
             2
         );
     }
+
+    #[test]
+    fn test_product_except_self() {
+        assert_eq!(
+            ArraySolution::product_except_self(vec![1, 2, 3, 4]),
+            vec![24, 12, 8, 6]
+        );
+    }
+
 }
