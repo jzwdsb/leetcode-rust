@@ -1,3 +1,5 @@
+use std::{cell::RefCell, rc::Rc};
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct TreeNode {
     pub val: i32,
@@ -7,6 +9,7 @@ pub struct TreeNode {
 
 impl TreeNode {
     #[inline]
+    #[allow(dead_code)]
     pub fn new(val: i32) -> Self {
         TreeNode {
             val,
@@ -19,7 +22,8 @@ impl TreeNode {
 struct TreeSolution {}
 
 impl TreeSolution {
-    pub fn max_depth(root: Option<std::rc::Rc<std::cell::RefCell<TreeNode>>>) -> i32 {
+    #[allow(dead_code)]
+    pub fn max_depth(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
         if root.is_none() {
             return 0;
         }
@@ -29,7 +33,9 @@ impl TreeSolution {
 
         left.max(right) + 1
     }
-    pub fn min_depth(root: Option<std::rc::Rc<std::cell::RefCell<TreeNode>>>) -> i32 {
+
+    #[allow(dead_code)]
+    pub fn min_depth(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
         if root.is_none() {
             return 0;
         }
@@ -39,6 +45,25 @@ impl TreeSolution {
             return left.max(right) + 1;
         }
         left.min(right) + 1
+    }
+
+    #[allow(dead_code)]
+    pub fn is_valid_bst(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
+        Self::is_valid_helper(&root, std::i64::MIN, std::i64::MAX)
+    }
+
+    fn is_valid_helper(root: &Option<Rc<RefCell<TreeNode>>>, gt: i64, lt: i64) -> bool {
+        match root.as_ref() {
+            None => true,
+            Some(node) => {
+                let node = node.borrow();
+                if (node.val as i64) <= gt || (node.val as i64) >= lt {
+                    return false;
+                }
+                Self::is_valid_helper(&node.left, gt, node.val as i64)
+                    && Self::is_valid_helper(&node.right, node.val as i64, lt)
+            }
+        }
     }
 }
 
@@ -83,6 +108,21 @@ mod tests {
         assert_eq!(
             TreeSolution::min_depth(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
             2
+        );
+    }
+
+    #[test]
+    fn test_is_valid_bst() {
+        let mut root = TreeNode::new(2);
+        let left = TreeNode::new(1);
+        let right = TreeNode::new(3);
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeSolution::is_valid_bst(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
+            true
         );
     }
 }
