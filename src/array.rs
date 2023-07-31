@@ -544,7 +544,6 @@ impl ArraySolution {
         }
         res
     }
-
 }
 
 pub fn main() {}
@@ -830,5 +829,4 @@ mod tests {
             vec![24, 12, 8, 6]
         );
     }
-
 }

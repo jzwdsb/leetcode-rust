@@ -177,6 +177,34 @@ impl SlidingWindow {
         }
         res as i32
     }
+
+    /*
+    link: https://leetcode.com/problems/minimum-size-subarray-sum/
+
+    use a sliding window to solve this problem
+    i,j respectively represent the left and right pointer of the window
+    sum is the sum of the window
+    if sum >= target, we need to move the left pointer to the right and update the sum
+    update result = min(result, j - i + 1) (current window size)
+     */
+    pub fn min_sub_array_len(target: i32, nums: Vec<i32>) -> i32 {
+        let mut res = std::usize::MAX;
+        let mut sum = 0;
+        let mut i = 0;
+        for j in 0..nums.len() {
+            sum += nums[j];
+            while sum >= target {
+                res = res.min(j - i + 1);
+                sum -= nums[i];
+                i += 1;
+            }
+        }
+        if res == std::usize::MAX {
+            0
+        } else {
+            res as i32
+        }
+    }
 }
 
 pub fn main() {}
@@ -244,5 +272,18 @@ mod tests {
             4
         );
         assert_eq!(SlidingWindow::longest_subarray(vec![0, 0, 0]), 0);
+    }
+
+    #[test]
+    fn test_min_sub_array_len() {
+        assert_eq!(
+            SlidingWindow::min_sub_array_len(7, vec![2, 3, 1, 2, 4, 3]),
+            2
+        );
+        assert_eq!(SlidingWindow::min_sub_array_len(4, vec![1, 4, 4]), 1);
+        assert_eq!(
+            SlidingWindow::min_sub_array_len(11, vec![1, 1, 1, 1, 1, 1, 1, 1]),
+            0
+        );
     }
 }
