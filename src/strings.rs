@@ -1,4 +1,3 @@
-
 pub struct StringSolution {}
 
 // Solution from https://leetcode.com/problems/valid-number/solutions/3461898/finite-state-machine/
@@ -224,7 +223,6 @@ impl StringSolution {
         return state.is_valid_end_state();
     }
 
-
     pub fn is_number_brute(s: String) -> bool {
         // trim leading and trailing whitespace
         let s = s.trim().to_string();
@@ -260,7 +258,7 @@ impl StringSolution {
         }
         if !s.contains('.') {
             return false;
-        } 
+        }
         let strs: Vec<&str> = s.split(".").collect();
         if strs.len() == 1 {
             return Self::check_integer(&strs[0].to_string(), true);
@@ -334,119 +332,200 @@ impl StringSolution {
             j += 1;
         }
         i == s.len()
-    } 
+    }
 
+    /*
+    links: https://leetcode.com/problems/buddy-strings/
+    swap two characters in a string so the s == goal
+
+     */
+
+    pub fn buddy_strings(s: String, goal: String) -> bool {
+        if s.len() != goal.len() {
+            return false;
+        }
+        let mut s = s.chars().collect::<Vec<char>>();
+        let goal = goal.chars().collect::<Vec<char>>();
+        let mut diff = Vec::new();
+        for i in 0..s.len() {
+            if s[i] != goal[i] {
+                diff.push(i);
+            }
+        }
+        // if diff.len() == 0, then we need to check if there is a duplicate character
+        // if there is a duplicate character, then we can swap it with itself
+        // otherwise, we cannot swap any character
+        if diff.len() == 0 {
+            let mut map = std::collections::HashSet::new();
+            for c in s {
+                if map.contains(&c) {
+                    return true;
+                }
+                map.insert(c);
+            }
+            return false;
+        }
+        if diff.len() != 2 {
+            return false;
+        }
+        s.swap(diff[0], diff[1]);
+        s == goal
+    }
 }
 
 pub fn main() {}
 
-#[test]
-fn test_count_good_string() {
-    assert_eq!(StringSolution::count_good_string(3, 3, 1, 1), 8);
-    assert_eq!(StringSolution::count_good_string(2, 3, 1, 2), 5);
-    assert_eq!(StringSolution::count_good_string(10, 10, 2, 1), 89);
-}
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-#[test]
-fn test_count_and_say() {
-    assert_eq!(StringSolution::count_and_say(1), "1");
-    assert_eq!(StringSolution::count_and_say(2), "11");
-    assert_eq!(StringSolution::count_and_say(3), "21");
-    assert_eq!(StringSolution::count_and_say(4), "1211");
-    assert_eq!(StringSolution::count_and_say(5), "111221");
-    assert_eq!(StringSolution::count_and_say(6), "312211");
-}
-
-#[test]
-fn test_multiply() {
-    assert_eq!(
-        StringSolution::multiply("2".to_string(), "3".to_string()),
-        "6"
-    );
-    assert_eq!(
-        StringSolution::multiply("123".to_string(), "456".to_string()),
-        "56088"
-    );
-    assert_eq!(
-        StringSolution::multiply("123456789".to_string(), "987654321".to_string()),
-        "121932631112635269"
-    );
-}
-
-#[test]
-fn test_str_str() {
-    assert_eq!(
-        StringSolution::str_str("hello".to_string(), "ll".to_string()),
-        2
-    );
-    assert_eq!(
-        StringSolution::str_str("aaaaa".to_string(), "bba".to_string()),
-        -1
-    );
-    assert_eq!(StringSolution::str_str("".to_string(), "".to_string()), 0);
-    assert_eq!(StringSolution::str_str("".to_string(), "a".to_string()), -1);
-    assert_eq!(StringSolution::str_str("a".to_string(), "".to_string()), 0);
-    assert_eq!(
-        StringSolution::str_str("mississippi".to_string(), "issip".to_string()),
-        4
-    );
-}
-
-#[test]
-fn test_group_anagrams() {
-    let mut result = StringSolution::group_anagrams(vec![
-        "eat".to_string(),
-        "tea".to_string(),
-        "tan".to_string(),
-        "ate".to_string(),
-        "nat".to_string(),
-        "bat".to_string(),
-    ]);
-    for r in result.iter_mut() {
-        r.sort();
+    #[test]
+    fn test_count_good_string() {
+        assert_eq!(StringSolution::count_good_string(3, 3, 1, 1), 8);
+        assert_eq!(StringSolution::count_good_string(2, 3, 1, 2), 5);
+        assert_eq!(StringSolution::count_good_string(10, 10, 2, 1), 89);
     }
-    result.sort();
-    let mut expect = vec![
-        vec!["ate".to_string(), "eat".to_string(), "tea".to_string()],
-        vec!["bat".to_string()],
-        vec!["nat".to_string(), "tan".to_string()],
-    ];
-    for e in expect.iter_mut() {
-        e.sort();
+
+    #[test]
+    fn test_count_and_say() {
+        assert_eq!(StringSolution::count_and_say(1), "1");
+        assert_eq!(StringSolution::count_and_say(2), "11");
+        assert_eq!(StringSolution::count_and_say(3), "21");
+        assert_eq!(StringSolution::count_and_say(4), "1211");
+        assert_eq!(StringSolution::count_and_say(5), "111221");
+        assert_eq!(StringSolution::count_and_say(6), "312211");
     }
-    expect.sort();
-    assert_eq!(result, expect);
-}
 
-#[test]
-fn test_is_number() {
-    assert_eq!(StringSolution::is_number_brute("0".to_string()), true);
-    assert_eq!(StringSolution::is_number_brute(" 0.1 ".to_string()), true);
-    assert_eq!(StringSolution::is_number_brute("abc".to_string()), false);
-    assert_eq!(StringSolution::is_number_brute("1 a".to_string()), false);
-    assert_eq!(StringSolution::is_number_brute("2e10".to_string()), true);
-    assert_eq!(StringSolution::is_number_brute(" -90e3   ".to_string()), true);
-    assert_eq!(StringSolution::is_number_brute(" 1e".to_string()), false);
-    assert_eq!(StringSolution::is_number_brute("1.+1".to_string()), false);
+    #[test]
+    fn test_multiply() {
+        assert_eq!(
+            StringSolution::multiply("2".to_string(), "3".to_string()),
+            "6"
+        );
+        assert_eq!(
+            StringSolution::multiply("123".to_string(), "456".to_string()),
+            "56088"
+        );
+        assert_eq!(
+            StringSolution::multiply("123456789".to_string(), "987654321".to_string()),
+            "121932631112635269"
+        );
+    }
 
-    assert_eq!(StringSolution::is_number("0".to_string()), true);
-    assert_eq!(StringSolution::is_number(" 0.1 ".to_string()), true);
-    assert_eq!(StringSolution::is_number("abc".to_string()), false);
-    assert_eq!(StringSolution::is_number("1 a".to_string()), false);
-    assert_eq!(StringSolution::is_number("2e10".to_string()), true);
-    assert_eq!(StringSolution::is_number(" -90e3   ".to_string()), true);
-    assert_eq!(StringSolution::is_number(" 1e".to_string()), false);
-    assert_eq!(StringSolution::is_number("1.+1".to_string()), false);
-}
+    #[test]
+    fn test_str_str() {
+        assert_eq!(
+            StringSolution::str_str("hello".to_string(), "ll".to_string()),
+            2
+        );
+        assert_eq!(
+            StringSolution::str_str("aaaaa".to_string(), "bba".to_string()),
+            -1
+        );
+        assert_eq!(StringSolution::str_str("".to_string(), "".to_string()), 0);
+        assert_eq!(StringSolution::str_str("".to_string(), "a".to_string()), -1);
+        assert_eq!(StringSolution::str_str("a".to_string(), "".to_string()), 0);
+        assert_eq!(
+            StringSolution::str_str("mississippi".to_string(), "issip".to_string()),
+            4
+        );
+    }
 
-#[test]
-fn test_add_binary() {
-    assert_eq!(StringSolution::add_binary("11".to_string(), "1".to_string()), "100");
-    assert_eq!(StringSolution::add_binary("1010".to_string(), "1011".to_string()), "10101");
-}
+    #[test]
+    fn test_group_anagrams() {
+        let mut result = StringSolution::group_anagrams(vec![
+            "eat".to_string(),
+            "tea".to_string(),
+            "tan".to_string(),
+            "ate".to_string(),
+            "nat".to_string(),
+            "bat".to_string(),
+        ]);
+        for r in result.iter_mut() {
+            r.sort();
+        }
+        result.sort();
+        let mut expect = vec![
+            vec!["ate".to_string(), "eat".to_string(), "tea".to_string()],
+            vec!["bat".to_string()],
+            vec!["nat".to_string(), "tan".to_string()],
+        ];
+        for e in expect.iter_mut() {
+            e.sort();
+        }
+        expect.sort();
+        assert_eq!(result, expect);
+    }
 
-#[test]
-fn test_is_subsequence() {
-    assert_eq!(StringSolution::is_subsequence("abc".to_string(), "ahbgdc".to_string()), true);
-    assert_eq!(StringSolution::is_subsequence("axc".to_string(), "ahbgdc".to_string()), false);
+    #[test]
+    fn test_is_number() {
+        assert_eq!(StringSolution::is_number_brute("0".to_string()), true);
+        assert_eq!(StringSolution::is_number_brute(" 0.1 ".to_string()), true);
+        assert_eq!(StringSolution::is_number_brute("abc".to_string()), false);
+        assert_eq!(StringSolution::is_number_brute("1 a".to_string()), false);
+        assert_eq!(StringSolution::is_number_brute("2e10".to_string()), true);
+        assert_eq!(
+            StringSolution::is_number_brute(" -90e3   ".to_string()),
+            true
+        );
+        assert_eq!(StringSolution::is_number_brute(" 1e".to_string()), false);
+        assert_eq!(StringSolution::is_number_brute("1.+1".to_string()), false);
+
+        assert_eq!(StringSolution::is_number("0".to_string()), true);
+        assert_eq!(StringSolution::is_number(" 0.1 ".to_string()), true);
+        assert_eq!(StringSolution::is_number("abc".to_string()), false);
+        assert_eq!(StringSolution::is_number("1 a".to_string()), false);
+        assert_eq!(StringSolution::is_number("2e10".to_string()), true);
+        assert_eq!(StringSolution::is_number(" -90e3   ".to_string()), true);
+        assert_eq!(StringSolution::is_number(" 1e".to_string()), false);
+        assert_eq!(StringSolution::is_number("1.+1".to_string()), false);
+    }
+
+    #[test]
+    fn test_add_binary() {
+        assert_eq!(
+            StringSolution::add_binary("11".to_string(), "1".to_string()),
+            "100"
+        );
+        assert_eq!(
+            StringSolution::add_binary("1010".to_string(), "1011".to_string()),
+            "10101"
+        );
+    }
+
+    #[test]
+    fn test_is_subsequence() {
+        assert_eq!(
+            StringSolution::is_subsequence("abc".to_string(), "ahbgdc".to_string()),
+            true
+        );
+        assert_eq!(
+            StringSolution::is_subsequence("axc".to_string(), "ahbgdc".to_string()),
+            false
+        );
+    }
+
+    #[test]
+    fn test_buddy_string() {
+        assert_eq!(
+            StringSolution::buddy_strings("ab".to_string(), "ba".to_string()),
+            true
+        );
+        assert_eq!(
+            StringSolution::buddy_strings("ab".to_string(), "ab".to_string()),
+            false
+        );
+        assert_eq!(
+            StringSolution::buddy_strings("aa".to_string(), "aa".to_string()),
+            true
+        );
+        assert_eq!(
+            StringSolution::buddy_strings("aaaaaaabc".to_string(), "aaaaaaacb".to_string()),
+            true
+        );
+        assert_eq!(
+            StringSolution::buddy_strings("".to_string(), "aa".to_string()),
+            false
+        );
+    }
 }

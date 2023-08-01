@@ -544,6 +544,41 @@ impl ArraySolution {
         }
         res
     }
+
+    /*
+    link: https://leetcode.com/problems/asteroid-collision/
+     */
+    pub fn asteroid_collision(asteroids: Vec<i32>) -> Vec<i32> {
+        let mut stack = Vec::new();
+
+        for asteroid in asteroids {
+            if asteroid > 0 {
+                stack.push(asteroid);
+            } else {
+                let survives = loop {
+                    match stack.last() {
+                        Some(&last) if last > 0 => match last.cmp(&asteroid.abs()) {
+                            std::cmp::Ordering::Less => {
+                                stack.pop();
+                            }
+                            std::cmp::Ordering::Equal => {
+                                stack.pop();
+                                break false;
+                            }
+                            std::cmp::Ordering::Greater => {
+                                break false;
+                            }
+                        },
+                        _ => break true,
+                    }
+                };
+                if survives {
+                    stack.push(asteroid);
+                }
+            }
+        }
+        stack
+    }
 }
 
 pub fn main() {}
@@ -827,6 +862,23 @@ mod tests {
         assert_eq!(
             ArraySolution::product_except_self(vec![1, 2, 3, 4]),
             vec![24, 12, 8, 6]
+        );
+    }
+
+    #[test]
+    fn test_asteroid_collision() {
+        assert_eq!(
+            ArraySolution::asteroid_collision(vec![5, 10, -5]),
+            vec![5, 10]
+        );
+        assert_eq!(
+            ArraySolution::asteroid_collision(vec![8, -8]),
+            Vec::<i32>::new()
+        );
+        assert_eq!(ArraySolution::asteroid_collision(vec![10, 2, -5]), vec![10]);
+        assert_eq!(
+            ArraySolution::asteroid_collision(vec![-2, -1, 1, 2]),
+            vec![-2, -1, 1, 2]
         );
     }
 }
