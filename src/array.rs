@@ -549,15 +549,15 @@ impl ArraySolution {
     link: https://leetcode.com/problems/asteroid-collision/
      */
     pub fn asteroid_collision(asteroids: Vec<i32>) -> Vec<i32> {
-        let mut stack = Vec::new();
+        let mut stack: Vec<i32> = Vec::new();
 
         for asteroid in asteroids {
-            if asteroid > 0 {
+            if stack.is_empty() || (stack.last().unwrap().is_positive()==asteroid.is_positive()) {
                 stack.push(asteroid);
             } else {
                 let survives = loop {
                     match stack.last() {
-                        Some(&last) if last > 0 => match last.cmp(&asteroid.abs()) {
+                        Some(&last) if last.is_positive() != asteroid.is_positive() => match last.abs().cmp(&asteroid.abs()) {
                             std::cmp::Ordering::Less => {
                                 stack.pop();
                             }
@@ -878,7 +878,8 @@ mod tests {
         assert_eq!(ArraySolution::asteroid_collision(vec![10, 2, -5]), vec![10]);
         assert_eq!(
             ArraySolution::asteroid_collision(vec![-2, -1, 1, 2]),
-            vec![-2, -1, 1, 2]
+            vec![]
         );
+        
     }
 }
