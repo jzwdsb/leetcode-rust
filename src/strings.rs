@@ -371,6 +371,15 @@ impl StringSolution {
         s.swap(diff[0], diff[1]);
         s == goal
     }
+
+    pub fn is_palindrome(s: String) -> bool {
+        let alpha = s
+            .chars()
+            .filter(|c| c.is_alphanumeric())
+            .map(|c| c.to_ascii_lowercase())
+            .collect::<String>();
+        alpha == alpha.chars().rev().collect::<String>()
+    }
 }
 
 pub fn main() {}
@@ -527,5 +536,13 @@ mod tests {
             StringSolution::buddy_strings("".to_string(), "aa".to_string()),
             false
         );
+    }
+
+    #[test]
+    fn test_is_palindrome() {
+        assert_eq!(
+            StringSolution::is_palindrome("A man, a plan, a canal: Panama".to_string()),
+            true
+        )
     }
 }

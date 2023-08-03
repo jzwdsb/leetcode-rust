@@ -211,6 +211,17 @@ impl ListSolution {
 
         Some(new_head)
     }
+
+    pub fn reverse_list(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+        let mut prev = None;
+        let mut node = head;
+        while let Some(mut n) = node {
+            node = n.next.take();
+            n.next = prev;
+            prev = Some(n);
+        }
+        prev
+    }
 }
 
 pub fn main() {}
@@ -339,5 +350,21 @@ mod tests {
         let head = ListNode::from_vec(vec![]);
         let ans = ListNode::from_vec(vec![]);
         assert_eq!(ListSolution::rotate_right(head, 1), ans);
+    }
+
+    #[test]
+    fn test_reverse_list() {
+        let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        let ans = ListNode::from_vec(vec![5, 4, 3, 2, 1]);
+        assert_eq!(ListSolution::reverse_list(head), ans);
+        let head = ListNode::from_vec(vec![1, 2]);
+        let ans = ListNode::from_vec(vec![2, 1]);
+        assert_eq!(ListSolution::reverse_list(head), ans);
+        let head = ListNode::from_vec(vec![1]);
+        let ans = ListNode::from_vec(vec![1]);
+        assert_eq!(ListSolution::reverse_list(head), ans);
+        let head = ListNode::from_vec(vec![]);
+        let ans = ListNode::from_vec(vec![]);
+        assert_eq!(ListSolution::reverse_list(head), ans);
     }
 }
