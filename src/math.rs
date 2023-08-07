@@ -1,4 +1,3 @@
-
 pub struct MathSolution {}
 
 impl MathSolution {
@@ -24,20 +23,20 @@ impl MathSolution {
     link: https://leetcode.com/problems/divide-two-integers/
     we can use binary search to search the [0, dividend] to find the answer
     time complexity O(log(dividend))
-     */    
+     */
     pub fn divide(dividend: i32, divisor: i32) -> i32 {
         if dividend == divisor {
-            return 1
+            return 1;
         }
         let is_neg = dividend.is_negative() ^ divisor.is_negative();
         let (dividend, divisor) = ((dividend as i64).abs(), (divisor as i64).abs());
         let (mut left, mut right) = (0i64, dividend);
         while left < right {
-            let mid = left + ((right+1-left) >> 1);
+            let mid = left + ((right + 1 - left) >> 1);
             if dividend >= Self::simulate_multiple(divisor, mid) {
                 left = mid;
             } else {
-                right = mid-1;
+                right = mid - 1;
             }
         }
         let ans: i64 = match is_neg {
@@ -64,7 +63,7 @@ impl MathSolution {
             y = y >> 1;
             add += add;
         }
-        
+
         ans
     }
     /*
@@ -79,7 +78,11 @@ impl MathSolution {
             return 1.0;
         }
         if x.abs() == 1.0 {
-            return if n&1 == 1 && x.is_sign_negative() { -1.0 } else { 1.0 };
+            return if n & 1 == 1 && x.is_sign_negative() {
+                -1.0
+            } else {
+                1.0
+            };
         }
         if n == i32::MIN {
             return 0.0;
@@ -106,25 +109,22 @@ impl MathSolution {
         let mut left = 0 as i64;
         let mut right = x as i64;
         while left < right {
-            let mid = left + ((right-left+1) >> 1);
+            let mid = left + ((right - left + 1) >> 1);
             if mid * mid <= x as i64 {
                 left = mid;
             } else {
-                right = mid-1;
+                right = mid - 1;
             }
         }
         left as i32
     }
 
     pub fn distance_traveled(main_tank: i32, additional_tank: i32) -> i32 {
-        (main_tank+((main_tank-1)/4).min(additional_tank))*10
+        (main_tank + ((main_tank - 1) / 4).min(additional_tank)) * 10
     }
-
 }
 
-pub fn main() {
-
-}
+pub fn main() {}
 
 #[test]
 fn test_reverse() {
@@ -148,13 +148,13 @@ fn test_divide() {
 
 #[test]
 fn test_pow() {
-    assert!(MathSolution::pow(2.0, 10)-1024.0 < 0.00001);
-    assert!(MathSolution::pow(2.1, 3)- 9.261 < 0.00001);
-    assert!(MathSolution::pow(2.0, -2)-0.25 < 0.00001);
+    assert!(MathSolution::pow(2.0, 10) - 1024.0 < 0.00001);
+    assert!(MathSolution::pow(2.1, 3) - 9.261 < 0.00001);
+    assert!(MathSolution::pow(2.0, -2) - 0.25 < 0.00001);
     assert!(MathSolution::pow(0.00001, 2147483647) - 0.0 < 0.00001);
-    assert!(MathSolution::pow(1.0, 2147483647)-1.0 < 0.00001);
+    assert!(MathSolution::pow(1.0, 2147483647) - 1.0 < 0.00001);
 
-    assert!(MathSolution::pow(2.0, -2147483648)-0.0 < 0.00001);
+    assert!(MathSolution::pow(2.0, -2147483648) - 0.0 < 0.00001);
 }
 
 #[test]
@@ -168,7 +168,7 @@ fn test_my_sqrt() {
 }
 
 #[test]
-fn test_distance_traveled(){
+fn test_distance_traveled() {
     assert_eq!(MathSolution::distance_traveled(5, 10), 60);
     assert_eq!(MathSolution::distance_traveled(1, 2), 10);
     assert_eq!(MathSolution::distance_traveled(9, 2), 110);

@@ -22,16 +22,26 @@ impl StackSolution {
     }
 }
 
-pub fn main() {
-
-}
+pub fn main() {}
 
 #[test]
 fn test_simplify_path() {
     assert_eq!(StackSolution::simplify_path("/home/".to_string()), "/home");
     assert_eq!(StackSolution::simplify_path("/../".to_string()), "/");
-    assert_eq!(StackSolution::simplify_path("/home//foo/".to_string()), "/home/foo");
-    assert_eq!(StackSolution::simplify_path("/a/./b/../../c/".to_string()), "/c");
-    assert_eq!(StackSolution::simplify_path("/a/../../b/../c//.//".to_string()), "/c");
-    assert_eq!(StackSolution::simplify_path("/a//b////c/d//././/..".to_string()), "/a/b/c"); 
+    assert_eq!(
+        StackSolution::simplify_path("/home//foo/".to_string()),
+        "/home/foo"
+    );
+    assert_eq!(
+        StackSolution::simplify_path("/a/./b/../../c/".to_string()),
+        "/c"
+    );
+    assert_eq!(
+        StackSolution::simplify_path("/a/../../b/../c//.//".to_string()),
+        "/c"
+    );
+    assert_eq!(
+        StackSolution::simplify_path("/a//b////c/d//././/..".to_string()),
+        "/a/b/c"
+    );
 }

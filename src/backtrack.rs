@@ -1,4 +1,4 @@
-pub struct BackStrackSolution{}
+pub struct BackStrackSolution {}
 
 impl BackStrackSolution {
     /*
@@ -30,10 +30,10 @@ impl BackStrackSolution {
         }
         for i in start..candidates.len() {
             path.push(candidates[i]);
-            Self::backtrack(result, path, candidates, target-candidates[i], i);
+            Self::backtrack(result, path, candidates, target - candidates[i], i);
             path.pop();
         }
-        return 
+        return;
     }
 
     /*
@@ -65,24 +65,22 @@ impl BackStrackSolution {
             result.push(path.clone());
         }
         for i in start..candidates.len() {
-            // 
-            if i > start && candidates[i] == candidates[i-1] {
+            //
+            if i > start && candidates[i] == candidates[i - 1] {
                 continue;
             }
             if candidates[i] > target {
-                break
+                break;
             }
             path.push(candidates[i]);
-            Self::backtrack2(result, path, candidates, target-candidates[i], i+1);
+            Self::backtrack2(result, path, candidates, target - candidates[i], i + 1);
             path.pop();
         }
-        return
+        return;
     }
 }
 
-pub fn main() {
-    
-}
+pub fn main() {}
 
 #[test]
 fn test_combination_sum() {
@@ -98,7 +96,10 @@ fn test_combination_sum() {
 fn test_combination_sum2() {
     let mut result = BackStrackSolution::combination_sum2(vec![10, 1, 2, 7, 6, 1, 5], 8);
     result.sort();
-    assert_eq!(result, vec![vec![1, 1, 6], vec![1, 2, 5], vec![1, 7], vec![2, 6]]);
+    assert_eq!(
+        result,
+        vec![vec![1, 1, 6], vec![1, 2, 5], vec![1, 7], vec![2, 6]]
+    );
     let mut result = BackStrackSolution::combination_sum2(vec![2, 5, 2, 1, 2], 5);
     result.sort();
     assert_eq!(result, vec![vec![1, 2, 2], vec![5]]);

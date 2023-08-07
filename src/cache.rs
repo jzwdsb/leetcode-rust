@@ -1,7 +1,5 @@
 use std::collections::{HashMap, VecDeque};
 
-
-
 struct LRUCache {
     capacity: i32,
     cache: HashMap<i32, i32>,
@@ -9,7 +7,6 @@ struct LRUCache {
 }
 
 impl LRUCache {
-
     fn new(capacity: i32) -> Self {
         LRUCache {
             capacity,
@@ -17,14 +14,14 @@ impl LRUCache {
             queue: VecDeque::new(),
         }
     }
-    
+
     fn get(&self, key: i32) -> i32 {
         match self.cache.get(&key) {
             Some(value) => *value,
-            None => -1
+            None => -1,
         }
     }
-    
+
     fn put(&mut self, key: i32, value: i32) {
         self.cache.insert(key, value);
         self.queue.push_back(key);
@@ -32,7 +29,6 @@ impl LRUCache {
             let key = self.queue.pop_front().unwrap();
             self.cache.remove(&key);
         }
-
     }
 }
 

@@ -552,23 +552,25 @@ impl ArraySolution {
         let mut stack: Vec<i32> = Vec::new();
 
         for asteroid in asteroids {
-            if stack.is_empty() || (stack.last().unwrap().is_positive()==asteroid.is_positive()) {
+            if stack.is_empty() || (stack.last().unwrap().is_positive() == asteroid.is_positive()) {
                 stack.push(asteroid);
             } else {
                 let survives = loop {
                     match stack.last() {
-                        Some(&last) if last.is_positive() != asteroid.is_positive() => match last.abs().cmp(&asteroid.abs()) {
-                            std::cmp::Ordering::Less => {
-                                stack.pop();
+                        Some(&last) if last.is_positive() != asteroid.is_positive() => {
+                            match last.abs().cmp(&asteroid.abs()) {
+                                std::cmp::Ordering::Less => {
+                                    stack.pop();
+                                }
+                                std::cmp::Ordering::Equal => {
+                                    stack.pop();
+                                    break false;
+                                }
+                                std::cmp::Ordering::Greater => {
+                                    break false;
+                                }
                             }
-                            std::cmp::Ordering::Equal => {
-                                stack.pop();
-                                break false;
-                            }
-                            std::cmp::Ordering::Greater => {
-                                break false;
-                            }
-                        },
+                        }
                         _ => break true,
                     }
                 };
@@ -880,6 +882,5 @@ mod tests {
             ArraySolution::asteroid_collision(vec![-2, -1, 1, 2]),
             vec![]
         );
-        
     }
 }

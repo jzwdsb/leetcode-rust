@@ -1,4 +1,3 @@
-
 // TODO: refactor the list node to use Rc<RefCell<ListNode<T>>> to avoid the ownership problem
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode<T> {
@@ -221,6 +220,24 @@ impl ListSolution {
             prev = Some(n);
         }
         prev
+    }
+
+    pub fn has_cycle(l1: Option<Box<ListNode<i32>>>) -> bool {
+        let mut slow = l1.as_ref();
+        let mut fast = l1.as_ref();
+        while let Some(f) = fast {
+            fast = f.next.as_ref();
+            if let Some(f) = fast {
+                fast = f.next.as_ref();
+            } else {
+                return false;
+            }
+            slow = slow.unwrap().next.as_ref();
+            if slow == fast {
+                return true;
+            }
+        }
+        false
     }
 }
 

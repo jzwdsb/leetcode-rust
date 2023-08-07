@@ -194,7 +194,7 @@ impl SearchSolution {
 
     pub fn peak_index_in_mountain_array(arr: Vec<i32>) -> i32 {
         let mut left = 0;
-        let mut right = arr.len()-1;
+        let mut right = arr.len() - 1;
         while left < right {
             let mid = (left + right) / 2;
             if arr[mid] < arr[mid + 1] {
@@ -205,7 +205,6 @@ impl SearchSolution {
         }
         left as i32
     }
-
 }
 
 pub fn main() {}
@@ -360,7 +359,10 @@ mod search_test {
 
     #[test]
     fn test_peak_index_in_mountain_array() {
-        assert_eq!(SearchSolution::peak_index_in_mountain_array(vec![0, 1, 0]), 1);
+        assert_eq!(
+            SearchSolution::peak_index_in_mountain_array(vec![0, 1, 0]),
+            1
+        );
         assert_eq!(
             SearchSolution::peak_index_in_mountain_array(vec![0, 2, 1, 0]),
             1
@@ -374,11 +376,13 @@ mod search_test {
             2
         );
         assert_eq!(
-            SearchSolution::peak_index_in_mountain_array(vec![24, 69, 100, 99, 79, 78, 67, 36, 26, 19]),
+            SearchSolution::peak_index_in_mountain_array(vec![
+                24, 69, 100, 99, 79, 78, 67, 36, 26, 19
+            ]),
             2
         );
         assert_eq!(
-            SearchSolution::peak_index_in_mountain_array(vec![0,3,5,12,2]),
+            SearchSolution::peak_index_in_mountain_array(vec![0, 3, 5, 12, 2]),
             3
         );
     }

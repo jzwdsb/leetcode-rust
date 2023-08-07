@@ -1,17 +1,17 @@
+pub mod array;
+pub mod graph;
+pub mod list;
 pub mod math;
 pub mod stack;
 pub mod strings;
-pub mod list;
-pub mod array;
 pub mod tree;
-pub mod graph;
 
-pub mod dynamic_programming;
-pub mod search;
 pub mod backtrack;
+pub mod dynamic_programming;
 pub mod recursive;
-pub mod sort;
+pub mod search;
 pub mod sliding_window;
+pub mod sort;
 // pub mod http;
 // pub mod postgres;
 
