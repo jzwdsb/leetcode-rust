@@ -96,6 +96,45 @@ impl ListSolution {
         }
     }
 
+    /* link: https://leetcode.com/problems/add-two-numbers-ii/
+    we can use stack by storing the value in reverse order
+    and pop the value from the stack to construct the list
+     */
+    
+    pub fn add_two_numbers_ii(
+        l1: Option<Box<ListNode<i32>>>,
+        l2: Option<Box<ListNode<i32>>>
+    ) -> Option<Box<ListNode<i32>>> {
+        let mut stack1 = Vec::new();
+        let mut stack2 = Vec::new();
+        let mut res = None;
+        let mut carry = 0;
+        let mut l1 = l1;
+        let mut l2 = l2;
+        while l1.is_some() {
+            stack1.push(l1.as_ref().unwrap().val);
+            l1 = l1.unwrap().next;
+        }
+        while l2.is_some() {
+            stack2.push(l2.as_ref().unwrap().val);
+            l2 = l2.unwrap().next;
+        }
+        while !stack1.is_empty() || !stack2.is_empty() || carry != 0 {
+            let mut val = carry;
+            if !stack1.is_empty() {
+                val += stack1.pop().unwrap();
+            }
+            if !stack2.is_empty() {
+                val += stack2.pop().unwrap();
+            }
+            carry = val / 10;
+            let mut node = ListNode::new(val % 10);
+            node.next = res;
+            res = Some(Box::new(node));
+        }
+        res
+    }
+
     pub fn swap_pairs(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
         let mut dummy = Some(Box::new(ListNode { val: 0, next: head }));
         let mut prev = dummy.as_mut();
@@ -281,6 +320,30 @@ mod tests {
         assert_eq!(
             ListSolution::add_two_numbers(l1, l2),
             ListNode::from_vec(vec![8, 9, 9, 9, 0, 0, 0, 1])
+        );
+    }
+
+    #[test]
+    fn test_add_two_numbers_ii() {
+        let l1 = ListNode::from_vec(vec![7, 2, 4, 3]);
+        let l2 = ListNode::from_vec(vec![5, 6, 4]);
+        assert_eq!(
+            ListSolution::add_two_numbers_ii(l1, l2),
+            ListNode::from_vec(vec![7, 8, 0, 7])
+        );
+
+        let l1 = ListNode::from_vec(vec![0]);
+        let l2 = ListNode::from_vec(vec![0]);
+        assert_eq!(
+            ListSolution::add_two_numbers_ii(l1, l2),
+            ListNode::from_vec(vec![0])
+        );
+
+        let l1 = ListNode::from_vec(vec![9, 9, 9, 9, 9, 9, 9]);
+        let l2 = ListNode::from_vec(vec![9, 9, 9, 9]);
+        assert_eq!(
+            ListSolution::add_two_numbers_ii(l1, l2),
+            ListNode::from_vec(vec![1, 0, 0, 0, 9, 9, 9, 8])
         );
     }
 
