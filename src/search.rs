@@ -205,6 +205,22 @@ impl SearchSolution {
         }
         left as i32
     }
+
+    pub fn find_kth_largest(nums: Vec<i32>, k: i32) -> i32 {
+        // use select_nth_unstable can easily solve this problem
+        // but I want to implement a heap solution
+        // let n = nums.len();
+        // *nums.select_nth_unstable(n-k as usize).1
+        use std::cmp::Reverse;
+        let mut min_heap = std::collections::BinaryHeap::<Reverse<i32>>::new();
+        for i in k as usize..nums.len() {
+            min_heap.push(Reverse(nums[i]));
+            if min_heap.len() > k as usize {
+                min_heap.pop();
+            }
+        }
+        min_heap.pop().unwrap().0
+    }
 }
 
 pub fn main() {}
@@ -385,5 +401,11 @@ mod search_test {
             SearchSolution::peak_index_in_mountain_array(vec![0, 3, 5, 12, 2]),
             3
         );
+    }
+
+    #[test]
+    fn test_find_kth_largest()  {
+        assert_eq!(SearchSolution::find_kth_largest(vec![3,2,1,5,6,4], 2), 5);
+        assert_eq!(SearchSolution::find_kth_largest(vec![3,2,3,1,2,4,5,5,6], 4), 4);
     }
 }
