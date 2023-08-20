@@ -221,6 +221,49 @@ impl SearchSolution {
         }
         min_heap.pop().unwrap().0
     }
+
+    /*
+    link: https://leetcode.com/problems/01-matrix/
+    find the nearest 0 for each cell
+    res[i][j] = min(res[i][j], res[i-1][j], res[i+1][j], res[i][j-1], res[i][j+1]) + 1
+    use bfs to solve this problem
+    for each cell with value 0, push (row, col) into queue and set res[row][col] = 0
+    for each cell with value 1, set res[row][col] = i32::MAX
+    update the res[row][col] with the min value of its neighbors
+     */
+
+    pub fn update_matrix(mat: Vec<Vec<i32>>) -> Vec<Vec<i32>> {
+        let mut res = vec![vec![i32::MAX; mat[0].len()]; mat.len()];
+        let mut queue = std::collections::VecDeque::new();
+        for i in 0..mat.len() {
+            for j in 0..mat[0].len() {
+                if mat[i][j] == 0 {
+                    res[i][j] = 0;
+                    queue.push_back((i, j));
+                }
+            }
+        }
+
+        let direction = [(0, 1), (0, -1), (1, 0), (-1, 0)];
+
+        while let Some((row, col)) = queue.pop_front() {
+            for (dx, dy) in direction.iter() {
+                let x = row as i32 + dx;
+                let y = col as i32 + dy;
+                if x >= 0
+                    && x < mat.len() as i32
+                    && y >= 0
+                    && y < mat[0].len() as i32
+                    && res[x as usize][y as usize] > res[row][col] + 1
+                {
+                    queue.push_back((x as usize, y as usize));
+                    res[x as usize][y as usize] = res[row][col] + 1;
+                }
+            }
+        }
+
+        res
+    }
 }
 
 pub fn main() {}
@@ -407,5 +450,17 @@ mod search_test {
     fn test_find_kth_largest()  {
         assert_eq!(SearchSolution::find_kth_largest(vec![3,2,1,5,6,4], 2), 5);
         assert_eq!(SearchSolution::find_kth_largest(vec![3,2,3,1,2,4,5,5,6], 4), 4);
+    }
+
+    #[test]
+    fn test_update_matrix() {
+        assert_eq!(
+            SearchSolution::update_matrix(vec![vec![0, 0, 0], vec![0, 1, 0], vec![0, 0, 0]]),
+            vec![vec![0, 0, 0], vec![0, 1, 0], vec![0, 0, 0]]
+        );
+        assert_eq!(
+            SearchSolution::update_matrix(vec![vec![0, 0, 0], vec![0, 1, 0], vec![1, 1, 1]]),
+            vec![vec![0, 0, 0], vec![0, 1, 0], vec![1, 2, 1]]
+        );
     }
 }
