@@ -599,6 +599,28 @@ impl ArraySolution {
 
         vec![front as i32 + 1, back as i32 + 1]
     }
+
+    /*
+    link: https://leetcode.com/problems/maximum-product-subarray/
+    dp solve
+    define two variables curr_min and curr_max
+    curr_min stores the minimum product of subarray ending with nums[i]
+    curr_max stores the maximum product of subarray ending with nums[i]
+    curr_min = min(curr_min * nums[i], curr_max * nums[i], nums[i])
+    curr_max = max(curr_min * nums[i], curr_max * nums[i], nums[i])
+     */
+
+    pub fn max_product(nums: Vec<i32>) -> i32 {
+        let first_num = nums[0];
+        let (mut curr_min, mut curr_max) = (1, 1);
+        nums.into_iter().fold(first_num, |max_prod, n| {
+            let tmp = n * curr_max;
+            curr_max = n.max(tmp).max(n * curr_min);
+            curr_min = n.min(tmp).min(n * curr_min);
+
+            std::cmp::max(max_prod, curr_max)
+        })
+    }
 }
 
 pub fn main() {}
@@ -907,5 +929,12 @@ mod tests {
         assert_eq!(ArraySolution::two_sum(vec![2, 7, 11, 15], 9), vec![1, 2]);
         assert_eq!(ArraySolution::two_sum(vec![2, 3, 4], 6), vec![1, 3]);
         assert_eq!(ArraySolution::two_sum(vec![-1, 0], -1), vec![1, 2]);
+    }
+
+    #[test]
+    fn test_max_product() {
+        assert_eq!(ArraySolution::max_product(vec![2, 3, -2, 4]), 6);
+        assert_eq!(ArraySolution::max_product(vec![-2, 0, -1]), 0);
+        assert_eq!(ArraySolution::max_product(vec![-4, -3, -2]), 12)
     }
 }
