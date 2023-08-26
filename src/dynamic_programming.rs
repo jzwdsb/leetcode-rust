@@ -297,6 +297,32 @@ impl DPSolution {
         }
         dp[amount as usize]
     }
+    
+    /*
+    link https://leetcode.com/problems/coin-change/
+    find the fewest number of coins that you need to make up that amount
+    dp solve
+    dp[i] represents the fewest number of coins that you need to make up amount i
+    dp[i] = min(dp[i], dp[i-coin]+1)
+    return dp[amount]
+     */
+
+    pub fn coin_change(coins:Vec<i32>, amount: i32) -> i32 {
+        let mut dp = vec![amount+1; amount as usize + 1];
+        dp[0] = 0;
+        for i in 1..=amount {
+            for coin in &coins {
+                if i >= *coin {
+                    // dp[i] = dp[i].min(dp[i-coin]+1); dp[i-coin] + 1 is the way to make up amount i with coin
+                    dp[i as usize] = dp[i as usize].min(dp[(i - coin) as usize] + 1);
+                }
+            }
+        }
+        if dp[amount as usize] > amount {
+            return -1;
+        }
+        dp[amount as usize]
+    }
 }
 
 #[cfg(test)]
@@ -400,5 +426,11 @@ mod test {
         assert_eq!(DPSolution::change(5, vec![1, 2, 5]), 4);
         assert_eq!(DPSolution::change(3, vec![2]), 0);
         assert_eq!(DPSolution::change(10, vec![10]), 1);
+    }
+
+    #[test]
+    fn test_coin_change() {
+        assert_eq!(DPSolution::coin_change(vec![1, 2, 5], 11), 3);
+        assert_eq!(DPSolution::coin_change(vec![2], 3), -1);
     }
 }
