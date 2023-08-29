@@ -621,6 +621,22 @@ impl ArraySolution {
             std::cmp::max(max_prod, curr_max)
         })
     }
+
+    pub fn sinlge_number(nums: Vec<i32>) -> i32 {
+        let mut res = 0;
+        for num in nums {
+            res ^= num;
+        }
+        res
+    }
+
+    pub fn missing_number(nums: Vec<i32>) -> i32 {
+        let mut res = 0;
+        for (i, num) in nums.iter().enumerate() {
+            res ^= i as i32 ^ num;
+        }
+        res ^ nums.len() as i32
+    }
 }
 
 pub fn main() {}
@@ -936,5 +952,13 @@ mod tests {
         assert_eq!(ArraySolution::max_product(vec![2, 3, -2, 4]), 6);
         assert_eq!(ArraySolution::max_product(vec![-2, 0, -1]), 0);
         assert_eq!(ArraySolution::max_product(vec![-4, -3, -2]), 12)
+    }
+
+    #[test]
+    fn test_missing_number() {
+        assert_eq!(ArraySolution::missing_number(vec![3, 0, 1]), 2);
+        assert_eq!(ArraySolution::missing_number(vec![0, 1]), 2);
+        assert_eq!(ArraySolution::missing_number(vec![9, 6, 4, 2, 3, 5, 7, 0, 1]), 8);
+        assert_eq!(ArraySolution::missing_number(vec![0]), 1);
     }
 }
