@@ -380,6 +380,33 @@ impl StringSolution {
             .collect::<String>();
         alpha == alpha.chars().rev().collect::<String>()
     }
+
+    pub fn reverse_vowels(s: String) -> String {
+        let mut s = s.chars().collect::<Vec<char>>();
+        let mut i = 0;
+        let mut j = s.len() - 1;
+        while i < j {
+            if !Self::is_vowel(s[i]) {
+                i += 1;
+                continue;
+            }
+            if !Self::is_vowel(s[j]) {
+                j -= 1;
+                continue;
+            }
+            s.swap(i, j);
+            i += 1;
+            j -= 1;
+        }
+        s.into_iter().collect::<String>()
+    }
+
+    fn is_vowel(c: char) -> bool {
+        matches!(
+            c,
+            'a' | 'e' | 'i' | 'o' | 'u' | 'A' | 'E' | 'I' | 'O'
+        )
+    }
 }
 
 pub fn main() {}
@@ -544,5 +571,17 @@ mod tests {
             StringSolution::is_palindrome("A man, a plan, a canal: Panama".to_string()),
             true
         )
+    }
+
+    #[test]
+    fn test_reverse_vowel() {
+        assert_eq!(
+            StringSolution::reverse_vowels("hello".to_string()),
+            "holle".to_string()
+        );
+        assert_eq!(
+            StringSolution::reverse_vowels("leetcode".to_string()),
+            "leotcede".to_string()
+        );
     }
 }
