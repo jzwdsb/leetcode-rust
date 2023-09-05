@@ -100,10 +100,10 @@ impl ListSolution {
     we can use stack by storing the value in reverse order
     and pop the value from the stack to construct the list
      */
-    
+
     pub fn add_two_numbers_ii(
         l1: Option<Box<ListNode<i32>>>,
-        l2: Option<Box<ListNode<i32>>>
+        l2: Option<Box<ListNode<i32>>>,
     ) -> Option<Box<ListNode<i32>>> {
         let mut stack1 = Vec::new();
         let mut stack2 = Vec::new();
@@ -278,6 +278,21 @@ impl ListSolution {
         }
         false
     }
+    pub fn delete_duplicates(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+        let mut dummy = Some(Box::new(ListNode { val: 0, next: head }));
+        let mut prev = dummy.as_mut();
+        while prev.as_ref().unwrap().next.is_some() {
+            let mut curr = prev.as_mut().unwrap().next.take();
+            while curr.as_ref().unwrap().next.is_some()
+                && curr.as_ref().unwrap().val == curr.as_ref().unwrap().next.as_ref().unwrap().val
+            {
+                curr = curr.unwrap().next;
+            }
+            prev.as_mut().unwrap().next = curr.take();
+            prev = prev.unwrap().next.as_mut();
+        }
+        dummy.unwrap().next
+    }
 }
 
 pub fn main() {}
@@ -446,5 +461,18 @@ mod tests {
         let head = ListNode::from_vec(vec![]);
         let ans = ListNode::from_vec(vec![]);
         assert_eq!(ListSolution::reverse_list(head), ans);
+    }
+
+    #[test]
+    fn test_delete_duplicates() {
+        let head = ListNode::from_vec(vec![1, 2, 3, 3, 4, 4, 5]);
+        let ans = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        assert_eq!(ListSolution::delete_duplicates(head), ans);
+        let head = ListNode::from_vec(vec![1, 1, 1, 2, 3]);
+        let ans = ListNode::from_vec(vec![1, 2, 3]);
+        assert_eq!(ListSolution::delete_duplicates(head), ans);
+        let head = ListNode::from_vec(vec![1, 1, 1, 1, 1]);
+        let ans = ListNode::from_vec(vec![1]);
+        assert_eq!(ListSolution::delete_duplicates(head), ans);
     }
 }
