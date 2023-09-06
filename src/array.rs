@@ -637,6 +637,18 @@ impl ArraySolution {
         }
         res ^ nums.len() as i32
     }
+
+
+    /*
+    link: https://leetcode.com/problems/make-two-arrays-equal-by-reversing-subarrays/
+     */
+    pub fn can_be_equal(target: Vec<i32>, arr: Vec<i32>) -> bool {
+        let mut target = target;
+        let mut arr = arr;
+        target.sort_unstable();
+        arr.sort_unstable();
+        target == arr
+    }
 }
 
 pub fn main() {}
