@@ -407,6 +407,40 @@ impl StringSolution {
             'a' | 'e' | 'i' | 'o' | 'u' | 'A' | 'E' | 'I' | 'O'
         )
     }
+
+    pub fn is_isomorphic(s: String, t: String) -> bool {
+        let mut map = std::collections::HashMap::new();
+        let mut map2 = std::collections::HashMap::new();
+        let s = s.chars().collect::<Vec<char>>();
+        let t = t.chars().collect::<Vec<char>>();
+        for i in 0..s.len() {
+            match (map.get(&s[i]), map2.get(&t[i])) {
+                (Some(sc), Some(tc)) => {
+                    if sc != &t[i] || tc != &s[i] {
+                        return false;
+                    }
+                },
+                (Some(sc), None) => {
+                    if sc != &t[i] {
+                        return false;
+                    }
+                    map2.insert(t[i], s[i]);
+                },
+                (None, Some(tc)) => {
+                    if tc != &s[i] {
+                        return false;
+                    }
+                    map.insert(s[i], t[i]);
+                },
+                (None, None) => {
+                    map.insert(s[i], t[i]);
+                    map2.insert(t[i], s[i]);
+                }
+                
+            }
+        }
+        true
+    }
 }
 
 pub fn main() {}
@@ -582,6 +616,26 @@ mod tests {
         assert_eq!(
             StringSolution::reverse_vowels("leetcode".to_string()),
             "leotcede".to_string()
+        );
+    }
+
+    #[test]
+    fn test_is_isomorphic() {
+        assert_eq!(
+            StringSolution::is_isomorphic("egg".to_string(), "add".to_string()),
+            true
+        );
+        assert_eq!(
+            StringSolution::is_isomorphic("foo".to_string(), "bar".to_string()),
+            false
+        );
+        assert_eq!(
+            StringSolution::is_isomorphic("paper".to_string(), "title".to_string()),
+            true
+        );
+        assert_eq!(
+            StringSolution::is_isomorphic("ab".to_string(), "aa".to_string()),
+            false
         );
     }
 }
