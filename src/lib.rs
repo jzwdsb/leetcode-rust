@@ -7,7 +7,7 @@ pub mod strings;
 pub mod tree;
 
 pub mod backtrack;
-pub mod dynamic_programming;
+pub mod dp;
 pub mod recursive;
 pub mod search;
 pub mod sliding_window;

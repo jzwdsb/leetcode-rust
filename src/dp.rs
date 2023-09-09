@@ -323,6 +323,39 @@ impl DPSolution {
         }
         dp[amount as usize]
     }
+
+    /*
+    link: https://leetcode.com/problems/edit-distance/
+    given two words word1 and word2, find the minimum number of operations required to convert word1 to word2.
+    we can solve this problem using dynamic programming.
+    let dp[i][j] be the minimum number of operations required to convert word1[0..i] to word2[0..j].
+    if word1[i] == word2[j], then dp[i][j] = dp[i - 1][j - 1]
+    otherwise, dp[i][j] = min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]) + 1
+    
+     */
+
+     pub fn min_distance(word1: String, word2: String) -> i32 {
+        let mut dp = vec![vec![0; word2.len() + 1]; word1.len() + 1];
+        for i in 0..=word1.len() {
+            dp[i][0] = i; // initialize the first column
+        }
+        for j in 0..=word2.len() {
+            dp[0][j] = j; // initialize the first row 
+        }
+        for i in 1..=word1.len() {
+            for j in 1..=word2.len() {
+                if word1.chars().nth(i - 1) == word2.chars().nth(j - 1) {
+                    dp[i][j] = dp[i - 1][j - 1];
+                } else {
+                    let insert = dp[i][j - 1] + 1;   // insert word2[j]
+                    let delete = dp[i - 1][j] + 1; // delete word1[i]
+                    let replace = dp[i - 1][j - 1] + 1;  // replace word1[i] with word2[j]
+                    dp[i][j] = insert.min(delete).min(replace);
+                }
+            }
+        }
+        dp[word1.len()][word2.len()] as i32
+    }
 }
 
 #[cfg(test)]
@@ -432,5 +465,17 @@ mod test {
     fn test_coin_change() {
         assert_eq!(DPSolution::coin_change(vec![1, 2, 5], 11), 3);
         assert_eq!(DPSolution::coin_change(vec![2], 3), -1);
+    }
+
+    #[test]
+    fn test_min_distance() {
+        assert_eq!(
+            DPSolution::min_distance("horse".to_string(), "ros".to_string()),
+            3
+        );
+        assert_eq!(
+            DPSolution::min_distance("intention".to_string(), "execution".to_string()),
+            5
+        );
     }
 }

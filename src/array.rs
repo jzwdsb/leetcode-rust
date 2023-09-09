@@ -649,6 +649,44 @@ impl ArraySolution {
         arr.sort_unstable();
         target == arr
     }
+
+    /*
+    link: https://leetcode.com/problems/trapping-rain-water/
+    steps:
+    1. find the max height of the left and right
+    2. if height[left] < height[right], we can trap the water from the left
+    3. else we can trap the water from the right
+    4. update the left and right 
+    5. repeat 1-4 until left >= right
+
+    for position[i], we can trap the water min(left_max, right_max) - height[i]
+     */
+
+    pub fn trap_rain(height: Vec<i32>) -> i32 {
+        let mut res = 0;  // the result, res += min(left_max, right_max) - height[i]
+        let mut left = 0; // left pointer
+        let mut right = height.len() - 1; // right pointer
+        let mut left_max = 0; // the max height of the left
+        let mut right_max = 0; // the max height of the right
+        while left < right {
+            if height[left] < height[right] {
+                if height[left] >= left_max {
+                    left_max = height[left];
+                } else {
+                    res += left_max - height[left];
+                }
+                left += 1;
+            } else {
+                if height[right] >= right_max {
+                    right_max = height[right];
+                } else {
+                    res += right_max - height[right];
+                }
+                right -= 1;
+            }
+        }
+        res
+    } 
 }
 
 pub fn main() {}
@@ -972,5 +1010,11 @@ mod tests {
         assert_eq!(ArraySolution::missing_number(vec![0, 1]), 2);
         assert_eq!(ArraySolution::missing_number(vec![9, 6, 4, 2, 3, 5, 7, 0, 1]), 8);
         assert_eq!(ArraySolution::missing_number(vec![0]), 1);
+    }
+
+    #[test]
+    fn test_trap_rain() {
+        assert_eq!(ArraySolution::trap_rain(vec![0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2]), 6);
+        assert_eq!(ArraySolution::trap_rain(vec![4, 2, 0, 3, 2, 5]), 9);
     }
 }
