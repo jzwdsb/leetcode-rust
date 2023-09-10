@@ -687,6 +687,28 @@ impl ArraySolution {
         }
         res
     } 
+
+    /*
+    link: https://leetcode.com/problems/maximum-sum-of-an-hourglass/
+    the brut force solution is pretty straightforward
+    the size and the shape of the hourglass is fixed with 3x3
+    but the input is not
+    so we can use two for loops to traverse the input
+    and calculate the sum of the hourglass
+     */
+
+    pub fn max_sum(grid: Vec<Vec<i32>>) -> i32 {
+        let mut res = i32::MIN;
+        for i in 0..grid.len() - 2 {
+            for j in 0..grid[0].len() - 2 {
+                let sum = grid[i][j] + grid[i][j + 1] + grid[i][j + 2]
+                    + grid[i + 1][j + 1]
+                    + grid[i + 2][j] + grid[i + 2][j + 1] + grid[i + 2][j + 2];
+                res = res.max(sum);
+            }
+        }
+        res
+    }
 }
 
 pub fn main() {}
@@ -1016,5 +1038,31 @@ mod tests {
     fn test_trap_rain() {
         assert_eq!(ArraySolution::trap_rain(vec![0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2]), 6);
         assert_eq!(ArraySolution::trap_rain(vec![4, 2, 0, 3, 2, 5]), 9);
+    }
+
+    #[test]
+    fn test_max_sum_hourglass() {
+        assert_eq!(
+            ArraySolution::max_sum(vec![
+                vec![-9, -9, -9, 1, 1, 1],
+                vec![0, -9, 0, 4, 3, 2],
+                vec![-9, -9, -9, 1, 2, 3],
+                vec![0, 0, 8, 6, 6, 0],
+                vec![0, 0, 0, -2, 0, 0],
+                vec![0, 0, 1, 2, 4, 0]
+            ]),
+            28
+        );
+        assert_eq!(
+            ArraySolution::max_sum(vec![
+                vec![1, 1, 1, 0, 0, 0],
+                vec![0, 1, 0, 0, 0, 0],
+                vec![1, 1, 1, 0, 0, 0],
+                vec![0, 0, 2, 4, 4, 0],
+                vec![0, 0, 0, 2, 0, 0],
+                vec![0, 0, 1, 2, 4, 0]
+            ]),
+            19
+        );
     }
 }
