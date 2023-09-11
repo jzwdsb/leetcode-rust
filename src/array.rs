@@ -80,6 +80,28 @@ impl ArraySolution {
         }
         max_profit
     }
+
+    /*
+    link: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-ii/
+    On each day, you may decide to buy and/or sell the stock.
+    You can only hold at most one share of the stock at any time.
+    However, you can buy it then immediately sell it on the same day.
+
+    the max profit at day[i] we can make is prices[i] - min(prices[0..i])
+    so we can calculate the max profit at each day
+    and sum them up to get the max profit
+    we can find the subarray that is increasing
+    and sum up the difference between the first and last element
+    time complexity: O(n) space complexity: O(1)
+
+     */
+    pub fn max_profit_ii(prices: Vec<i32>) -> i32 {
+        // one line solution
+        prices
+            .windows(2)
+            .fold(0, |acc, w| acc + (w[1] - w[0]).max(0))
+    }
+
     /*
     link: https://leetcode.com/problems/average-salary-excluding-the-minimum-and-maximum-salary/
      */
@@ -638,7 +660,6 @@ impl ArraySolution {
         res ^ nums.len() as i32
     }
 
-
     /*
     link: https://leetcode.com/problems/make-two-arrays-equal-by-reversing-subarrays/
      */
@@ -656,14 +677,14 @@ impl ArraySolution {
     1. find the max height of the left and right
     2. if height[left] < height[right], we can trap the water from the left
     3. else we can trap the water from the right
-    4. update the left and right 
+    4. update the left and right
     5. repeat 1-4 until left >= right
 
     for position[i], we can trap the water min(left_max, right_max) - height[i]
      */
 
     pub fn trap_rain(height: Vec<i32>) -> i32 {
-        let mut res = 0;  // the result, res += min(left_max, right_max) - height[i]
+        let mut res = 0; // the result, res += min(left_max, right_max) - height[i]
         let mut left = 0; // left pointer
         let mut right = height.len() - 1; // right pointer
         let mut left_max = 0; // the max height of the left
@@ -686,7 +707,7 @@ impl ArraySolution {
             }
         }
         res
-    } 
+    }
 
     /*
     link: https://leetcode.com/problems/maximum-sum-of-an-hourglass/
@@ -701,9 +722,13 @@ impl ArraySolution {
         let mut res = i32::MIN;
         for i in 0..grid.len() - 2 {
             for j in 0..grid[0].len() - 2 {
-                let sum = grid[i][j] + grid[i][j + 1] + grid[i][j + 2]
+                let sum = grid[i][j]
+                    + grid[i][j + 1]
+                    + grid[i][j + 2]
                     + grid[i + 1][j + 1]
-                    + grid[i + 2][j] + grid[i + 2][j + 1] + grid[i + 2][j + 2];
+                    + grid[i + 2][j]
+                    + grid[i + 2][j + 1]
+                    + grid[i + 2][j + 2];
                 res = res.max(sum);
             }
         }
@@ -1030,13 +1055,19 @@ mod tests {
     fn test_missing_number() {
         assert_eq!(ArraySolution::missing_number(vec![3, 0, 1]), 2);
         assert_eq!(ArraySolution::missing_number(vec![0, 1]), 2);
-        assert_eq!(ArraySolution::missing_number(vec![9, 6, 4, 2, 3, 5, 7, 0, 1]), 8);
+        assert_eq!(
+            ArraySolution::missing_number(vec![9, 6, 4, 2, 3, 5, 7, 0, 1]),
+            8
+        );
         assert_eq!(ArraySolution::missing_number(vec![0]), 1);
     }
 
     #[test]
     fn test_trap_rain() {
-        assert_eq!(ArraySolution::trap_rain(vec![0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2]), 6);
+        assert_eq!(
+            ArraySolution::trap_rain(vec![0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2]),
+            6
+        );
         assert_eq!(ArraySolution::trap_rain(vec![4, 2, 0, 3, 2, 5]), 9);
     }
 
