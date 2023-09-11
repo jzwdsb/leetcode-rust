@@ -103,6 +103,33 @@ impl ArraySolution {
     }
 
     /*
+    link: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
+    we can not buy on the day and the day after we sell
+    so we can use two variables to represent the max profit at day[i]
+    1. hold[i]: the max profit at day[i] we can make if we hold the stock
+    2. sold[i]: the max profit at day[i] we can make if we sold the stock
+    hold[i] = max(hold[i-1],     hold[i-1] means we do nothing at day[i], 
+                  sold[i-2] - prices[i]) . sold[i-2] means we sold the stock at day[i-2] and do nothing at day[i-1]
+                                
+    sold[i] = max(sold[i-1],  sold[i-1] means we do nothing at day[i]
+                 hold[i-1] + prices[i]) hold[i-1] means we hold the stock at day[i-1] and sell it at day[i]
+    time complexity: O(n) space complexity: O(1)
+    at the end, we can get the max profit at day[n] from sold[n]
+     */
+
+    pub fn max_proft_with_cooldown(prices: Vec<i32>) -> i32 {
+        let mut hold = vec![i32::MIN; prices.len() + 1];
+        let mut sold = vec![0; prices.len() + 1];
+
+        for i in 1..=prices.len() {
+            hold[i] = hold[i - 1].max(if i >= 2 { sold[i - 2] } else { 0 } - prices[i - 1]);
+            sold[i] = sold[i - 1].max(hold[i - 1] + prices[i - 1]);
+        }
+
+        sold[prices.len()]
+    }
+
+    /*
     link: https://leetcode.com/problems/average-salary-excluding-the-minimum-and-maximum-salary/
      */
 
@@ -1094,6 +1121,21 @@ mod tests {
                 vec![0, 0, 1, 2, 4, 0]
             ]),
             19
+        );
+    }
+
+    #[test]
+    fn test_max_profit_ii() {
+        assert_eq!(ArraySolution::max_profit_ii(vec![7, 1, 5, 3, 6, 4]), 7);
+        assert_eq!(ArraySolution::max_profit_ii(vec![1, 2, 3, 4, 5]), 4);
+        assert_eq!(ArraySolution::max_profit_ii(vec![7, 6, 4, 3, 1]), 0);
+    }
+
+    #[test]
+    fn test_max_profit_with_cooldown() {
+        assert_eq!(
+            ArraySolution::max_proft_with_cooldown(vec![1, 2, 3, 0, 2]),
+            3
         );
     }
 }
