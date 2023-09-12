@@ -108,9 +108,9 @@ impl ArraySolution {
     so we can use two variables to represent the max profit at day[i]
     1. hold[i]: the max profit at day[i] we can make if we hold the stock
     2. sold[i]: the max profit at day[i] we can make if we sold the stock
-    hold[i] = max(hold[i-1],     hold[i-1] means we do nothing at day[i], 
+    hold[i] = max(hold[i-1],     hold[i-1] means we do nothing at day[i],
                   sold[i-2] - prices[i]) . sold[i-2] means we sold the stock at day[i-2] and do nothing at day[i-1]
-                                
+
     sold[i] = max(sold[i-1],  sold[i-1] means we do nothing at day[i]
                  hold[i-1] + prices[i]) hold[i-1] means we hold the stock at day[i-1] and sell it at day[i]
     time complexity: O(n) space complexity: O(1)
@@ -761,6 +761,40 @@ impl ArraySolution {
         }
         res
     }
+
+    /*
+    link: https://leetcode.com/problems/stone-game-vii/
+    at turn, alice can choose the left or right stone, and get the score of the rest of the stones
+    bob can do the same thing
+
+    max the difference between alice and bob
+
+    we can use dp to solve this problem
+    dp[i][j] represents the max difference between alice and bob at stones[i..j]
+    i, j means the index of the stones, where stones i,j remains
+    dp[i][j] = max(sum[i..j] - dp[i+1][j],   if alice choose the left stone
+                    sum[i..j] - dp[i][j-1])     if alice choose the right stone
+    time complexity: O(n^2) space complexity: O(n^2)
+
+     */
+    pub fn stone_game_vii(stones: Vec<i32>) -> i32 {
+        let mut dp = vec![vec![0; stones.len()]; stones.len()];
+        let sum = {
+            let mut sum = vec![0; stones.len() + 1];
+            for i in 0..stones.len() {
+                sum[i + 1] = sum[i] + stones[i];
+            }
+            sum
+        };
+
+        for i in (0..stones.len() - 1).rev() {
+            for j in i + 1..stones.len() {
+                dp[i][j] =
+                    (sum[j + 1] - sum[i + 1] - dp[i + 1][j]).max(sum[j] - sum[i] - dp[i][j - 1]);
+            }
+        }
+        dp[0][stones.len() - 1]
+    }
 }
 
 pub fn main() {}
@@ -1136,6 +1170,15 @@ mod tests {
         assert_eq!(
             ArraySolution::max_proft_with_cooldown(vec![1, 2, 3, 0, 2]),
             3
+        );
+    }
+
+    #[test]
+    fn test_stone_game_ii() {
+        assert_eq!(ArraySolution::stone_game_vii(vec![5, 3, 1, 4, 2]), 6);
+        assert_eq!(
+            ArraySolution::stone_game_vii(vec![7, 90, 5, 1, 100, 10, 10, 2]),
+            122
         );
     }
 }
