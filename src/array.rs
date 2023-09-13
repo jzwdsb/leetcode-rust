@@ -816,7 +816,7 @@ impl ArraySolution {
      */
     pub fn sort_colors(nums: &mut Vec<i32>) {
         let (mut i, mut j, mut k) = (0, 0usize, nums.len() - 1);
-        while j <= k as usize {
+        while j <= k {
             match nums[j] {
                 0 => {
                     nums.swap(i, j);
@@ -827,7 +827,7 @@ impl ArraySolution {
                     j += 1;
                 }
                 2 => {
-                    nums.swap(j, k as usize);
+                    nums.swap(j, k);
                     if k > 0 {
                         k -= 1;
                     } else {
