@@ -117,7 +117,7 @@ impl ArraySolution {
     at the end, we can get the max profit at day[n] from sold[n]
      */
 
-    pub fn max_proft_with_cooldown(prices: Vec<i32>) -> i32 {
+    pub fn max_profit_with_cool_down(prices: Vec<i32>) -> i32 {
         let mut hold = vec![i32::MIN; prices.len() + 1];
         let mut sold = vec![0; prices.len() + 1];
 
@@ -304,12 +304,12 @@ impl ArraySolution {
 
     #[allow(dead_code)]
     pub fn spiral_matrix_ii(n: i32) -> Vec<Vec<i32>> {
-        let mut matrix = vec![vec![0 as i32; n as usize]; n as usize];
+        let mut matrix = vec![vec![0i32; n as usize]; n as usize];
         let mut length_y = n as usize;
         let mut length_x = n as usize;
         let total_num = n * n;
         let (mut x, mut y) = (0, 0); // pointing to the current pos
-        let mut num = 1 as i32;
+        let mut num = 1i32;
         loop {
             // 4 steps in a loop
             // 1. to the right, y++ until y == length_y-1
@@ -470,7 +470,7 @@ impl ArraySolution {
 
     /*
     link: https://leetcode.com/problems/move-zeroes/
-    same solution at remove elelement
+    same solution at remove element
      */
 
     #[allow(dead_code)]
@@ -671,7 +671,7 @@ impl ArraySolution {
         })
     }
 
-    pub fn sinlge_number(nums: Vec<i32>) -> i32 {
+    pub fn single_number(nums: Vec<i32>) -> i32 {
         let mut res = 0;
         for num in nums {
             res ^= num;
@@ -794,6 +794,45 @@ impl ArraySolution {
             }
         }
         dp[0][stones.len() - 1]
+    }
+
+    /*
+    link: https://leetcode.com/problems/sort-colors/
+    we can use three pointers to solve this problem
+    i points to the element that is not equal to 0
+    j points to the element that is not equal to 1
+    k points to the element that is not equal to 2
+    we can use two pointers to travel the array
+    pointer j is the slow pointer points to the element that is not equal to 1
+    pointer k is the fast pointer points to the element that is equal to 2
+    every time nums[j] != val, we copy nums[j] to nums[i] and i += 1
+    so that we can remove all the element that is equal to val
+    time complexity: O(n) space complexity: O(1)
+
+    but there is a more straightforward solution
+    we can count sort the array
+    same time complexity, but more straightforward
+
+     */
+    pub fn sort_colors(nums: &mut Vec<i32>)  {
+        let (mut i, mut j, mut k) = (0,0, nums.len()-1);
+        while j <= k {
+            match nums[j] {
+                0 => {
+                    nums.swap(i, j);
+                    i += 1;
+                    j += 1;
+                }
+                1 => {
+                    j += 1;
+                }
+                2 => {
+                    nums.swap(j, k);
+                    k -= 1;
+                }
+                _ => unreachable!(),
+            }
+        }
     }
 }
 
@@ -985,7 +1024,7 @@ mod tests {
     }
 
     #[test]
-    fn test_sprial_matrix_ii() {
+    fn test_spiral_matrix_ii() {
         assert_eq!(
             ArraySolution::spiral_matrix_ii(3),
             vec![vec![1, 2, 3], vec![8, 9, 4], vec![7, 6, 5]]
@@ -1049,7 +1088,7 @@ mod tests {
     }
 
     #[test]
-    fn test_earse_overlap_intervals() {
+    fn test_erase_overlap_intervals() {
         assert_eq!(
             ArraySolution::erase_overlap_intervals(vec![vec![1, 2], vec![2, 3], vec![3, 4],]),
             0
@@ -1166,9 +1205,9 @@ mod tests {
     }
 
     #[test]
-    fn test_max_profit_with_cooldown() {
+    fn test_max_profit_with_cool_down() {
         assert_eq!(
-            ArraySolution::max_proft_with_cooldown(vec![1, 2, 3, 0, 2]),
+            ArraySolution::max_profit_with_cool_down(vec![1, 2, 3, 0, 2]),
             3
         );
     }
@@ -1180,5 +1219,24 @@ mod tests {
             ArraySolution::stone_game_vii(vec![7, 90, 5, 1, 100, 10, 10, 2]),
             122
         );
+    }
+
+    #[test]
+    fn test_sort_colors() {
+        let mut input = vec![2, 0, 2, 1, 1, 0];
+        ArraySolution::sort_colors(&mut input);
+        assert_eq!(input, vec![0, 0, 1, 1, 2, 2]);
+        let mut input = vec![2, 0, 1];
+        ArraySolution::sort_colors(&mut input);
+        assert_eq!(input, vec![0, 1, 2]);
+        let mut input = vec![0];
+        ArraySolution::sort_colors(&mut input);
+        assert_eq!(input, vec![0]);
+        let mut input = vec![1];
+        ArraySolution::sort_colors(&mut input);
+        assert_eq!(input, vec![1]);
+        let mut input = vec![2];
+        ArraySolution::sort_colors(&mut input);
+        assert_eq!(input, vec![2]);
     }
 }
