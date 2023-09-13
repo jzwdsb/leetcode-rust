@@ -814,9 +814,9 @@ impl ArraySolution {
     same time complexity, but more straightforward
 
      */
-    pub fn sort_colors(nums: &mut Vec<i32>)  {
-        let (mut i, mut j, mut k) = (0,0, nums.len()-1);
-        while j <= k {
+    pub fn sort_colors(nums: &mut Vec<i32>) {
+        let (mut i, mut j, mut k) = (0, 0usize, nums.len() - 1);
+        while j <= k as usize {
             match nums[j] {
                 0 => {
                     nums.swap(i, j);
@@ -827,8 +827,12 @@ impl ArraySolution {
                     j += 1;
                 }
                 2 => {
-                    nums.swap(j, k);
-                    k -= 1;
+                    nums.swap(j, k as usize);
+                    if k > 0 {
+                        k -= 1;
+                    } else {
+                        break;
+                    }
                 }
                 _ => unreachable!(),
             }
@@ -927,7 +931,7 @@ mod tests {
                 vec![15, 13, 2, 5],
                 vec![14, 3, 4, 1],
                 vec![12, 6, 8, 9],
-                vec![16, 7, 10, 11]
+                vec![16, 7, 10, 11],
             ]
         );
     }
@@ -954,7 +958,7 @@ mod tests {
             ArraySolution::spiral_order(vec![
                 vec![1, 2, 3, 4],
                 vec![5, 6, 7, 8],
-                vec![9, 10, 11, 12]
+                vec![9, 10, 11, 12],
             ]),
             vec![1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7]
         );
@@ -1001,7 +1005,7 @@ mod tests {
     #[test]
     fn test_insert_interval() {
         assert_eq!(
-            ArraySolution::insert_interval(vec![vec![1, 3], vec![6, 9]], vec![2, 5],),
+            ArraySolution::insert_interval(vec![vec![1, 3], vec![6, 9]], vec![2, 5]),
             vec![vec![1, 5], vec![6, 9]]
         );
         assert_eq!(
@@ -1011,14 +1015,14 @@ mod tests {
                     vec![3, 5],
                     vec![6, 7],
                     vec![8, 10],
-                    vec![12, 16]
+                    vec![12, 16],
                 ],
                 vec![4, 8],
             ),
             vec![vec![1, 2], vec![3, 10], vec![12, 16]]
         );
         assert_eq!(
-            ArraySolution::insert_interval(vec![vec![1, 5]], vec![2, 3],),
+            ArraySolution::insert_interval(vec![vec![1, 5]], vec![2, 3]),
             vec![vec![1, 5]]
         );
     }
@@ -1090,15 +1094,15 @@ mod tests {
     #[test]
     fn test_erase_overlap_intervals() {
         assert_eq!(
-            ArraySolution::erase_overlap_intervals(vec![vec![1, 2], vec![2, 3], vec![3, 4],]),
+            ArraySolution::erase_overlap_intervals(vec![vec![1, 2], vec![2, 3], vec![3, 4]]),
             0
         );
         assert_eq!(
-            ArraySolution::erase_overlap_intervals(vec![vec![1, 2], vec![1, 2], vec![1, 2],]),
+            ArraySolution::erase_overlap_intervals(vec![vec![1, 2], vec![1, 2], vec![1, 2]]),
             2
         );
         assert_eq!(
-            ArraySolution::erase_overlap_intervals(vec![vec![1, 2], vec![2, 3],]),
+            ArraySolution::erase_overlap_intervals(vec![vec![1, 2], vec![2, 3]]),
             0
         );
         assert_eq!(
@@ -1180,7 +1184,7 @@ mod tests {
                 vec![-9, -9, -9, 1, 2, 3],
                 vec![0, 0, 8, 6, 6, 0],
                 vec![0, 0, 0, -2, 0, 0],
-                vec![0, 0, 1, 2, 4, 0]
+                vec![0, 0, 1, 2, 4, 0],
             ]),
             28
         );
@@ -1191,7 +1195,7 @@ mod tests {
                 vec![1, 1, 1, 0, 0, 0],
                 vec![0, 0, 2, 4, 4, 0],
                 vec![0, 0, 0, 2, 0, 0],
-                vec![0, 0, 1, 2, 4, 0]
+                vec![0, 0, 1, 2, 4, 0],
             ]),
             19
         );
