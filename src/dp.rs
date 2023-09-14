@@ -356,6 +356,35 @@ impl DPSolution {
         }
         dp[word1.len()][word2.len()] as i32
     }
+    /*
+    link: https://leetcode.com/problems/distinct-subsequences/
+    given a string S and a string T, count the number of distinct subsequences of S which equals T.
+
+    we can use dp to solve this problem.
+    let dp[i][j] be the number of distinct subsequences of S[0..i] which equals T[0..j]
+    if S[i] == T[j], that means we can use S[i] to match T[j],
+     the number of distinct subsequences is the sum of the number of distinct subsequences
+     of S[0..i-1] which equals T[0..j-1] and the number of distinct subsequences of S[0..i-1] which equals T[0..j]
+    then dp[i][j] = dp[i - 1][j - 1] + dp[i - 1][j]
+    otherwise, dp[i][j] = dp[i - 1][j]
+
+     */
+    pub fn num_distinct(s: String, t: String) -> i32 {
+        let mut dp = vec![vec![0; t.len() + 1]; s.len() + 1];
+        for i in 0..=s.len() {
+            dp[i][0] = 1; // if s is empty, then there is only one way to make up t
+        }
+        for i in 1..=s.len() {
+            for j in 1..=t.len() {
+                dp[i][j] = if s.chars().nth(i - 1) == t.chars().nth(j - 1) {
+                    dp[i - 1][j - 1] + dp[i - 1][j]
+                } else {
+                    dp[i - 1][j]
+                }
+            }
+        }
+        dp[s.len()][t.len()]
+    }
 }
 
 #[cfg(test)]
@@ -475,6 +504,18 @@ mod test {
         );
         assert_eq!(
             DPSolution::min_distance("intention".to_string(), "execution".to_string()),
+            5
+        );
+    }
+
+    #[test]
+    fn test_num_distinct() {
+        assert_eq!(
+            DPSolution::num_distinct("rabbbit".to_string(), "rabbit".to_string()),
+            3
+        );
+        assert_eq!(
+            DPSolution::num_distinct("babgbag".to_string(), "bag".to_string()),
             5
         );
     }
