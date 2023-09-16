@@ -1,3 +1,6 @@
+use std::cmp::Reverse;
+use std::collections::BinaryHeap;
+
 pub struct GraphSolution {}
 
 impl GraphSolution {
@@ -74,7 +77,54 @@ impl GraphSolution {
                 max = max.max(count);
             }
         }
-        max as i32 
+        max as i32
+    }
+
+    /*
+    link: https://leetcode.com/problems/path-with-minimum-effort
+    plain dfs with visited array will cause TLE
+
+    we can use dijkstra with heap to solve this problem
+    use heap to store the cost and position
+
+     */
+
+    pub fn minimum_effort_path(heights: Vec<Vec<i32>>) -> i32 {
+        let direction = [(0, 1), (0, -1i32), (1, 0), (-1i32, 0)];
+        let mut visited = vec![vec![false; heights[0].len()]; heights.len()];
+        // binary heap will sort the elements in the heap by the first element of the tuple
+        // so we need to reverse the cost to make the heap sort the cost in ascending order
+        let mut heap = BinaryHeap::<(Reverse<i32>, usize, usize)>::new();
+        heap.push((Reverse(0), 0, 0));
+        loop {
+            let (Reverse(cost), x, y) = heap.pop().unwrap();  
+            if x == heights.len() - 1 && y == heights[0].len() - 1 {
+                // reach the destination, return the cost
+                break cost;
+            }
+            if visited[x][y] {
+                continue;
+            }
+            visited[x][y] = true;
+            for (dx, dy) in direction {
+                let nx = x.wrapping_add_signed(dx as isize);
+                let ny = y.wrapping_add_signed(dy as isize);
+                if nx < heights.len() && ny < heights[0].len() && visited[nx][ny] == false {
+                    // the maximum cost of the path from (x, y) to (nx, ny) is the maximum of the current cost 
+                    // and the difference between the heights of (nx, ny) and (x, y)
+                    let cost2 = cost.max((heights[nx][ny] - heights[x][y]).abs());
+                    heap.push((Reverse(cost2), nx, ny));
+                }
+            }
+        }
+    }
+    /*
+    https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
+
+    implemetation of dijkstra algorithm
+     */
+    pub fn dijkstra() -> i32 {
+        todo!("dijkstra")
     }
 }
 
@@ -94,15 +144,51 @@ mod tests {
     #[test]
     fn test_maximal_network_rank() {
         assert_eq!(
-            GraphSolution::maximal_network_rank(4, vec![vec![0, 1], vec![0, 3], vec![1, 2], vec![1, 3]]),
+            GraphSolution::maximal_network_rank(
+                4,
+                vec![vec![0, 1], vec![0, 3], vec![1, 2], vec![1, 3]]
+            ),
             4
         );
         assert_eq!(
             GraphSolution::maximal_network_rank(
                 5,
-                vec![vec![0, 1], vec![0, 3], vec![1, 2], vec![1, 3], vec![2, 3], vec![2, 4]]
+                vec![
+                    vec![0, 1],
+                    vec![0, 3],
+                    vec![1, 2],
+                    vec![1, 3],
+                    vec![2, 3],
+                    vec![2, 4]
+                ],
             ),
             5
+        );
+    }
+
+    #[test]
+    fn test_minimum_effort_path() {
+        assert_eq!(
+            GraphSolution::minimum_effort_path(vec![vec![1, 2, 2], vec![3, 8, 2], vec![5, 3, 5]]),
+            2
+        );
+        assert_eq!(
+            GraphSolution::minimum_effort_path(vec![vec![1, 2, 3], vec![3, 8, 4], vec![5, 3, 5]]),
+            1
+        );
+        assert_eq!(
+            GraphSolution::minimum_effort_path(vec![
+                vec![1, 2, 1, 1, 1],
+                vec![1, 2, 1, 2, 1],
+                vec![1, 2, 1, 2, 1],
+                vec![1, 2, 1, 2, 1],
+                vec![1, 1, 1, 2, 1]
+            ]),
+            0
+        );
+        assert_eq!(
+            GraphSolution::minimum_effort_path(vec![vec![1, 10, 6, 7, 9, 10, 4, 9]]),
+            9
         );
     }
 }
