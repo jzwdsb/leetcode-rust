@@ -1,5 +1,5 @@
 use std::cmp::Reverse;
-use std::collections::BinaryHeap;
+use std::collections::{BinaryHeap, HashMap};
 
 pub struct GraphSolution {}
 
@@ -97,7 +97,7 @@ impl GraphSolution {
         let mut heap = BinaryHeap::<(Reverse<i32>, usize, usize)>::new();
         heap.push((Reverse(0), 0, 0));
         loop {
-            let (Reverse(cost), x, y) = heap.pop().unwrap();  
+            let (Reverse(cost), x, y) = heap.pop().unwrap();
             if x == heights.len() - 1 && y == heights[0].len() - 1 {
                 // reach the destination, return the cost
                 break cost;
@@ -110,7 +110,7 @@ impl GraphSolution {
                 let nx = x.wrapping_add_signed(dx as isize);
                 let ny = y.wrapping_add_signed(dy as isize);
                 if nx < heights.len() && ny < heights[0].len() && visited[nx][ny] == false {
-                    // the maximum cost of the path from (x, y) to (nx, ny) is the maximum of the current cost 
+                    // the maximum cost of the path from (x, y) to (nx, ny) is the maximum of the current cost
                     // and the difference between the heights of (nx, ny) and (x, y)
                     let cost2 = cost.max((heights[nx][ny] - heights[x][y]).abs());
                     heap.push((Reverse(cost2), nx, ny));
@@ -125,6 +125,23 @@ impl GraphSolution {
      */
     pub fn dijkstra() -> i32 {
         todo!("dijkstra")
+    }
+
+    // a[i]: the start of road i
+    // b[i]: the end of road i
+    // n: citys
+    pub fn max_network_rank(a: Vec<i32>, b: Vec<i32>, _n: i32) -> i32 {
+        let mut max = 0;
+        let mut count = HashMap::<i32, i32>::new();
+        for i in 0..a.len() {
+            count.entry(a[i]).and_modify(|v| *v += 1).or_insert(1);
+            count.entry(b[i]).and_modify(|v| *v += 1).or_insert(1);
+        }
+        for i in 0..a.len() {
+            max = max.max(count.get(&a[i]).unwrap() + count.get(&b[i]).unwrap() - 1)
+        }
+
+        max
     }
 }
 
@@ -190,5 +207,10 @@ mod tests {
             GraphSolution::minimum_effort_path(vec![vec![1, 10, 6, 7, 9, 10, 4, 9]]),
             9
         );
+    }
+
+    #[test]
+    fn test_max_network_rank() {
+        todo!("add test case")
     }
 }

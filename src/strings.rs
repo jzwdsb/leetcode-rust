@@ -402,10 +402,7 @@ impl StringSolution {
     }
 
     fn is_vowel(c: char) -> bool {
-        matches!(
-            c,
-            'a' | 'e' | 'i' | 'o' | 'u' | 'A' | 'E' | 'I' | 'O'
-        )
+        matches!(c, 'a' | 'e' | 'i' | 'o' | 'u' | 'A' | 'E' | 'I' | 'O')
     }
 
     pub fn is_isomorphic(s: String, t: String) -> bool {
@@ -419,27 +416,58 @@ impl StringSolution {
                     if sc != &t[i] || tc != &s[i] {
                         return false;
                     }
-                },
+                }
                 (Some(sc), None) => {
                     if sc != &t[i] {
                         return false;
                     }
                     map2.insert(t[i], s[i]);
-                },
+                }
                 (None, Some(tc)) => {
                     if tc != &s[i] {
                         return false;
                     }
                     map.insert(s[i], t[i]);
-                },
+                }
                 (None, None) => {
                     map.insert(s[i], t[i]);
                     map2.insert(t[i], s[i]);
                 }
-                
             }
         }
         true
+    }
+
+    // s is a string of digits
+    // create a palindrome number from s
+    // return the maximum palindrome number
+    pub fn max_palindromic_number(s: String) -> String {
+        let mut digit_cnts = vec![0; 10];
+        for c in s.chars() {
+            if let Some(digit) = c.to_digit(10) {
+                digit_cnts[digit as usize] += 1;
+            }
+        }
+        
+        let (mut half, mut mid) = (String::new(), String::new());
+
+        // build half string from digit that appears even times
+        // this is the second half of the palindrome
+        // build mid string from digit that appears odd times
+        // mid string can only build once
+        for i in (0..=9).rev() {
+            let count = digit_cnts[i];
+            if count % 2 == 0 {
+                half.push_str(&i.to_string().repeat(count / 2));
+            } else if mid.is_empty() {
+                mid.push_str(&i.to_string().repeat(count));
+            }
+        }
+
+        // remove the trailing zeros
+        half = half.trim_end_matches('0').to_string();
+
+        half.clone() + &mid + &half.chars().rev().collect::<String>()
     }
 }
 
@@ -636,6 +664,14 @@ mod tests {
         assert_eq!(
             StringSolution::is_isomorphic("ab".to_string(), "aa".to_string()),
             false
+        );
+    }
+
+    #[test]
+    fn test_max_palindromic_number() {
+        assert_eq!(
+            StringSolution::max_palindromic_number("28398".to_string()),
+            "898".to_string()
         );
     }
 }
