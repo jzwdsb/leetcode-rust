@@ -65,6 +65,20 @@ impl TreeSolution {
             }
         }
     }
+
+    pub fn is_same_tree(p: Option<Rc<RefCell<TreeNode>>>, q: Option<Rc<RefCell<TreeNode>>>) -> bool {
+        match (p, q) {
+            (None, None) => true,
+            (Some(p), Some(q)) => {
+                let p = p.borrow();
+                let q = q.borrow();
+                p.val == q.val
+                    && Self::is_same_tree(p.left.clone(), q.left.clone())
+                    && Self::is_same_tree(p.right.clone(), q.right.clone())
+            }
+            _ => false,
+        }
+    }
 }
 
 #[cfg(test)]
@@ -122,6 +136,31 @@ mod tests {
 
         assert_eq!(
             TreeSolution::is_valid_bst(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
+            true
+        );
+    }
+
+    #[test]
+    fn test_same_tree() {
+        let mut root = TreeNode::new(1);
+        let left = TreeNode::new(2);
+        let right = TreeNode::new(3);
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        let mut root2 = TreeNode::new(1);
+        let left2 = TreeNode::new(2);
+        let right2 = TreeNode::new(3);
+
+        root2.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left2)));
+        root2.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right2)));
+
+        assert_eq!(
+            TreeSolution::is_same_tree(
+                Some(std::rc::Rc::new(std::cell::RefCell::new(root))),
+                Some(std::rc::Rc::new(std::cell::RefCell::new(root2)))
+            ),
             true
         );
     }
