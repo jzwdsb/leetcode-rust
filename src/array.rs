@@ -859,6 +859,55 @@ impl ArraySolution {
         }
         true
     }
+
+    /*
+    link: https://leetcode.com/problems/set-matrix-zeroes/description/
+    we can use the first row and first col to store the information
+    if matrix[i][j] == 0, we can set matrix[i][0] = 0 and matrix[0][j] = 0
+    then we can use the first row and first col to set the matrix to zero
+     */
+
+    pub fn set_zero(matrix: &mut Vec<Vec<i32>>) {
+        let mut first_row = false;
+        let mut first_col = false;
+        for i in 0..matrix.len() {
+            if matrix[i][0] == 0 {
+                first_col = true;
+                break;
+            }
+        }
+        for j in 0..matrix[0].len() {
+            if matrix[0][j] == 0 {
+                first_row = true;
+                break;
+            }
+        }
+        for i in 1..matrix.len() {
+            for j in 1..matrix[0].len() {
+                if matrix[i][j] == 0 {
+                    matrix[i][0] = 0;
+                    matrix[0][j] = 0;
+                }
+            }
+        }
+        for i in 1..matrix.len() {
+            for j in 1..matrix[0].len() {
+                if matrix[i][0] == 0 || matrix[0][j] == 0 {
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        if first_row {
+            for j in 0..matrix[0].len() {
+                matrix[0][j] = 0;
+            }
+        }
+        if first_col {
+            for i in 0..matrix.len() {
+                matrix[i][0] = 0;
+            }
+        }
+    }
 }
 
 pub fn main() {}
@@ -1294,6 +1343,38 @@ mod tests {
                 vec!['.', '.', '.', '.', '8', '.', '.', '7', '9'],
             ]),
             false
+        );
+    }
+
+    #[test]
+    fn test_set_zero() {
+        let mut input = vec![
+            vec![1, 1, 1],
+            vec![1, 0, 1],
+            vec![1, 1, 1],
+        ];
+        ArraySolution::set_zero(&mut input);
+        assert_eq!(
+            input,
+            vec![
+                vec![1, 0, 1],
+                vec![0, 0, 0],
+                vec![1, 0, 1],
+            ]
+        );
+        let mut input = vec![
+            vec![0, 1, 2, 0],
+            vec![3, 4, 5, 2],
+            vec![1, 3, 1, 5],
+        ];
+        ArraySolution::set_zero(&mut input);
+        assert_eq!(
+            input,
+            vec![
+                vec![0, 0, 0, 0],
+                vec![0, 4, 5, 0],
+                vec![0, 3, 1, 0],
+            ]
         );
     }
 }
