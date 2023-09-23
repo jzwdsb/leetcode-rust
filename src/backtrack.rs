@@ -95,11 +95,81 @@ impl BackStrackSolution {
             res.push(curr.clone());
             return;
         }
-        for i in curr.last().unwrap_or(&0) + 1..=(n - k+1) {
+        for i in curr.last().unwrap_or(&0) + 1..=(n - k + 1) {
             curr.push(i);
             Self::backtrack3(res, curr, n, k - 1);
             curr.pop();
         }
+    }
+
+    /*
+    https://leetcode.com/problems/n-queens/description/
+
+    n queens problem, place n queens on an n*n chessboard
+    return all the possible solution that n queens can be placed on an n*n chessboard
+    and no two queens attack each other 
+    a queen can attack horizontally, vertically and diagonally
+    
+    */
+
+    // start from the first row, try to place a queen on each column
+    pub fn solve_n_queens(n: i32) -> Vec<Vec<String>> {
+        let mut res = vec![];
+        let mut curr = vec![];
+        Self::queen_backtrack(&mut res, &mut curr, n);
+        res
+    }
+
+    fn queen_backtrack(res: &mut Vec<Vec<String>>, curr: &mut Vec<String>, n: i32 ) {
+        if curr.len() == n as usize {
+            res.push(curr.clone());
+            return;
+        }
+
+        // try to place a queen on each column
+        for i in 0..n {
+            if Self::is_valid_queen(curr, i, n) {
+                let mut s = vec!['.'; n as usize].iter().collect::<String>();
+                s.replace_range(i as usize..i as usize + 1, "Q");
+                curr.push(s);
+                Self::queen_backtrack(res, curr, n);
+                curr.pop();
+            }
+        }
+    }
+
+    // the current position is valid if there is no queen on the same column, same row and same diagonal
+    fn is_valid_queen(curr: &Vec<String>, col: i32, n: i32) -> bool {
+        let row = curr.len() as i32;
+        // check if there multiple Q in the same col
+        for i in 0..row {
+            if curr[i as usize].chars().nth(col as usize) == Some('Q') {
+                return false;
+            }
+        }
+        
+        // check if there is multiple Q in the left up diagonal
+        let mut i = row - 1;
+        let mut j = col - 1;
+        while i >= 0 && j >= 0 {
+            if curr[i as usize].chars().nth(j as usize) == Some('Q') {
+                return false;
+            }
+            i -= 1;
+            j -= 1;
+        }
+        
+        // check if there is multiple Q in the right up diagonal
+        let mut i = row - 1;
+        let mut j = col + 1;
+        while i >= 0 && j < n {
+            if curr[i as usize].chars().nth(j as usize) == Some('Q') {
+                return false;
+            }
+            i -= 1;
+            j += 1;
+        }
+        true
     }
 }
 
@@ -145,6 +215,17 @@ mod tests {
                 vec![2, 3],
                 vec![2, 4],
                 vec![3, 4]
+            ]
+        );
+    }
+
+    #[test]
+    fn test_solve_n_queens() {
+        assert_eq!(
+            BackStrackSolution::solve_n_queens(4),
+            vec![
+                vec![".Q..", "...Q", "Q...", "..Q."],
+                vec!["..Q.", "Q...", "...Q", ".Q.."]
             ]
         );
     }
