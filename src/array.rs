@@ -908,6 +908,58 @@ impl ArraySolution {
             }
         }
     }
+
+    /*
+    https://leetcode.com/problems/first-missing-positive/description/
+
+    must solve with O(n) time complexity and O(1) space complexity
+
+    the basic idea is to treat the num in the array as an index.
+    if the array is sorted, the first missing positive number should be the first 
+    non-positive and non-consecutive number.
+    this number should fall into the range [1, nums.len()]
+    for all the number that negative and greater than nums.len()
+    we can simply set them to nums.len() + 1 for they left some solt in the array.
+    for the rest of the positive number, use them as index and set corresponding positive as negative
+    then we can traverse the array and found the first positive number, the index of that position is 
+    the first missing positive number.
+    f we couldn't found such a number, the means the numbers in the input array all falls into the 
+    range [1,nums.len()], return nums.len() + 1 as result
+    
+
+     */
+    pub fn first_missing_positive(nums: Vec<i32>) -> i32 {
+        let mut nums = nums;
+
+        // remove all the non-positive and greater than nums.len() elements
+        // and replace them with nums.len() + 1 so we can ignore them
+        for i in 0..nums.len() {
+            if nums[i] <= 0 || nums[i] > nums.len() as i32 {
+                nums[i] = nums.len() as i32 + 1;
+            }
+        }
+        // use the index to store the information
+        // nums[i] = -nums[i].abs() means the num i+1 exists in the array
+        // nums[i] = nums.len() + 1 means the num i+1 doesn't exist in the array
+        // if nums[i] == num, we can set nums[num-1] = -nums[num-1].abs() so 
+        for i in 0..nums.len() {
+            let num = nums[i].abs() as usize;
+            if num <= nums.len() {
+                nums[num - 1] = -nums[num - 1].abs();
+            }
+        }
+        // find the first num that is greater than 0
+        // if we can't find it, that means all the nums in the array exists
+        // if we found a num that is > 0, that means there is a empty slot in the array
+        // i is the index of the empty slot
+        for i in 0..nums.len() {
+            if nums[i] > 0 {
+                return i as i32 + 1;
+            }
+        }
+        
+        nums.len() as i32 + 1
+    }
 }
 
 pub fn main() {}
@@ -1376,5 +1428,13 @@ mod tests {
                 vec![0, 3, 1, 0],
             ]
         );
+    }
+
+    #[test]
+    fn test_missing_positive() {
+        assert_eq!(ArraySolution::first_missing_positive(vec![1, 2, 0]), 3);
+        assert_eq!(ArraySolution::first_missing_positive(vec![3, 4, -1, 1]), 2);
+        assert_eq!(ArraySolution::first_missing_positive(vec![7, 8, 9, 11, 12]), 1);
+        assert_eq!(ArraySolution::first_missing_positive(vec![1]), 2);
     }
 }

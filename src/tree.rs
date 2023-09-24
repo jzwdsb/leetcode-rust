@@ -66,6 +66,7 @@ impl TreeSolution {
         }
     }
 
+    #[allow(dead_code)]
     pub fn is_same_tree(p: Option<Rc<RefCell<TreeNode>>>, q: Option<Rc<RefCell<TreeNode>>>) -> bool {
         match (p, q) {
             (None, None) => true,
