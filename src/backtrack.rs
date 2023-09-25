@@ -107,9 +107,9 @@ impl BackStrackSolution {
 
     n queens problem, place n queens on an n*n chessboard
     return all the possible solution that n queens can be placed on an n*n chessboard
-    and no two queens attack each other 
+    and no two queens attack each other
     a queen can attack horizontally, vertically and diagonally
-    
+
     */
 
     // start from the first row, try to place a queen on each column
@@ -120,7 +120,7 @@ impl BackStrackSolution {
         res
     }
 
-    fn queen_backtrack(res: &mut Vec<Vec<String>>, curr: &mut Vec<String>, n: i32 ) {
+    fn queen_backtrack(res: &mut Vec<Vec<String>>, curr: &mut Vec<String>, n: i32) {
         if curr.len() == n as usize {
             res.push(curr.clone());
             return;
@@ -147,7 +147,7 @@ impl BackStrackSolution {
                 return false;
             }
         }
-        
+
         // check if there is multiple Q in the left up diagonal
         let mut i = row - 1;
         let mut j = col - 1;
@@ -158,7 +158,7 @@ impl BackStrackSolution {
             i -= 1;
             j -= 1;
         }
-        
+
         // check if there is multiple Q in the right up diagonal
         let mut i = row - 1;
         let mut j = col + 1;
@@ -170,6 +170,25 @@ impl BackStrackSolution {
             j += 1;
         }
         true
+    }
+
+    pub fn subsets(num: Vec<i32>) -> Vec<Vec<i32>> {
+        let mut res = vec![];
+        let mut curr = vec![];
+        Self::subset_backtrack(&mut res, &mut curr, &num, 0);
+        res
+    }
+
+    fn subset_backtrack(res: &mut Vec<Vec<i32>>, curr: &mut Vec<i32>, num: &Vec<i32>, pos: usize) {
+        res.push(curr.clone());
+        if pos == num.len() {
+            return;
+        }
+        for i in pos..num.len() {
+            curr.push(num[i]);
+            Self::subset_backtrack(res, curr, num, i + 1);
+            curr.pop();
+        }
     }
 }
 
@@ -226,6 +245,25 @@ mod tests {
             vec![
                 vec![".Q..", "...Q", "Q...", "..Q."],
                 vec!["..Q.", "Q...", "...Q", ".Q.."]
+            ]
+        );
+    }
+
+    #[test]
+    fn test_subset() {
+        let mut result = BackStrackSolution::subsets(vec![1, 2, 3]);
+        result.sort();
+        assert_eq!(
+            result,
+            vec![
+                vec![],
+                vec![1],
+                vec![1, 2],
+                vec![1, 2, 3],
+                vec![1, 3],
+                vec![2],
+                vec![2, 3],
+                vec![3]
             ]
         );
     }
