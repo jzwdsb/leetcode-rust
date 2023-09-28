@@ -293,6 +293,34 @@ impl ListSolution {
         }
         dummy.unwrap().next
     }
+
+    /*
+    link: https://leetcode.com/problems/partition-list/
+
+    partition the list into two parts, one part contains all the nodes with value less than x
+    and the other part contains all the nodes with value greater than or equal to x
+    then link the two parts together.
+     */
+
+    pub fn partition(head: Option<Box<ListNode<i32>>>, x: i32) -> Option<Box<ListNode<i32>>> {
+        let mut dummy1 = Some(Box::new(ListNode { val: 0, next: None }));
+        let mut dummy2 = Some(Box::new(ListNode { val: 0, next: None }));
+        let mut prev1 = dummy1.as_mut();
+        let mut prev2 = dummy2.as_mut();
+        let mut node = head;
+        while let Some(mut n) = node {
+            node = n.next.take();
+            if n.val < x {
+                prev1.as_mut().unwrap().next = Some(n);
+                prev1 = prev1.unwrap().next.as_mut();
+            } else {
+                prev2.as_mut().unwrap().next = Some(n);
+                prev2 = prev2.unwrap().next.as_mut();
+            }
+        }
+        prev1.as_mut().unwrap().next = dummy2.unwrap().next;
+        dummy1.unwrap().next
+    }
 }
 
 pub fn main() {}
@@ -474,5 +502,24 @@ mod tests {
         let head = ListNode::from_vec(vec![1, 1, 1, 1, 1]);
         let ans = ListNode::from_vec(vec![1]);
         assert_eq!(ListSolution::delete_duplicates(head), ans);
+    }
+
+    #[test]
+    fn test_partition() {
+        let head = ListNode::from_vec(vec![1, 4, 3, 2, 5, 2]);
+        let ans = ListNode::from_vec(vec![1, 2, 2, 4, 3, 5]);
+        assert_eq!(ListSolution::partition(head, 3), ans);
+        let head = ListNode::from_vec(vec![2, 1]);
+        let ans = ListNode::from_vec(vec![1, 2]);
+        assert_eq!(ListSolution::partition(head, 2), ans);
+        let head = ListNode::from_vec(vec![1, 4, 3, 2, 5, 2]);
+        let ans = ListNode::from_vec(vec![1, 4, 3, 2, 5, 2]);
+        assert_eq!(ListSolution::partition(head, 6), ans);
+        let head = ListNode::from_vec(vec![1, 4, 3, 2, 5, 2]);
+        let ans = ListNode::from_vec(vec![1, 4, 3, 2, 5, 2]);
+        assert_eq!(ListSolution::partition(head, 0), ans);
+        let head = ListNode::from_vec(vec![1, 4, 3, 2, 5, 2]);
+        let ans = ListNode::from_vec(vec![1, 4, 3, 2, 5, 2]);
+        assert_eq!(ListSolution::partition(head, 1), ans);
     }
 }
