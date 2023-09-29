@@ -190,6 +190,59 @@ impl BackStrackSolution {
             curr.pop();
         }
     }
+
+    pub fn solve_sudoko(board: &mut Vec<Vec<char>>) {
+        Self::sudoko_backtrack(board, 0, 0);
+    }
+
+    fn sudoko_backtrack(board: &mut Vec<Vec<char>>, row: usize, col: usize) -> bool {
+        // all the row and col are filled
+        if row == 9 {
+            return true;
+        }
+        // if the current row is filled, go to the next position
+        if col == 9 {
+            return Self::sudoko_backtrack(board, row + 1, 0);
+        }
+        // if the current position is not empty, go to the next position
+        if board[row][col] != '.' {
+            return Self::sudoko_backtrack(board, row, col + 1);
+        }
+        // try to fill the current position with 1 to 9
+        for i in 1..=9 {
+            if Self::is_valid_sudoko(board, row, col, i) {
+                board[row][col] = i.to_string().chars().nth(0).unwrap();
+                // if the next position is filled, return true
+                if Self::sudoko_backtrack(board, row, col + 1) {
+                    return true;
+                } else {
+                    // else rollback the current position
+                    board[row][col] = '.';
+                }
+            }
+        }
+        return false;
+    }
+
+    fn is_valid_sudoko(board: &Vec<Vec<char>>, row: usize, col: usize, num: i32) -> bool {
+        let num = (num as u8 + '0' as u8) as char;
+        for i in 0..9 {
+            if board[row][i] == num {
+                return false;
+            }
+            if board[i][col] == num {
+                return false;
+            }
+            // check the 3*3 block
+            // for row, col. the upper left corner is (row / 3 * 3, col / 3 * 3)
+            // for the ith element in the block
+            // the position is (row / 3 * 3 + i / 3, col / 3 * 3 + i % 3)
+            if board[row / 3 * 3 + i / 3][col / 3 * 3 + i % 3] == num {
+                return false;
+            }
+        }
+        true
+    }
 }
 
 pub fn main() {}
@@ -264,6 +317,36 @@ mod tests {
                 vec![2],
                 vec![2, 3],
                 vec![3]
+            ]
+        );
+    }
+
+    #[test]
+    fn test_solve_sudoko() {
+        let mut board = vec![
+            vec!['5', '3', '.', '.', '7', '.', '.', '.', '.'],
+            vec!['6', '.', '.', '1', '9', '5', '.', '.', '.'],
+            vec!['.', '9', '8', '.', '.', '.', '.', '6', '.'],
+            vec!['8', '.', '.', '.', '6', '.', '.', '.', '3'],
+            vec!['4', '.', '.', '8', '.', '3', '.', '.', '1'],
+            vec!['7', '.', '.', '.', '2', '.', '.', '.', '6'],
+            vec!['.', '6', '.', '.', '.', '.', '2', '8', '.'],
+            vec!['.', '.', '.', '4', '1', '9', '.', '.', '5'],
+            vec!['.', '.', '.', '.', '8', '.', '.', '7', '9'],
+        ];
+        BackStrackSolution::solve_sudoko(&mut board);
+        assert_eq!(
+            board,
+            vec![
+                vec!['5', '3', '4', '6', '7', '8', '9', '1', '2'],
+                vec!['6', '7', '2', '1', '9', '5', '3', '4', '8'],
+                vec!['1', '9', '8', '3', '4', '2', '5', '6', '7'],
+                vec!['8', '5', '9', '7', '6', '1', '4', '2', '3'],
+                vec!['4', '2', '6', '8', '5', '3', '7', '9', '1'],
+                vec!['7', '1', '3', '9', '2', '4', '8', '5', '6'],
+                vec!['9', '6', '1', '5', '3', '7', '2', '8', '4'],
+                vec!['2', '8', '7', '4', '1', '9', '6', '3', '5'],
+                vec!['3', '4', '5', '2', '8', '6', '1', '7', '9'],
             ]
         );
     }
