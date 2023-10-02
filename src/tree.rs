@@ -67,7 +67,10 @@ impl TreeSolution {
     }
 
     #[allow(dead_code)]
-    pub fn is_same_tree(p: Option<Rc<RefCell<TreeNode>>>, q: Option<Rc<RefCell<TreeNode>>>) -> bool {
+    pub fn is_same_tree(
+        p: Option<Rc<RefCell<TreeNode>>>,
+        q: Option<Rc<RefCell<TreeNode>>>,
+    ) -> bool {
         match (p, q) {
             (None, None) => true,
             (Some(p), Some(q)) => {
@@ -79,6 +82,47 @@ impl TreeSolution {
             }
             _ => false,
         }
+    }
+
+    /*
+    link: https://leetcode.com/problems/unique-binary-search-trees/
+    return the number of unique binary search trees that can be composited with n nodes
+
+    n = 0, res = 1
+    n = 1, res = 1
+    n = 2, res = 2
+    n = 3, res = 5
+    n = 4, res = 14
+
+    given a sequence of numbers from 1 to n, we can choose a number as the root node,
+    then the left part of the root node is the left subtree,
+    the right part of the root node is the right subtree,
+
+    if we chose i as the root node, then the left subtree has i - 1 nodes, the right subtree has n - i nodes,
+    so the number of unique binary search trees that can be composited with i nodes is: f(i - 1) * f(n - i)
+
+    so we can inference the equation that is:
+    f(n) = f(0) * f(n - 1) + f(1) * f(n - 2) + ... + f(n - 1) * f(0)
+
+    we already know that f(0) = 1, f(1) = 1, so we can build a dp array to store the result of f(i)
+    from 0 to n,
+
+    dp[i] represents the number of unique binary search trees that can be composited with i nodes
+    dp[i] = dp[0] * dp[i - 1] + dp[1] * dp[i - 2] + ... + dp[i - 1] * dp[0]
+     */
+    #[allow(dead_code)]
+    pub fn num_trees(n: i32) -> i32 {
+        let mut dp = vec![0; (n + 1) as usize];
+        dp[0] = 1;
+        dp[1] = 1;
+
+        for i in 2..=n as usize {
+            for j in 1..=i {
+                dp[i] += dp[j - 1] * dp[i - j];
+            }
+        }
+
+        dp[n as usize]
     }
 }
 
@@ -164,5 +208,10 @@ mod tests {
             ),
             true
         );
+    }
+
+    #[test]
+    fn test_num_trees() {
+        assert_eq!(TreeSolution::num_trees(3), 5);
     }
 }
