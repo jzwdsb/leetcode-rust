@@ -915,17 +915,17 @@ impl ArraySolution {
     must solve with O(n) time complexity and O(1) space complexity
 
     the basic idea is to treat the num in the array as an index.
-    if the array is sorted, the first missing positive number should be the first 
+    if the array is sorted, the first missing positive number should be the first
     non-positive and non-consecutive number.
     this number should fall into the range [1, nums.len()]
     for all the number that negative and greater than nums.len()
     we can simply set them to nums.len() + 1 for they left some solt in the array.
     for the rest of the positive number, use them as index and set corresponding positive as negative
-    then we can traverse the array and found the first positive number, the index of that position is 
+    then we can traverse the array and found the first positive number, the index of that position is
     the first missing positive number.
-    f we couldn't found such a number, the means the numbers in the input array all falls into the 
+    f we couldn't found such a number, the means the numbers in the input array all falls into the
     range [1,nums.len()], return nums.len() + 1 as result
-    
+
 
      */
     pub fn first_missing_positive(nums: Vec<i32>) -> i32 {
@@ -941,7 +941,7 @@ impl ArraySolution {
         // use the index to store the information
         // nums[i] = -nums[i].abs() means the num i+1 exists in the array
         // nums[i] = nums.len() + 1 means the num i+1 doesn't exist in the array
-        // if nums[i] == num, we can set nums[num-1] = -nums[num-1].abs() so 
+        // if nums[i] == num, we can set nums[num-1] = -nums[num-1].abs() so
         for i in 0..nums.len() {
             let num = nums[i].abs() as usize;
             if num <= nums.len() {
@@ -957,8 +957,38 @@ impl ArraySolution {
                 return i as i32 + 1;
             }
         }
-        
+
         nums.len() as i32 + 1
+    }
+
+    /*
+    https://leetcode.com/problems/number-of-good-pairs/
+
+    a pair is good if nums[i] == nums[j] and i < j
+
+    we can use a hashmap to store the repetitions of each number
+    and calculate the number of good pairs.
+    the good number is the combination of the index of the number
+    we pick two index from n index
+    so the combination of the index is C(n,2) = n * (n-1) / 2
+    n is the repetitions of the number
+
+    get the sum of all the good pairs
+    return the sum as result
+     */
+
+    #[allow(dead_code)]
+    fn number_of_good_pairs(numbers: Vec<i32>) -> i32 {
+        let mut res = 0;
+        let mut map = std::collections::HashMap::new();
+        for num in numbers {
+            *map.entry(num).or_insert(0) += 1;
+        }
+
+        for (_, v) in map {
+            res += v * (v - 1) / 2;
+        }
+        res
     }
 }
 
@@ -1400,33 +1430,14 @@ mod tests {
 
     #[test]
     fn test_set_zero() {
-        let mut input = vec![
-            vec![1, 1, 1],
-            vec![1, 0, 1],
-            vec![1, 1, 1],
-        ];
+        let mut input = vec![vec![1, 1, 1], vec![1, 0, 1], vec![1, 1, 1]];
+        ArraySolution::set_zero(&mut input);
+        assert_eq!(input, vec![vec![1, 0, 1], vec![0, 0, 0], vec![1, 0, 1],]);
+        let mut input = vec![vec![0, 1, 2, 0], vec![3, 4, 5, 2], vec![1, 3, 1, 5]];
         ArraySolution::set_zero(&mut input);
         assert_eq!(
             input,
-            vec![
-                vec![1, 0, 1],
-                vec![0, 0, 0],
-                vec![1, 0, 1],
-            ]
-        );
-        let mut input = vec![
-            vec![0, 1, 2, 0],
-            vec![3, 4, 5, 2],
-            vec![1, 3, 1, 5],
-        ];
-        ArraySolution::set_zero(&mut input);
-        assert_eq!(
-            input,
-            vec![
-                vec![0, 0, 0, 0],
-                vec![0, 4, 5, 0],
-                vec![0, 3, 1, 0],
-            ]
+            vec![vec![0, 0, 0, 0], vec![0, 4, 5, 0], vec![0, 3, 1, 0],]
         );
     }
 
@@ -1434,7 +1445,20 @@ mod tests {
     fn test_missing_positive() {
         assert_eq!(ArraySolution::first_missing_positive(vec![1, 2, 0]), 3);
         assert_eq!(ArraySolution::first_missing_positive(vec![3, 4, -1, 1]), 2);
-        assert_eq!(ArraySolution::first_missing_positive(vec![7, 8, 9, 11, 12]), 1);
+        assert_eq!(
+            ArraySolution::first_missing_positive(vec![7, 8, 9, 11, 12]),
+            1
+        );
         assert_eq!(ArraySolution::first_missing_positive(vec![1]), 2);
+    }
+
+    #[test]
+    fn test_number_of_good_pairs() {
+        assert_eq!(
+            ArraySolution::number_of_good_pairs(vec![1, 2, 3, 1, 1, 3]),
+            4
+        );
+        assert_eq!(ArraySolution::number_of_good_pairs(vec![1, 1, 1, 1]), 6);
+        assert_eq!(ArraySolution::number_of_good_pairs(vec![1, 2, 3]), 0);
     }
 }
