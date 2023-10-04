@@ -122,6 +122,8 @@ impl MathSolution {
     pub fn distance_traveled(main_tank: i32, additional_tank: i32) -> i32 {
         (main_tank + ((main_tank - 1) / 4).min(additional_tank)) * 10
     }
+
+    
 }
 
 pub fn main() {}

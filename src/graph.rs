@@ -143,6 +143,70 @@ impl GraphSolution {
 
         max
     }
+
+    /*
+    link: https://leetcode.com/problems/detonate-the-maximum-bombs/
+    intput is a vector of tuple (x, y, r), x,y is the coordinate of the bomb
+    r is the radius of the bomb,
+    return the maximum number of bombs that can be detonated with only detonating one bomb
+
+    build the adjacency matrix of the graph first
+    then travel all the nodes of the graph using DFS & backtracking to
+    find the maximum depth of the graph
+
+    almost time limit exceeded
+    need to optimize the algorithm
+     */
+    pub fn maximum_detonation(bombs: Vec<(i32, i32, i32)>) -> i32 {
+        let mut ans = 0;
+        let mut graph = vec![vec![0; bombs.len()]; bombs.len()];
+
+        for i in 0..bombs.len() {
+            for j in i + 1..bombs.len() {
+                if i == j {
+                    continue;
+                }
+                let distance = Self::distance(&bombs[i], &bombs[j]);
+                if distance <= bombs[i].2 as f64 {
+                    graph[i][j] = 1;
+                }
+                if distance <= bombs[j].2 as f64 {
+                    graph[j][i] = 1;
+                }
+            }
+        }
+
+        for i in 0..bombs.len() {
+            let mut path = vec![];
+            ans = ans.max(Self::walk_bomb_graph(&graph, &mut path, i));
+        }
+
+        ans as i32
+    }
+
+    fn distance(a: &(i32, i32, i32), b: &(i32, i32, i32)) -> f64 {
+        let (x1, y1, _) = a;
+        let (x2, y2, _) = b;
+        (((*x1 as i64 - *x2 as i64).pow(2) + (*y1 as i64 - *y2 as i64).pow(2)) as f64).sqrt()
+    }
+
+    fn walk_bomb_graph(graph: &Vec<Vec<usize>>, path: &mut Vec<usize>, pos: usize) -> usize {
+        if path.contains(&pos) {
+            return path.len();
+        }
+
+        path.push(pos);
+
+        let mut depth = path.len();
+        for next in 0..graph[pos].len() {
+            if graph[pos][next] == 0 {
+                continue;
+            }
+            depth = depth.max(Self::walk_bomb_graph(graph, path, next));
+        }
+
+        depth
+    }
 }
 
 #[cfg(test)]
@@ -211,6 +275,89 @@ mod tests {
 
     #[test]
     fn test_max_network_rank() {
-        // TODO: add test case for max_network_rank 
+        // TODO: add test case for max_network_rank
+    }
+
+    #[test]
+    fn test_maximum_detonation() {
+        assert_eq!(
+            GraphSolution::maximum_detonation(vec![(2, 1, 3), (6, 1, 4)]),
+            2
+        );
+        assert_eq!(
+            GraphSolution::maximum_detonation(vec![(1, 1, 5), (10, 10, 5)]),
+            1
+        );
+        assert_eq!(
+            GraphSolution::maximum_detonation(vec![
+                (1, 2, 3),
+                (2, 3, 1),
+                (3, 4, 2),
+                (4, 5, 3),
+                (5, 6, 4)
+            ]),
+            5
+        );
+        assert_eq!(
+            GraphSolution::maximum_detonation(vec![(2, 1, 3), (6, 1, 4)]),
+            2
+        );
+        assert_eq!(
+            GraphSolution::maximum_detonation(vec![
+                (54, 95, 4),
+                (99, 46, 3),
+                (29, 21, 3),
+                (96, 72, 8),
+                (49, 43, 3),
+                (11, 20, 3),
+                (2, 57, 1),
+                (69, 51, 7),
+                (97, 1, 10),
+                (85, 45, 2),
+                (38, 47, 1),
+                (83, 75, 3),
+                (65, 59, 3),
+                (33, 4, 1),
+                (32, 10, 2),
+                (20, 97, 8),
+                (35, 37, 3)
+            ]),
+            1
+        );
+        assert_eq!(
+            GraphSolution::maximum_detonation(vec![
+                (85024, 58997, 3532),
+                (65196, 42043, 9739),
+                (85872, 75029, 3117),
+                (73014, 91183, 7092),
+                (29098, 40864, 7624),
+                (11469, 13607, 4315),
+                (98722, 69681, 9656),
+                (75140, 42250, 421),
+                (92580, 44040, 4779),
+                (58474, 78273, 1047),
+                (27683, 4203, 6186),
+                (10714, 24238, 6243),
+                (60138, 81791, 3496),
+                (16227, 92418, 5622),
+                (60496, 64917, 2463),
+                (59241, 62074, 885),
+                (11961, 163, 5815),
+                (37757, 43214, 3402),
+                (21094, 98519, 1678),
+                (49368, 22385, 1431),
+                (6343, 53798, 159),
+                (80129, 9282, 5139),
+                (69565, 32036, 6827),
+                (59372, 64978, 6575),
+                (44948, 71199, 7095),
+                (46390, 91701, 1667),
+                (37144, 98691, 8128),
+                (13558, 81505, 4653),
+                (41234, 48161, 9304),
+                (14852, 3206, 5369)
+            ]),
+            3
+        );
     }
 }
