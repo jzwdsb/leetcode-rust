@@ -124,6 +124,28 @@ impl TreeSolution {
 
         dp[n as usize]
     }
+
+    /*
+    https://leetcode.com/problems/binary-tree-inorder-traversal/   
+    */
+
+    pub fn inorder_traversal(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+        let mut res = vec![];
+        Self::inorder_helper(&root, &mut res);
+        res
+    }
+
+    fn inorder_helper(root: &Option<Rc<RefCell<TreeNode>>>, res: &mut Vec<i32>) {
+        match root.as_ref() {
+            None => {}
+            Some(node) => {
+                let node = node.borrow();
+                Self::inorder_helper(&node.left, res);
+                res.push(node.val);
+                Self::inorder_helper(&node.right, res);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -213,5 +235,20 @@ mod tests {
     #[test]
     fn test_num_trees() {
         assert_eq!(TreeSolution::num_trees(3), 5);
+    }
+
+    #[test]
+    fn test_inorder_traversal() {
+        let mut root = TreeNode::new(1);
+        let mut right = TreeNode::new(2);
+        let right_left = TreeNode::new(3);
+
+        right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(right_left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeSolution::inorder_traversal(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
+            vec![1, 3, 2]
+        );
     }
 }
