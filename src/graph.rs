@@ -207,6 +207,61 @@ impl GraphSolution {
 
         depth
     }
+
+    pub fn word_search(board: Vec<Vec<char>>, word: String) -> bool {
+        let mut visited = vec![vec![false; board[0].len()]; board.len()];
+        let mut ans = false;
+        for i in 0..board.len() {
+            for j in 0..board[0].len() {
+                if board[i][j] == word.chars().nth(0).unwrap() {
+                    ans = ans
+                        || Self::dfs_word_search(
+                            &board,
+                            &mut visited,
+                            i as i32,
+                            j as i32,
+                            &word,
+                            0,
+                        );
+                    if ans {
+                        return ans;
+                    }
+                }
+            }
+        }
+        ans
+    }
+
+    fn dfs_word_search(
+        board: &Vec<Vec<char>>,
+        visited: &mut Vec<Vec<bool>>,
+        i: i32,
+        j: i32,
+        word: &String,
+        pos: usize,
+    ) -> bool {
+        if pos == word.len() {
+            return true;
+        }
+        if i >= board.len() as i32
+            || j >= board[0].len() as i32
+            || i < 0
+            || j < 0
+            || visited[i as usize][j as usize]
+        {
+            return false;
+        }
+        if board[i as usize][j as usize] != word.chars().nth(pos).unwrap() {
+            return false;
+        }
+        visited[i as usize][j as usize] = true;
+        let ans = Self::dfs_word_search(board, visited, i + 1, j, word, pos + 1)
+            || Self::dfs_word_search(board, visited, i, j + 1, word, pos + 1)
+            || Self::dfs_word_search(board, visited, i - 1, j, word, pos + 1)
+            || Self::dfs_word_search(board, visited, i, j - 1, word, pos + 1);
+        visited[i as usize][j as usize] = false;
+        ans
+    }
 }
 
 #[cfg(test)]
@@ -358,6 +413,43 @@ mod tests {
                 (14852, 3206, 5369)
             ]),
             3
+        );
+    }
+
+    #[test]
+    fn test_word_search() {
+        assert_eq!(
+            GraphSolution::word_search(
+                vec![
+                    vec!['A', 'B', 'C', 'E'],
+                    vec!['S', 'F', 'C', 'S'],
+                    vec!['A', 'D', 'E', 'E']
+                ],
+                "ABCCED".to_string()
+            ),
+            true
+        );
+        assert_eq!(
+            GraphSolution::word_search(
+                vec![
+                    vec!['A', 'B', 'C', 'E'],
+                    vec!['S', 'F', 'C', 'S'],
+                    vec!['A', 'D', 'E', 'E']
+                ],
+                "SEE".to_string()
+            ),
+            true
+        );
+        assert_eq!(
+            GraphSolution::word_search(
+                vec![
+                    vec!['A', 'B', 'C', 'E'],
+                    vec!['S', 'F', 'C', 'S'],
+                    vec!['A', 'D', 'E', 'E']
+                ],
+                "ABCB".to_string()
+            ),
+            false
         );
     }
 }
