@@ -448,7 +448,7 @@ impl StringSolution {
                 digit_cnts[digit as usize] += 1;
             }
         }
-        
+
         let (mut half, mut mid) = (String::new(), String::new());
 
         // build half string from digit that appears even times
@@ -468,6 +468,19 @@ impl StringSolution {
         half = half.trim_end_matches('0').to_string();
 
         half.clone() + &mid + &half.chars().rev().collect::<String>()
+    }
+
+    pub fn compare_version(version1: String, version2: String) -> i32 {
+        let mut v1 = version1.split('.').map(|s| s.parse().unwrap());
+        let mut v2 = version2.split('.').map(|s| s.parse().unwrap());
+        loop {
+            match (v1.next(), v2.next()) {
+                (Some(v1), v2) if v1 > v2.unwrap_or(0) => return 1,
+                (v1, Some(v2)) if v2 > v1.unwrap_or(0) => return -1,
+                (None, None) => return 0,
+                _ => continue,
+            }
+        }
     }
 }
 
@@ -672,6 +685,26 @@ mod tests {
         assert_eq!(
             StringSolution::max_palindromic_number("28398".to_string()),
             "898".to_string()
+        );
+    }
+
+    #[test]
+    fn test_compare_version() {
+        assert_eq!(
+            StringSolution::compare_version("1.01".to_string(), "1.001".to_string()),
+            0
+        );
+        assert_eq!(
+            StringSolution::compare_version("1.0".to_string(), "1.0.0".to_string()),
+            0
+        );
+        assert_eq!(
+            StringSolution::compare_version("0.1".to_string(), "1.1".to_string()),
+            -1
+        );
+        assert_eq!(
+            StringSolution::compare_version("1.0.1".to_string(), "1".to_string()),
+            1
         );
     }
 }

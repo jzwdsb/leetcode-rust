@@ -123,55 +123,80 @@ impl MathSolution {
         (main_tank + ((main_tank - 1) / 4).min(additional_tank)) * 10
     }
 
-    
+    pub fn is_happy(n: i32) -> bool {
+        let mut n = n;
+        let mut set = std::collections::HashSet::new();
+        while n != 1 {
+            let mut sum = 0;
+            while n > 0 {
+                let digit = n % 10;
+                sum += digit * digit;
+                n /= 10;
+            }
+            if set.contains(&sum) {
+                return false;
+            }
+            set.insert(sum);
+            n = sum;
+        }
+        true
+    }
 }
 
-pub fn main() {}
+mod tests {
+    use super::*;
 
-#[test]
-fn test_reverse() {
-    assert_eq!(MathSolution::reverse(123), 321);
-    assert_eq!(MathSolution::reverse(-123), -321);
-    assert_eq!(MathSolution::reverse(120), 21);
-    assert_eq!(MathSolution::reverse(0), 0);
-    assert_eq!(MathSolution::reverse(900000), 9);
-}
+    #[test]
+    fn test_reverse() {
+        assert_eq!(MathSolution::reverse(123), 321);
+        assert_eq!(MathSolution::reverse(-123), -321);
+        assert_eq!(MathSolution::reverse(120), 21);
+        assert_eq!(MathSolution::reverse(0), 0);
+        assert_eq!(MathSolution::reverse(900000), 9);
+    }
 
-#[test]
-fn test_divide() {
-    assert_eq!(MathSolution::divide(10, 3), 3);
-    assert_eq!(MathSolution::divide(7, -3), -2);
-    assert_eq!(MathSolution::divide(0, 1), 0);
-    assert_eq!(MathSolution::divide(1, 1), 1);
-    assert_eq!(MathSolution::divide(-1, 1), -1);
-    assert_eq!(MathSolution::divide(-2147483648, -1), 2147483647);
-    assert_eq!(MathSolution::divide(-1010369383, -2147483648), 0);
-}
+    #[test]
+    fn test_divide() {
+        assert_eq!(MathSolution::divide(10, 3), 3);
+        assert_eq!(MathSolution::divide(7, -3), -2);
+        assert_eq!(MathSolution::divide(0, 1), 0);
+        assert_eq!(MathSolution::divide(1, 1), 1);
+        assert_eq!(MathSolution::divide(-1, 1), -1);
+        assert_eq!(MathSolution::divide(-2147483648, -1), 2147483647);
+        assert_eq!(MathSolution::divide(-1010369383, -2147483648), 0);
+    }
 
-#[test]
-fn test_pow() {
-    assert!(MathSolution::pow(2.0, 10) - 1024.0 < 0.00001);
-    assert!(MathSolution::pow(2.1, 3) - 9.261 < 0.00001);
-    assert!(MathSolution::pow(2.0, -2) - 0.25 < 0.00001);
-    assert!(MathSolution::pow(0.00001, 2147483647) - 0.0 < 0.00001);
-    assert!(MathSolution::pow(1.0, 2147483647) - 1.0 < 0.00001);
+    #[test]
+    fn test_pow() {
+        assert!(MathSolution::pow(2.0, 10) - 1024.0 < 0.00001);
+        assert!(MathSolution::pow(2.1, 3) - 9.261 < 0.00001);
+        assert!(MathSolution::pow(2.0, -2) - 0.25 < 0.00001);
+        assert!(MathSolution::pow(0.00001, 2147483647) - 0.0 < 0.00001);
+        assert!(MathSolution::pow(1.0, 2147483647) - 1.0 < 0.00001);
 
-    assert!(MathSolution::pow(2.0, -2147483648) - 0.0 < 0.00001);
-}
+        assert!(MathSolution::pow(2.0, -2147483648) - 0.0 < 0.00001);
+    }
 
-#[test]
-fn test_my_sqrt() {
-    assert_eq!(MathSolution::my_sqrt(0), 0);
-    assert_eq!(MathSolution::my_sqrt(1), 1);
-    assert_eq!(MathSolution::my_sqrt(4), 2);
-    assert_eq!(MathSolution::my_sqrt(8), 2);
-    assert_eq!(MathSolution::my_sqrt(9), 3);
-    assert_eq!(MathSolution::my_sqrt(2147395599), 46339);
-}
+    #[test]
+    fn test_my_sqrt() {
+        assert_eq!(MathSolution::my_sqrt(0), 0);
+        assert_eq!(MathSolution::my_sqrt(1), 1);
+        assert_eq!(MathSolution::my_sqrt(4), 2);
+        assert_eq!(MathSolution::my_sqrt(8), 2);
+        assert_eq!(MathSolution::my_sqrt(9), 3);
+        assert_eq!(MathSolution::my_sqrt(2147395599), 46339);
+    }
 
-#[test]
-fn test_distance_traveled() {
-    assert_eq!(MathSolution::distance_traveled(5, 10), 60);
-    assert_eq!(MathSolution::distance_traveled(1, 2), 10);
-    assert_eq!(MathSolution::distance_traveled(9, 2), 110);
+    #[test]
+    fn test_distance_traveled() {
+        assert_eq!(MathSolution::distance_traveled(5, 10), 60);
+        assert_eq!(MathSolution::distance_traveled(1, 2), 10);
+        assert_eq!(MathSolution::distance_traveled(9, 2), 110);
+    }
+
+    #[test]
+    fn test_is_happy() {
+        assert!(MathSolution::is_happy(19));
+        assert!(!MathSolution::is_happy(2));
+    }
 }
