@@ -321,6 +321,40 @@ impl ListSolution {
         prev1.as_mut().unwrap().next = dummy2.unwrap().next;
         dummy1.unwrap().next
     }
+
+    /*
+    https://leetcode.com/problems/reverse-linked-list-ii/
+     */
+
+    pub fn reverse_between(
+        head: Option<Box<ListNode<i32>>>,
+        left: i32,
+        right: i32,
+    ) -> Option<Box<ListNode<i32>>> {
+        let mut dummy = Some(Box::new(ListNode { val: 0, next: head }));
+        let mut before = dummy.as_mut();
+        for _ in 0..left - 1 {
+            before = before?.next.as_mut();
+        }
+
+        let mut curr = before.as_mut()?.next.take();
+        let mut tail = curr.as_mut()?.next.take();
+        for _ in left..right {
+            let next = tail.as_mut()?.next.take();
+            tail.as_mut()?.next = curr.take();
+            curr = tail;
+            tail = next;
+        }
+        let mut rev_tail = curr.as_mut();
+        for _ in left..right {
+            rev_tail = rev_tail?.next.as_mut();
+        }
+
+        rev_tail.as_mut()?.next = tail;
+        before.as_mut()?.next = curr;
+
+        dummy?.next
+    }
 }
 
 pub fn main() {}
@@ -521,5 +555,24 @@ mod tests {
         let head = ListNode::from_vec(vec![1, 4, 3, 2, 5, 2]);
         let ans = ListNode::from_vec(vec![1, 4, 3, 2, 5, 2]);
         assert_eq!(ListSolution::partition(head, 1), ans);
+    }
+
+    #[test]
+    fn test_reverse_between() {
+        let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        let ans = ListNode::from_vec(vec![1, 4, 3, 2, 5]);
+        assert_eq!(ListSolution::reverse_between(head, 2, 4), ans);
+        let head = ListNode::from_vec(vec![5]);
+        let ans = ListNode::from_vec(vec![5]);
+        assert_eq!(ListSolution::reverse_between(head, 1, 1), ans);
+        let head = ListNode::from_vec(vec![3, 5]);
+        let ans = ListNode::from_vec(vec![5, 3]);
+        assert_eq!(ListSolution::reverse_between(head, 1, 2), ans);
+        let head = ListNode::from_vec(vec![3, 5]);
+        let ans = ListNode::from_vec(vec![3, 5]);
+        assert_eq!(ListSolution::reverse_between(head, 1, 1), ans);
+        let head = ListNode::from_vec(vec![3, 5]);
+        let ans = ListNode::from_vec(vec![5, 3]);
+        assert_eq!(ListSolution::reverse_between(head, 1, 2), ans);
     }
 }
