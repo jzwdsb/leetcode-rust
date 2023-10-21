@@ -243,9 +243,43 @@ impl BackStrackSolution {
         }
         true
     }
-}
 
-pub fn main() {}
+    pub fn restore_ip_addresses(s: String) -> Vec<String> {
+        let mut res = Vec::new();
+        let mut path = Vec::new();
+        Self::ip_backtrack(&s, 0, &mut path, &mut res);
+        res
+    }
+
+    fn ip_backtrack(s: &String, start: usize, path: &mut Vec<String>, res: &mut Vec<String>) {
+        // if the path is already 4 and the start is already the end of the string
+        // push the path to the result and return
+        if path.len() == 4 && start == s.len() {
+            res.push(path.join("."));
+            return;
+        }
+
+        // if the path is already 4 or the start is already the end of the string
+        // return
+        if path.len() == 4 || start == s.len() {
+            return;
+        }
+        for i in start..s.len() {
+            // the number could not start with 0
+            if i > start && s.chars().nth(start) == Some('0') {
+                break;
+            }
+            // if the number is larger than 255, break
+            let num = s[start..=i].parse::<i32>().unwrap();
+            if num > 255 {
+                break;
+            }
+            path.push(num.to_string());
+            Self::ip_backtrack(s, i + 1, path, res);
+            path.pop();
+        }
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -349,5 +383,14 @@ mod tests {
                 vec!['3', '4', '5', '2', '8', '6', '1', '7', '9'],
             ]
         );
+    }
+
+    #[test]
+    fn test_restore_ip_addresses() {
+        let mut result = BackStrackSolution::restore_ip_addresses("25525511135".to_string());
+        result.sort();
+        let mut expect = vec!["255.255.111.35", "255.255.11.135"];
+        expect.sort();
+        assert_eq!(result, expect);
     }
 }

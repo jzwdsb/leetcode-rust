@@ -514,9 +514,9 @@ impl StringSolution {
         }
         dp[s.len()]
     }
-}
 
-pub fn main() {}
+    
+}
 
 #[cfg(test)]
 mod tests {
@@ -747,4 +747,7 @@ mod tests {
         assert_eq!(StringSolution::num_decodings("0".to_string()), 0);
         assert_eq!(StringSolution::num_decodings("06".to_string()), 0);
     }
+
+    
+
 }
