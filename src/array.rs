@@ -990,6 +990,26 @@ impl ArraySolution {
         }
         res
     }
+
+    /*
+    https://leetcode.com/problems/remove-duplicates-from-sorted-array-ii/
+
+     */
+
+    pub fn remove_duplicates(nums: &mut Vec<i32>) -> i32 {
+        *nums = nums
+            .iter()
+            .enumerate()
+            .flat_map(|(i, &n)| {
+                if i > 1 && nums[i - 2] == n {
+                    None
+                } else {
+                    Some(n)
+                }
+            })
+            .collect();
+        nums.len() as i32
+    }
 }
 
 pub fn main() {}
@@ -1460,5 +1480,15 @@ mod tests {
         );
         assert_eq!(ArraySolution::number_of_good_pairs(vec![1, 1, 1, 1]), 6);
         assert_eq!(ArraySolution::number_of_good_pairs(vec![1, 2, 3]), 0);
+    }
+
+    #[test]
+    fn test_remove_duplicates() {
+        let mut input = vec![1, 1, 1, 2, 2, 3];
+        assert_eq!(ArraySolution::remove_duplicates(&mut input), 5);
+        assert_eq!(input[0..5], vec![1, 1, 2, 2, 3]);
+        let mut input = vec![0, 0, 1, 1, 1, 1, 2, 3, 3];
+        assert_eq!(ArraySolution::remove_duplicates(&mut input), 7);
+        assert_eq!(input[0..7], vec![0, 0, 1, 1, 2, 3, 3]);
     }
 }
