@@ -126,7 +126,7 @@ impl TreeSolution {
     }
 
     /*
-    https://leetcode.com/problems/binary-tree-inorder-traversal/   
+    https://leetcode.com/problems/binary-tree-inorder-traversal/
     */
 
     pub fn inorder_traversal(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
@@ -144,6 +144,31 @@ impl TreeSolution {
                 res.push(node.val);
                 Self::inorder_helper(&node.right, res);
             }
+        }
+    }
+
+    /*
+    https://leetcode.com/problems/symmetric-tree/
+     */
+
+    pub fn is_symmetric(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
+        Self::is_symmetric_helper(&root, &root)
+    }
+
+    fn is_symmetric_helper(
+        left: &Option<Rc<RefCell<TreeNode>>>,
+        right: &Option<Rc<RefCell<TreeNode>>>,
+    ) -> bool {
+        match (left, right) {
+            (None, None) => true,
+            (Some(left), Some(right)) => {
+                let left = left.borrow();
+                let right = right.borrow();
+                left.val == right.val
+                    && Self::is_symmetric_helper(&left.left, &right.right)
+                    && Self::is_symmetric_helper(&left.right, &right.left)
+            }
+            _ => false,
         }
     }
 }
@@ -249,6 +274,30 @@ mod tests {
         assert_eq!(
             TreeSolution::inorder_traversal(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
             vec![1, 3, 2]
+        );
+    }
+
+    #[test]
+    fn test_is_symmetric() {
+        let mut root = TreeNode::new(1);
+        let mut left = TreeNode::new(2);
+        let mut right = TreeNode::new(2);
+        let left_left = TreeNode::new(3);
+        let left_right = TreeNode::new(4);
+        let right_left = TreeNode::new(4);
+        let right_right = TreeNode::new(3);
+
+        left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left)));
+        left.right = Some(std::rc::Rc::new(std::cell::RefCell::new(left_right)));
+        right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(right_left)));
+        right.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right_right)));
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeSolution::is_symmetric(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
+            true
         );
     }
 }
