@@ -522,6 +522,38 @@ impl StringSolution {
         }
         dp[s.len()]
     }
+
+    /*
+    https://leetcode.com/problems/longest-palindromic-substring/
+
+    find the longest palindromic substring in a string
+    define dp[i][j] as the substring s[i..=j] is a palindrome
+    dp[i][j] = 1 if s[i..=j] is a palindrome
+               0 else
+    dp[i][j] = 1 if s[i] == s[j] && (j - i <= 2 || dp[i+1][j-1] == 1)
+             = 0 else
+     */
+
+    pub fn longest_palindrome(s: String) -> String {
+        let mut dp = vec![vec![0; s.len()]; s.len()];
+        let s = s.chars().collect::<Vec<char>>();
+        let mut max_len = 0;
+        let (mut start, mut end) = (0, 0);
+        for i in (0..s.len()).rev() {
+            for j in i..s.len() {
+                // dp[i][j] = 1 means s[i..=j] is a palindrome
+                if s[i] == s[j] && (j - i <= 2 || dp[i + 1][j - 1] == 1) {
+                    dp[i][j] = 1;
+                    if j - i + 1 > max_len {
+                        max_len = j - i + 1;
+                        start = i;
+                        end = j;
+                    }
+                }
+            }
+        }
+        s[start..=end].iter().collect::<String>()
+    }
 }
 
 #[cfg(test)]
@@ -752,5 +784,25 @@ mod tests {
         assert_eq!(StringSolution::num_decodings("226".to_string()), 3);
         assert_eq!(StringSolution::num_decodings("0".to_string()), 0);
         assert_eq!(StringSolution::num_decodings("06".to_string()), 0);
+    }
+
+    #[test]
+    fn test_longest_palindrome() {
+        assert_eq!(
+            StringSolution::longest_palindrome("babad".to_string()),
+            "aba".to_string()
+        );
+        assert_eq!(
+            StringSolution::longest_palindrome("cbbd".to_string()),
+            "bb".to_string()
+        );
+        assert_eq!(
+            StringSolution::longest_palindrome("a".to_string()),
+            "a".to_string()
+        );
+        assert_eq!(
+            StringSolution::longest_palindrome("ac".to_string()),
+            "c".to_string()
+        );
     }
 }
