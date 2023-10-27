@@ -447,9 +447,15 @@ mod search_test {
     }
 
     #[test]
-    fn test_find_kth_largest()  {
-        assert_eq!(SearchSolution::find_kth_largest(vec![3,2,1,5,6,4], 2), 5);
-        assert_eq!(SearchSolution::find_kth_largest(vec![3,2,3,1,2,4,5,5,6], 4), 4);
+    fn test_find_kth_largest() {
+        assert_eq!(
+            SearchSolution::find_kth_largest(vec![3, 2, 1, 5, 6, 4], 2),
+            5
+        );
+        assert_eq!(
+            SearchSolution::find_kth_largest(vec![3, 2, 3, 1, 2, 4, 5, 5, 6], 4),
+            4
+        );
     }
 
     #[test]

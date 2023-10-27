@@ -484,7 +484,7 @@ impl StringSolution {
     }
     /*
     https://leetcode.com/problems/decode-ways/
-    
+
     we can use dp to solve this problem
 
     define dp[n], where dp[i] is the number of ways to decode the string s[0..i]
@@ -498,24 +498,30 @@ impl StringSolution {
 
      */
     pub fn num_decodings(s: String) -> i32 {
-        let mut dp = vec![0;s.len()+1];
+        let mut dp = vec![0; s.len() + 1];
         let s = s.chars().collect::<Vec<char>>();
         dp[0] = 1;
-        dp[1] = if s[0] == '0' {0} else {1};
+        dp[1] = if s[0] == '0' { 0 } else { 1 };
         for i in 2..=s.len() {
-            let one = s[i-1..i].iter().collect::<String>().parse::<i32>().unwrap();
-            let two = s[i-2..i].iter().collect::<String>().parse::<i32>().unwrap();
+            let one = s[i - 1..i]
+                .iter()
+                .collect::<String>()
+                .parse::<i32>()
+                .unwrap();
+            let two = s[i - 2..i]
+                .iter()
+                .collect::<String>()
+                .parse::<i32>()
+                .unwrap();
             if one >= 1 && one <= 9 {
-                dp[i] += dp[i-1];
+                dp[i] += dp[i - 1];
             }
             if two >= 10 && two <= 26 {
-                dp[i] += dp[i-2];
+                dp[i] += dp[i - 2];
             }
         }
         dp[s.len()]
     }
-
-    
 }
 
 #[cfg(test)]
@@ -747,7 +753,4 @@ mod tests {
         assert_eq!(StringSolution::num_decodings("0".to_string()), 0);
         assert_eq!(StringSolution::num_decodings("06".to_string()), 0);
     }
-
-    
-
 }

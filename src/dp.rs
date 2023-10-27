@@ -297,7 +297,7 @@ impl DPSolution {
         }
         dp[amount as usize]
     }
-    
+
     /*
     link https://leetcode.com/problems/coin-change/
     find the fewest number of coins that you need to make up that amount
@@ -307,8 +307,8 @@ impl DPSolution {
     return dp[amount]
      */
 
-    pub fn coin_change(coins:Vec<i32>, amount: i32) -> i32 {
-        let mut dp = vec![amount+1; amount as usize + 1];
+    pub fn coin_change(coins: Vec<i32>, amount: i32) -> i32 {
+        let mut dp = vec![amount + 1; amount as usize + 1];
         dp[0] = 0;
         for i in 1..=amount {
             for coin in &coins {
@@ -331,25 +331,25 @@ impl DPSolution {
     let dp[i][j] be the minimum number of operations required to convert word1[0..i] to word2[0..j].
     if word1[i] == word2[j], then dp[i][j] = dp[i - 1][j - 1]
     otherwise, dp[i][j] = min(dp[i - 1][j], dp[i][j - 1], dp[i - 1][j - 1]) + 1
-    
+
      */
 
-     pub fn min_distance(word1: String, word2: String) -> i32 {
+    pub fn min_distance(word1: String, word2: String) -> i32 {
         let mut dp = vec![vec![0; word2.len() + 1]; word1.len() + 1];
         for i in 0..=word1.len() {
             dp[i][0] = i; // initialize the first column
         }
         for j in 0..=word2.len() {
-            dp[0][j] = j; // initialize the first row 
+            dp[0][j] = j; // initialize the first row
         }
         for i in 1..=word1.len() {
             for j in 1..=word2.len() {
                 if word1.chars().nth(i - 1) == word2.chars().nth(j - 1) {
                     dp[i][j] = dp[i - 1][j - 1];
                 } else {
-                    let insert = dp[i][j - 1] + 1;   // insert word2[j]
+                    let insert = dp[i][j - 1] + 1; // insert word2[j]
                     let delete = dp[i - 1][j] + 1; // delete word1[i]
-                    let replace = dp[i - 1][j - 1] + 1;  // replace word1[i] with word2[j]
+                    let replace = dp[i - 1][j - 1] + 1; // replace word1[i] with word2[j]
                     dp[i][j] = insert.min(delete).min(replace);
                 }
             }
