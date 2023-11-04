@@ -554,6 +554,32 @@ impl StringSolution {
         }
         s[start..=end].iter().collect::<String>()
     }
+
+    /*
+    https://leetcode.com/problems/word-break/
+
+    define dp
+    dp[i] = true if s[0..i] can be segmented into a space-separated sequence of one or more dictionary words
+            false otherwise
+     */
+
+    pub fn word_break(s: String, word_dict: Vec<String>) -> bool {
+        let mut dp = vec![false; s.len() + 1];
+        let s = s.chars().collect::<Vec<char>>();
+        dp[0] = true;
+        for i in 1..=s.len() {
+            for word in word_dict.iter() {
+                if i >= word.len() && dp[i - word.len()] {
+                    let match_word = s[i - word.len()..i] == word.chars().collect::<Vec<char>>();
+                    if match_word {
+                        dp[i] = true;
+                        break;
+                    }
+                }
+            }
+        }
+        dp[s.len()]
+    }
 }
 
 #[cfg(test)]
@@ -803,6 +829,40 @@ mod tests {
         assert_eq!(
             StringSolution::longest_palindrome("ac".to_string()),
             "c".to_string()
+        );
+    }
+
+    #[test]
+    fn test_word_break() {
+        assert_eq!(
+            StringSolution::word_break(
+                "leetcode".to_string(),
+                vec![
+                    "leet".to_string(),
+                    "code".to_string(),
+                ]
+            ),
+            true
+        );
+        assert_eq!(
+            StringSolution::word_break(
+                "applepenapple".to_string(),
+                vec!["apple".to_string(), "pen".to_string()]
+            ),
+            true
+        );
+        assert_eq!(
+            StringSolution::word_break(
+                "catsandog".to_string(),
+                vec![
+                    "cats".to_string(),
+                    "dog".to_string(),
+                    "sand".to_string(),
+                    "and".to_string(),
+                    "cat".to_string()
+                ]
+            ),
+            false
         );
     }
 }
