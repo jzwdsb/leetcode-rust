@@ -171,6 +171,21 @@ impl TreeSolution {
             _ => false,
         }
     }
+
+    pub fn is_balanced(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
+        match root {
+            None => return true,
+            Some(root) => {
+                let root = root.borrow();
+                let left = Self::max_depth(root.left.clone());
+                let right = Self::max_depth(root.right.clone());
+                if (left - right).abs() > 1 {
+                    return false;
+                }
+                Self::is_balanced(root.left.clone()) && Self::is_balanced(root.right.clone())
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -297,6 +312,26 @@ mod tests {
 
         assert_eq!(
             TreeSolution::is_symmetric(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
+            true
+        );
+    }
+
+    #[test]
+    fn test_is_balance() {
+        let mut root = TreeNode::new(3);
+        let mut left = TreeNode::new(9);
+        let right = TreeNode::new(20);
+        let left_left = TreeNode::new(15);
+        let left_right = TreeNode::new(7);
+
+        left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left)));
+        left.right = Some(std::rc::Rc::new(std::cell::RefCell::new(left_right)));
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeSolution::is_balanced(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
             true
         );
     }
