@@ -1010,6 +1010,25 @@ impl ArraySolution {
             .collect();
         nums.len() as i32
     }
+
+    /*
+    https://leetcode.com/problems/average-value-of-even-numbers-that-are-divisible-by-three/
+
+     */
+
+    pub fn average_value(nums: Vec<i32>) -> i32 {
+        let (mut sum, mut cnt) = (0, 0);
+        for num in nums {
+            if num % 2 == 0 && num % 3 == 0 {
+                sum += num;
+                cnt += 1;
+            }
+        }
+        if cnt == 0 {
+            return 0;
+        }
+        sum / cnt
+    }
 }
 
 pub fn main() {}
@@ -1490,5 +1509,11 @@ mod tests {
         let mut input = vec![0, 0, 1, 1, 1, 1, 2, 3, 3];
         assert_eq!(ArraySolution::remove_duplicates(&mut input), 7);
         assert_eq!(input[0..7], vec![0, 0, 1, 1, 2, 3, 3]);
+    }
+
+    #[test]
+    fn test_average_value() {
+        assert_eq!(ArraySolution::average_value(vec![1, 3, 6, 10, 12, 15]), 9);
+        assert_eq!(ArraySolution::average_value(vec![1, 2, 4, 7, 10]), 0);
     }
 }
