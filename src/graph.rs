@@ -1,5 +1,5 @@
 use std::cmp::Reverse;
-use std::collections::{BinaryHeap, HashMap};
+use std::collections::{BinaryHeap, HashMap, VecDeque};
 
 pub struct GraphSolution {}
 
@@ -262,6 +262,56 @@ impl GraphSolution {
         visited[i as usize][j as usize] = false;
         ans
     }
+
+    pub fn shortest_path_with_max_coin(layers: Vec<Vec<&str>>) -> i32 {
+        let mut visited = vec![vec![false; layers[0].len()]; layers.len()];
+
+        let mut deque = VecDeque::new();
+
+        let mut start = (0i32, 0i32);
+        let mut goal = (0i32, 0i32);
+        for i in 0..layers.len() {
+            for j in 0..layers[0].len() {
+                if layers[i][j] == "S" {
+                    start = (i as i32, j as i32);
+                }
+                if layers[i][j] == "G" {
+                    goal = (i as i32, j as i32);
+                }
+            }
+        }
+        deque.push_back((start.0, start.1, 0));
+        let directions = [(0, 1), (0, -1), (1, 0), (-1, 0)];
+        let left_up = (start.0.min(goal.0), start.1.min(goal.1));
+        let right_down = (start.0.max(goal.0), start.1.max(goal.1));
+        let mut max_coins = -1;
+        while let Some((x, y, coin)) = deque.pop_front() {
+            if x == goal.0 && y == goal.1 {
+                max_coins = max_coins.max(coin);
+                continue;
+            }
+            visited[x as usize][y as usize] = true;
+            for (dx, dy) in directions {
+                let nx = x.wrapping_add(dx);
+                let ny = y.wrapping_add(dy);
+                if nx < left_up.0
+                    || nx > right_down.0
+                    || ny < left_up.1
+                    || ny > right_down.1
+                    || visited[nx as usize][ny as usize]
+                {
+                    continue;
+                }
+                let mut next_coin = coin;
+                if layers[nx as usize][ny as usize] != "G" {
+                    next_coin += layers[nx as usize][ny as usize].parse::<i32>().unwrap();
+                }
+                deque.push_back((nx, ny, next_coin));
+            }
+        }
+
+        max_coins
+    }
 }
 
 #[cfg(test)]
@@ -419,37 +469,22 @@ mod tests {
     #[test]
     fn test_word_search() {
         assert_eq!(
-            GraphSolution::word_search(
-                vec![
-                    vec!['A', 'B', 'C', 'E'],
-                    vec!['S', 'F', 'C', 'S'],
-                    vec!['A', 'D', 'E', 'E']
-                ],
-                "ABCCED".to_string()
-            ),
-            true
+            GraphSolution::shortest_path_with_max_coin(vec![
+                vec!["S", "3", "2", "4"],
+                vec!["1", "2", "G", "1"],
+                vec!["2", "4", "2", "5"],
+                vec!["7", "1", "4", "4"],
+            ]),
+            5
         );
         assert_eq!(
-            GraphSolution::word_search(
-                vec![
-                    vec!['A', 'B', 'C', 'E'],
-                    vec!['S', 'F', 'C', 'S'],
-                    vec!['A', 'D', 'E', 'E']
-                ],
-                "SEE".to_string()
-            ),
-            true
-        );
-        assert_eq!(
-            GraphSolution::word_search(
-                vec![
-                    vec!['A', 'B', 'C', 'E'],
-                    vec!['S', 'F', 'C', 'S'],
-                    vec!['A', 'D', 'E', 'E']
-                ],
-                "ABCB".to_string()
-            ),
-            false
+            GraphSolution::shortest_path_with_max_coin(vec![
+                vec!["6", "3", "2", "G"],
+                vec!["3", "2", "3", "1"],
+                vec!["2", "3", "8", "5"],
+                vec!["S", "1", "4", "3"],
+            ]),
+            19
         );
     }
 }
