@@ -1029,6 +1029,45 @@ impl ArraySolution {
         }
         sum / cnt
     }
+
+    pub fn count_donut(grids: Vec<Vec<char>>) -> usize {
+        let directions = [
+            (0, 1),
+            (0, -1),
+            (1, 0),
+            (-1, 0),
+            (1, 1),
+            (-1, -1),
+            (1, -1),
+            (-1, 1),
+        ];
+        let mut ans = 0;
+
+        for i in 0..grids.len() {
+            for j in 0..grids[i].len() {
+                if grids[i][j] == '.' {
+                    let mut is_donut = true;
+                    for (dx, dy) in directions {
+                        let (nx, ny) = (i as i32 + dx, j as i32 + dy);
+                        if nx < 0
+                            || nx >= grids.len() as i32
+                            || ny < 0
+                            || ny >= grids[0].len() as i32
+                            || grids[nx as usize][ny as usize] != '#'
+                        {
+                            is_donut = false;
+                            break;
+                        }
+                    }
+                    if is_donut {
+                        ans += 1;
+                    }
+                }
+            }
+        }
+
+        ans
+    }
 }
 
 pub fn main() {}
@@ -1515,5 +1554,19 @@ mod tests {
     fn test_average_value() {
         assert_eq!(ArraySolution::average_value(vec![1, 3, 6, 10, 12, 15]), 9);
         assert_eq!(ArraySolution::average_value(vec![1, 2, 4, 7, 10]), 0);
+    }
+
+    #[test]
+    fn test_count_donut() {
+        assert_eq!(
+            ArraySolution::count_donut(vec![
+                "####.".to_string().chars().collect::<Vec<char>>(),
+                "#.###".to_string().chars().collect::<Vec<char>>(),
+                "###.#".to_string().chars().collect::<Vec<char>>(),
+                "#.###".to_string().chars().collect::<Vec<char>>(),
+                "###.#".to_string().chars().collect::<Vec<char>>(),
+            ]),
+            3
+        );
     }
 }
