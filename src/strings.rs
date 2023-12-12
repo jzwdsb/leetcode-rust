@@ -580,6 +580,39 @@ impl StringSolution {
         }
         dp[s.len()]
     }
+
+    /*
+    https://leetcode.com/problems/interleaving-string/
+
+    define dp
+
+    dp[i][j] = true if s1[0..i] and s2[0..j] can be interleaved to s3[0..i+j]
+               false otherwise
+     */
+
+    pub fn is_interleave(s1: String, s2: String, s3: String) -> bool {
+        let s1 = s1.chars().collect::<Vec<char>>();
+        let s2 = s2.chars().collect::<Vec<char>>();
+        let s3 = s3.chars().collect::<Vec<char>>();
+        if s1.len() + s2.len() != s3.len() {
+            return false;
+        }
+        let mut dp = vec![vec![false; s2.len() + 1]; s1.len() + 1];
+        dp[0][0] = true;
+        for i in 1..=s1.len() {
+            dp[i][0] = dp[i - 1][0] && s1[i - 1] == s3[i - 1];
+        }
+        for j in 1..=s2.len() {
+            dp[0][j] = dp[0][j - 1] && s2[j - 1] == s3[j - 1];
+        }
+        for i in 1..=s1.len() {
+            for j in 1..=s2.len() {
+                dp[i][j] = (dp[i - 1][j] && s1[i - 1] == s3[i + j - 1])
+                    || (dp[i][j - 1] && s2[j - 1] == s3[i + j - 1]);
+            }
+        }
+        dp[s1.len()][s2.len()]
+    }
 }
 
 #[cfg(test)]
@@ -837,10 +870,7 @@ mod tests {
         assert_eq!(
             StringSolution::word_break(
                 "leetcode".to_string(),
-                vec![
-                    "leet".to_string(),
-                    "code".to_string(),
-                ]
+                vec!["leet".to_string(), "code".to_string(),]
             ),
             true
         );
@@ -864,5 +894,33 @@ mod tests {
             ),
             false
         );
+    }
+
+    #[test]
+    fn test_is_interleave() {
+        assert_eq!(
+            StringSolution::is_interleave(
+                "aabcc".to_string(),
+                "dbbca".to_string(),
+                "aadbbcbcac".to_string()
+            ),
+            true
+        );
+        assert_eq!(
+            StringSolution::is_interleave(
+                "aabcc".to_string(),
+                "dbbca".to_string(),
+                "aadbbbaccc".to_string()
+            ),
+            false
+        );
+        assert_eq!(
+            StringSolution::is_interleave("".to_string(), "".to_string(), "".to_string()),
+            true
+        );
+        assert_eq!(
+            StringSolution::is_interleave("a".to_string(), "".to_string(), "a".to_string()),
+            true
+        )
     }
 }
