@@ -201,6 +201,38 @@ impl TreeSolution {
             }
         }
     }
+
+    #[allow(dead_code)]
+    pub fn has_path_sum_ii(root: Option<Rc<RefCell<TreeNode>>>, target_sum: i32) -> Vec<Vec<i32>> {
+        let mut res = vec![];
+        let mut path = vec![];
+        Self::path_sum_helper(root, target_sum, &mut path, &mut res);
+        res
+    }
+
+    fn path_sum_helper(
+        root: Option<Rc<RefCell<TreeNode>>>,
+        target_sum: i32,
+        path: &mut Vec<i32>,
+        res: &mut Vec<Vec<i32>>,
+    ) {
+        match root {
+            None => {}
+            Some(root) => {
+                let root = root.borrow();
+                path.push(root.val);
+                if root.left.is_none() && root.right.is_none() && root.val == target_sum {
+                    res.push(path.clone());
+                    path.pop();
+                    return;
+                }
+                Self::path_sum_helper(root.left.clone(), target_sum - root.val, path, res);
+                Self::path_sum_helper(root.right.clone(), target_sum - root.val, path, res);
+                path.pop();
+                return;
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -379,6 +411,40 @@ mod tests {
         assert_eq!(
             TreeSolution::has_path_sum(Some(std::rc::Rc::new(std::cell::RefCell::new(root))), 22),
             true
+        );
+    }
+
+    #[test]
+    fn test_has_path_sum_ii() {
+        let mut root = TreeNode::new(5);
+        let mut left = TreeNode::new(4);
+        let mut right = TreeNode::new(8);
+        let mut left_left = TreeNode::new(11);
+        let left_right = TreeNode::new(13);
+        let right_left = TreeNode::new(4);
+        let mut right_right: TreeNode = TreeNode::new(1);
+        let left_left_left = TreeNode::new(7);
+        let left_left_right = TreeNode::new(2);
+        let right_right_right = TreeNode::new(5);
+
+        left_left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left_left)));
+        left_left.right = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left_right)));
+        right_right.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right_right_right)));
+
+        left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left)));
+        left.right = Some(std::rc::Rc::new(std::cell::RefCell::new(left_right)));
+        right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(right_left)));
+        right.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right_right)));
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeSolution::has_path_sum_ii(
+                Some(std::rc::Rc::new(std::cell::RefCell::new(root))),
+                22
+            ),
+            vec![vec![5, 4, 11, 2], vec![5, 4, 13]]
         );
     }
 }
