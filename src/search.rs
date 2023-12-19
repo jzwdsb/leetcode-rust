@@ -264,6 +264,21 @@ impl SearchSolution {
 
         res
     }
+
+    #[allow(dead_code)]
+    fn find_min_in_rotated_array(nums: Vec<i32>) -> i32 {
+        let mut left = 0;
+        let mut right = nums.len() - 1;
+        while left < right {
+            let mid = (left + right) / 2;
+            if nums[mid] < nums[right] {
+                right = mid;
+            } else {
+                left = mid + 1;
+            }
+        }
+        nums[left]
+    }
 }
 
 pub fn main() {}
@@ -467,6 +482,22 @@ mod search_test {
         assert_eq!(
             SearchSolution::update_matrix(vec![vec![0, 0, 0], vec![0, 1, 0], vec![1, 1, 1]]),
             vec![vec![0, 0, 0], vec![0, 1, 0], vec![1, 2, 1]]
+        );
+    }
+
+    #[test]
+    fn test_find_min_in_rotated_array() {
+        assert_eq!(
+            SearchSolution::find_min_in_rotated_array(vec![3, 4, 5, 1, 2]),
+            1
+        );
+        assert_eq!(
+            SearchSolution::find_min_in_rotated_array(vec![4, 5, 6, 7, 0, 1, 2]),
+            0
+        );
+        assert_eq!(
+            SearchSolution::find_min_in_rotated_array(vec![11, 13, 15, 17]),
+            11
         );
     }
 }
