@@ -312,6 +312,40 @@ impl GraphSolution {
 
         max_coins
     }
+
+    pub fn word_ladder(start: String, end: String, word_list: Vec<String>) -> i32 {
+        let mut visited = vec![false; word_list.len()];
+        let mut deque = VecDeque::new();
+        deque.push_back((start, 1));
+        while let Some((word, step)) = deque.pop_front() {
+            if word == end {
+                return step;
+            }
+            for i in 0..word_list.len() {
+                if visited[i] {
+                    continue;
+                }
+                if Self::is_one_char_diff(&word, &word_list[i]) {
+                    deque.push_back((word_list[i].clone(), step + 1));
+                    visited[i] = true;
+                }
+            }
+        }
+        0
+    }
+
+    fn is_one_char_diff(a: &String, b: &String) -> bool {
+        let mut diff = 0;
+        for i in 0..a.len() {
+            if a.chars().nth(i).unwrap() != b.chars().nth(i).unwrap() {
+                diff += 1;
+                if diff > 1 {
+                    return false;
+                }
+            }
+        }
+        diff == 1
+    }
 }
 
 #[cfg(test)]
@@ -485,6 +519,39 @@ mod tests {
                 vec!["S", "1", "4", "3"],
             ]),
             19
+        );
+    }
+
+    #[test]
+    fn test_word_ladder() {
+        assert_eq!(
+            GraphSolution::word_ladder(
+                "hit".to_string(),
+                "cog".to_string(),
+                vec![
+                    "hot".to_string(),
+                    "dot".to_string(),
+                    "dog".to_string(),
+                    "lot".to_string(),
+                    "log".to_string(),
+                    "cog".to_string()
+                ]
+            ),
+            5
+        );
+        assert_eq!(
+            GraphSolution::word_ladder(
+                "hit".to_string(),
+                "cog".to_string(),
+                vec![
+                    "hot".to_string(),
+                    "dot".to_string(),
+                    "dog".to_string(),
+                    "lot".to_string(),
+                    "log".to_string()
+                ]
+            ),
+            0
         );
     }
 }
