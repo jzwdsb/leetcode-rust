@@ -613,6 +613,44 @@ impl StringSolution {
         }
         dp[s1.len()][s2.len()]
     }
+
+    pub fn word_pattern(pattern: String, s: String) -> bool {
+        let mut map = std::collections::HashMap::<char, &str>::new();
+        let mut map2 = std::collections::HashMap::<&str, char>::new();
+        let pattern = pattern.chars().collect::<Vec<char>>();
+        let s = s.split(' ').collect::<Vec<&str>>();
+        if s.len() != pattern.len() {
+            return false;
+        }
+
+        for i in 0..s.len() {
+            match (map.get(&pattern[i]), map2.get(&s[i])) {
+                (Some(&word), Some(&p)) => {
+                    if word != s[i] || p != pattern[i] {
+                        return false;
+                    }
+                }
+                (Some(&c), None) => {
+                    if c != s[i] {
+                        return false;
+                    }
+                    map2.insert(s[i], pattern[i]);
+                }
+                (None, Some(&p)) => {
+                    if p != pattern[i] {
+                        return false;
+                    }
+                    map.insert(pattern[i], s[i]);
+                }
+                (None, None) => {
+                    map.insert(pattern[i], &s[i]);
+                    map2.insert(s[i], pattern[i]);
+                }
+            }
+        }
+
+        true
+    }
 }
 
 #[cfg(test)]
@@ -922,5 +960,25 @@ mod tests {
             StringSolution::is_interleave("a".to_string(), "".to_string(), "a".to_string()),
             true
         )
+    }
+
+    #[test]
+    fn test_word_pattern() {
+        assert_eq!(
+            StringSolution::word_pattern("abba".to_string(), "dog cat cat dog".to_string()),
+            true
+        );
+        assert_eq!(
+            StringSolution::word_pattern("abba".to_string(), "dog cat cat fish".to_string()),
+            false
+        );
+        assert_eq!(
+            StringSolution::word_pattern("abbc".to_string(), "dog cat cat dog".to_string()),
+            false
+        );
+        assert_eq!(
+            StringSolution::word_pattern("avva".to_string(), "dog dog dog dog".to_string()),
+            false
+        );
     }
 }
