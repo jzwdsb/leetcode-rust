@@ -1068,6 +1068,32 @@ impl ArraySolution {
 
         ans
     }
+
+    /*
+    https://leetcode.com/problems/convert-an-array-into-a-2d-array-with-conditions/description/
+     */
+
+    pub fn find_matrix(nums: Vec<i32>) -> Vec<Vec<i32>> {
+        let mut nums = nums;
+        nums.sort_unstable();
+        let mut res = Vec::new();
+        let mut i = 0;
+        while i < nums.len() {
+            let mut j = i + 1;
+            while j < nums.len() && nums[j] == nums[i] {
+                j += 1;
+            }
+            for k in 0..j - i {
+                if k >= res.len() {
+                    res.push(Vec::new());
+                }
+                res[k].push(nums[i]);
+            }
+            i = j;
+        }
+
+        res
+    }
 }
 
 pub fn main() {}
@@ -1568,5 +1594,15 @@ mod tests {
             ]),
             3
         );
+    }
+
+    #[test]
+    fn test_find_matrix() {
+        let mut res = ArraySolution::find_matrix(vec![1, 3, 4, 1, 2, 3, 1]);
+        for row in res.iter_mut() {
+            row.sort();
+        }
+        res.sort();
+        assert_eq!(res, vec![vec![1], vec![1, 2, 3, 4], vec![1, 3]]);
     }
 }
