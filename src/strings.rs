@@ -651,6 +651,21 @@ impl StringSolution {
 
         true
     }
+
+    /*
+    https://leetcode.com/problems/partitioning-into-minimum-number-of-deci-binary-numbers/
+     */
+
+    pub fn min_partitions(n: String) -> i32 {
+        let mut max = 0;
+        for c in n.chars() {
+            let digit = c.to_digit(10).unwrap();
+            if digit > max {
+                max = digit;
+            }
+        }
+        max as i32
+    }
 }
 
 #[cfg(test)]
@@ -979,6 +994,16 @@ mod tests {
         assert_eq!(
             StringSolution::word_pattern("avva".to_string(), "dog dog dog dog".to_string()),
             false
+        );
+    }
+
+    #[test]
+    fn test_min_partitions() {
+        assert_eq!(StringSolution::min_partitions("32".to_string()), 3);
+        assert_eq!(StringSolution::min_partitions("82734".to_string()), 8);
+        assert_eq!(
+            StringSolution::min_partitions("27346209830709182346".to_string()),
+            9
         );
     }
 }
