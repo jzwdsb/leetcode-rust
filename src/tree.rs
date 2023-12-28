@@ -18,6 +18,7 @@ impl TreeNode {
         }
     }
 }
+type Tree = Option<Rc<RefCell<TreeNode>>>;
 
 struct TreeSolution {}
 
@@ -233,6 +234,41 @@ impl TreeSolution {
             }
         }
     }
+
+    /*
+    https://leetcode.com/problems/recover-binary-search-tree/
+     */
+
+    #[allow(dead_code)]
+    pub fn recover_tree(root: &mut Tree) {
+        let mut first: Tree = None;
+        let mut second: Tree = None;
+        let mut prev: Tree = None;
+
+        Self::recover_helper(root, &mut first, &mut second, &mut prev);
+
+        std::mem::swap(
+            &mut first.as_ref().unwrap().borrow_mut().val,
+            &mut second.as_ref().unwrap().borrow_mut().val,
+        );
+    }
+
+    fn recover_helper(root: &mut Tree, first: &mut Tree, second: &mut Tree, prev: &mut Tree) {
+        match root {
+            None => {}
+            Some(root) => {
+                Self::recover_helper(&mut root.borrow().left.clone(), first, second, prev);
+                if prev.is_some() && prev.as_ref().unwrap().borrow().val > root.borrow().val {
+                    if first.is_none() {
+                        *first = prev.clone();
+                    }
+                    *second = Some(root.clone());
+                }
+                *prev = Some(root.clone());
+                Self::recover_helper(&mut root.borrow().right.clone(), first, second, prev);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -445,6 +481,39 @@ mod tests {
                 22
             ),
             vec![vec![5, 4, 11, 2], vec![5, 4, 13]]
+        );
+    }
+
+    #[test]
+    fn test_recover_tree() {
+        let root = std::rc::Rc::new(std::cell::RefCell::new(TreeNode::new(1)));
+        let left = std::rc::Rc::new(std::cell::RefCell::new(TreeNode::new(3)));
+        let right = std::rc::Rc::new(std::cell::RefCell::new(TreeNode::new(2)));
+
+        root.as_ref().borrow_mut().left = Some(left.clone());
+        left.as_ref().borrow_mut().right = Some(right);
+
+        TreeSolution::recover_tree(&mut Some(root.clone()));
+
+        assert_eq!(TreeSolution::inorder_traversal(Some(root)), vec![1, 2, 3]);
+
+        let root = std::rc::Rc::new(std::cell::RefCell::new(TreeNode::new(3)));
+        let left = std::rc::Rc::new(std::cell::RefCell::new(TreeNode::new(1)));
+        let right = std::rc::Rc::new(std::cell::RefCell::new(TreeNode::new(4)));
+        let right_left = std::rc::Rc::new(std::cell::RefCell::new(TreeNode::new(2)));
+
+        root.as_ref().borrow_mut().left = Some(left.clone());
+        root.as_ref().borrow_mut().right = Some(right.clone());
+        right.as_ref().borrow_mut().left = Some(right_left);
+
+        assert_eq!(
+            TreeSolution::inorder_traversal(Some(root.clone())),
+            vec![1, 3, 2, 4]
+        );
+        TreeSolution::recover_tree(&mut Some(root.clone()));
+        assert_eq!(
+            TreeSolution::inorder_traversal(Some(root)),
+            vec![1, 2, 3, 4]
         );
     }
 }
