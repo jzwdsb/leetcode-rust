@@ -279,7 +279,7 @@ impl TreeSolution {
 
     fn sum_depth_helper(root: Tree, depth: usize) -> usize {
         match root {
-            None => depth,
+            None => 0,
             Some(root) => {
                 let root = root.borrow();
                 depth
