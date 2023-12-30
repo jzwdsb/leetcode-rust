@@ -269,6 +269,64 @@ impl TreeSolution {
             }
         }
     }
+
+    // calculate the sum of depth of all nodes
+    // depth of a node is the number of edges from the node to the tree's root node
+    #[allow(dead_code)]
+    pub fn sum_of_depth(root: Tree) -> usize {
+        Self::sum_depth_helper(root, 0)
+    }
+
+    fn sum_depth_helper(root: Tree, depth: usize) -> usize {
+        match root {
+            None => depth,
+            Some(root) => {
+                let root = root.borrow();
+                depth
+                    + Self::sum_depth_helper(root.left.clone(), depth + 1)
+                    + Self::sum_depth_helper(root.right.clone(), depth + 1)
+            }
+        }
+    }
+
+    #[allow(dead_code)]
+    fn node_distance(root: Tree, p: i32, q: i32) -> i32 {
+        let mut p_path = vec![];
+        let mut q_path = vec![];
+        Self::node_distance_helper(root.clone(), p, &mut p_path);
+        Self::node_distance_helper(root.clone(), q, &mut q_path);
+        p_path.reverse();
+        q_path.reverse();
+        let mut i = 0;
+        while i < p_path.len() && i < q_path.len() {
+            if p_path[i] != q_path[i] {
+                break;
+            }
+            i += 1;
+        }
+
+        (p_path.len() + q_path.len() - 2 * i) as i32
+    }
+
+    fn node_distance_helper(root: Tree, target: i32, path: &mut Vec<i32>) -> bool {
+        match root {
+            None => false,
+            Some(root) => {
+                let root = root.borrow();
+                if root.val == target {
+                    path.push(root.val);
+                    return true;
+                }
+                if Self::node_distance_helper(root.left.clone(), target, path)
+                    || Self::node_distance_helper(root.right.clone(), target, path)
+                {
+                    path.push(root.val);
+                    return true;
+                }
+                false
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -515,5 +573,54 @@ mod tests {
             TreeSolution::inorder_traversal(Some(root)),
             vec![1, 2, 3, 4]
         );
+    }
+
+    #[test]
+    fn test_sum_of_depth() {
+        let mut root = TreeNode::new(3);
+        let mut left = TreeNode::new(9);
+        let right = TreeNode::new(20);
+        let left_left = TreeNode::new(15);
+        let left_right = TreeNode::new(7);
+
+        left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left)));
+        left.right = Some(std::rc::Rc::new(std::cell::RefCell::new(left_right)));
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeSolution::sum_of_depth(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
+            6
+        );
+    }
+
+    #[test]
+    fn test_node_distence(){
+        let mut root = TreeNode::new(3);
+        let mut left = TreeNode::new(5);
+        let mut right = TreeNode::new(1);
+        let left_left = TreeNode::new(6);
+        let mut left_right = TreeNode::new(2);
+        let right_left = TreeNode::new(0);
+        let right_right = TreeNode::new(8);
+        let left_right_left = TreeNode::new(7);
+        let left_right_right = TreeNode::new(4);
+
+        left_right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_right_left)));
+        left_right.right = Some(std::rc::Rc::new(std::cell::RefCell::new(left_right_right)));
+        left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left)));
+        left.right = Some(std::rc::Rc::new(std::cell::RefCell::new(left_right)));
+        right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(right_left)));
+        right.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right_right)));
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(TreeSolution::node_distance(Some(std::rc::Rc::new(std::cell::RefCell::new(root))), 5, 1), 2);
+    }
+
+    #[allow(dead_code)]
+    fn new_node(val: i32) -> Tree {
+        Some(Rc::new(RefCell::new(TreeNode::new(val))))
     }
 }
