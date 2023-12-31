@@ -385,6 +385,65 @@ impl TreeSolution {
             }
         }
     }
+
+    #[allow(dead_code)]
+    pub fn sorted_array_to_bst(nums: Vec<i32>) -> Tree {
+        Self::sorted_array_to_bst_helper(&nums, 0, nums.len() - 1)
+    }
+
+    fn sorted_array_to_bst_helper(nums: &Vec<i32>, start: usize, end: usize) -> Tree {
+        if start >= end {
+            return None;
+        }
+        let mid: usize = (start + end) / 2;
+        let mut root = TreeNode::new(nums[mid]);
+        root.left = Self::sorted_array_to_bst_helper(nums, start, mid);
+        root.right = Self::sorted_array_to_bst_helper(nums, mid + 1, end);
+        Some(Rc::new(RefCell::new(root)))
+    }
+
+    #[allow(dead_code)]
+    pub fn is_binary_search_tree(root: Tree) -> bool {
+        match root {
+            None => true,
+            Some(root) => {
+                let root = root.borrow();
+                if root.left.is_none() && root.right.is_none() {
+                    return true;
+                }
+                let left = root.left.clone();
+                let right = root.right.clone();
+                if left.is_some() && left.as_ref().unwrap().borrow().val >= root.val {
+                    return false;
+                }
+                if right.is_some() && right.as_ref().unwrap().borrow().val <= root.val {
+                    return false;
+                }                
+
+                Self::is_binary_search_tree(root.left.clone())
+                    && Self::is_binary_search_tree(root.right.clone())
+            }
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn is_balance(root: Tree) -> bool {
+        match root {
+            None => true,
+            Some(root) => {
+                let root = root.borrow();
+                if root.left.is_none() && root.right.is_none() {
+                    return true;
+                }
+                let left = Self::max_depth(root.left.clone());
+                let right = Self::max_depth(root.right.clone());
+                if (left - right).abs() > 1 {
+                    return false;
+                }
+                Self::is_balance(root.left.clone()) && Self::is_balance(root.right.clone())
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -739,6 +798,26 @@ mod tests {
                 1
             ),
             2
+        );
+    }
+
+    #[test]
+    fn test_sort_array_to_bst() {
+        let nums = vec![-10, -3, 0, 5, 9];
+        let mut root = TreeNode::new(0);
+        let mut left = TreeNode::new(-3);
+        let mut right = TreeNode::new(9);
+        let left_left = TreeNode::new(-10);
+        let right_left = TreeNode::new(5);
+
+        left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left)));
+        right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(right_left)));
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+        let res = TreeSolution::sorted_array_to_bst(nums.clone());
+        assert_eq!(
+            TreeSolution::is_binary_search_tree(res),
+            true
         );
     }
 
