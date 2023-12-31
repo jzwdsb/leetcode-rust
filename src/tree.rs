@@ -1,3 +1,4 @@
+use std::collections::VecDeque;
 use std::{cell::RefCell, rc::Rc};
 
 #[derive(Debug, PartialEq, Eq)]
@@ -124,6 +125,63 @@ impl TreeSolution {
         }
 
         dp[n as usize]
+    }
+
+    #[allow(dead_code)]
+    pub fn preorder_traversal(root: Tree) -> Vec<i32> {
+        let mut res = vec![];
+        Self::preorder_helper(root, &mut res);
+        res
+    }
+
+    fn preorder_helper(root: Tree, res: &mut Vec<i32>) {
+        match root {
+            None => {}
+            Some(root) => {
+                let root = root.borrow();
+                res.push(root.val);
+                Self::preorder_helper(root.left.clone(), res);
+                Self::preorder_helper(root.right.clone(), res);
+            }
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn postorder_traversal(root: Tree) -> Vec<i32> {
+        let mut res = vec![];
+        Self::postorder_helper(root, &mut res);
+        res
+    }
+
+    fn postorder_helper(root: Tree, res: &mut Vec<i32>) {
+        match root {
+            None => {}
+            Some(root) => {
+                let root = root.borrow();
+                Self::postorder_helper(root.left.clone(), res);
+                Self::postorder_helper(root.right.clone(), res);
+                res.push(root.val);
+            }
+        }
+    }
+
+    #[allow(dead_code)]
+    pub fn breadth_first_traversal(root: Tree) -> Vec<i32> {
+        let mut res = vec![];
+        let mut queue = VecDeque::new();
+        queue.push_back(root.clone());
+        while let Some(front) = queue.pop_front() {
+            match front {
+                None => {}
+                Some(front) => {
+                    let front = front.borrow();
+                    res.push(front.val);
+                    queue.push_back(front.left.clone());
+                    queue.push_back(front.right.clone());
+                }
+            }
+        }
+        res
     }
 
     /*
@@ -419,6 +477,21 @@ mod tests {
     }
 
     #[test]
+    fn test_preorder_traversal() {
+        let mut root = TreeNode::new(1);
+        let mut right = TreeNode::new(2);
+        let right_left = TreeNode::new(3);
+
+        right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(right_left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeSolution::preorder_traversal(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
+            vec![1, 2, 3]
+        );
+    }
+
+    #[test]
     fn test_inorder_traversal() {
         let mut root = TreeNode::new(1);
         let mut right = TreeNode::new(2);
@@ -430,6 +503,49 @@ mod tests {
         assert_eq!(
             TreeSolution::inorder_traversal(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
             vec![1, 3, 2]
+        );
+    }
+
+    #[test]
+    fn test_postorder_travesal() {
+        let mut root = TreeNode::new(1);
+        let mut right = TreeNode::new(2);
+        let right_left = TreeNode::new(3);
+
+        right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(right_left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeSolution::postorder_traversal(Some(std::rc::Rc::new(std::cell::RefCell::new(
+                root
+            )))),
+            vec![3, 2, 1]
+        );
+    }
+
+    #[test]
+    fn test_breadth_first_search() {
+        let mut root = TreeNode::new(1);
+        let mut left = TreeNode::new(2);
+        let mut right = TreeNode::new(3);
+        let left_left = TreeNode::new(4);
+        let left_right = TreeNode::new(5);
+        let right_left = TreeNode::new(6);
+        let right_right = TreeNode::new(7);
+
+        left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left)));
+        left.right = Some(std::rc::Rc::new(std::cell::RefCell::new(left_right)));
+        right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(right_left)));
+        right.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right_right)));
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeSolution::breadth_first_traversal(Some(std::rc::Rc::new(std::cell::RefCell::new(
+                root
+            )))),
+            vec![1, 2, 3, 4, 5, 6, 7]
         );
     }
 
@@ -596,7 +712,7 @@ mod tests {
     }
 
     #[test]
-    fn test_node_distence(){
+    fn test_node_distence() {
         let mut root = TreeNode::new(3);
         let mut left = TreeNode::new(5);
         let mut right = TreeNode::new(1);
@@ -616,7 +732,14 @@ mod tests {
         root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
         root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
 
-        assert_eq!(TreeSolution::node_distance(Some(std::rc::Rc::new(std::cell::RefCell::new(root))), 5, 1), 2);
+        assert_eq!(
+            TreeSolution::node_distance(
+                Some(std::rc::Rc::new(std::cell::RefCell::new(root))),
+                5,
+                1
+            ),
+            2
+        );
     }
 
     #[allow(dead_code)]

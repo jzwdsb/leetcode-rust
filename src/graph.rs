@@ -1,5 +1,12 @@
+use std::cell::RefCell;
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, HashMap, VecDeque};
+use std::rc::Rc;
+
+struct Node {
+    val: i32,
+    nodes: Vec<Rc<RefCell<Node>>>,
+}
 
 pub struct GraphSolution {}
 
@@ -345,6 +352,26 @@ impl GraphSolution {
             }
         }
         diff == 1
+    }
+
+    #[allow(dead_code)]
+    fn breadth_first_traversal(node: Rc<RefCell<Node>>) -> Vec<i32> {
+        let mut queue = VecDeque::new();
+        let mut visited = vec![false; 100];
+        let mut ans = vec![];
+        queue.push_back(node);
+        while let Some(node) = queue.pop_front() {
+            let node = node.borrow();
+            if visited[node.val as usize] {
+                continue;
+            }
+            visited[node.val as usize] = true;
+            ans.push(node.val);
+            for child in node.nodes.iter() {
+                queue.push_back(child.clone());
+            }
+        }
+        ans
     }
 }
 

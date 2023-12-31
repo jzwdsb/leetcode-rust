@@ -67,6 +67,82 @@ impl SortSolution {
             Self::heapify(data, len, largest);
         }
     }
+
+    pub fn quick_sort(nums: &mut Vec<i32>) {
+        Self::quick_helper(nums, 0, nums.len().wrapping_sub(1))
+    }
+
+    fn quick_helper(nums: &mut Vec<i32>, start: usize, end: usize) {
+        if start >= end {
+            return;
+        }
+        let pivot = Self::quick_partition(nums, start, end);
+        Self::quick_helper(nums, start, if pivot == 0 { 0 } else { pivot - 1 });
+        Self::quick_helper(nums, pivot + 1, end)
+    }
+
+    fn quick_partition(nums: &mut Vec<i32>, start: usize, end: usize) -> usize {
+        let piviot = nums[end];
+        let mut i = start;
+        for j in start..end {
+            if nums[j] < piviot {
+                nums.swap(i, j);
+                i += 1;
+            }
+        }
+        nums.swap(i, end);
+        i
+    }
+
+    pub fn merge_sort(nums1: &mut Vec<i32>) {
+        let len = nums1.len();
+        Self::merge_helper(nums1, 0, len - 1);
+    }
+
+    fn merge_helper(nums1: &mut Vec<i32>, start: usize, end: usize) {
+        if start >= end {
+            return;
+        }
+        let mid = (start + end) / 2;
+        Self::merge_helper(nums1, start, mid);
+        Self::merge_helper(nums1, mid + 1, end);
+        Self::merge(nums1, start, mid, end);
+    }
+
+    fn merge(nums1: &mut Vec<i32>, start: usize, mid: usize, end: usize) {
+        let mut i = start;
+        let mut j = mid + 1;
+        let mut tmp = Vec::new();
+        while i <= mid && j <= end {
+            if nums1[i] < nums1[j] {
+                tmp.push(nums1[i]);
+                i += 1;
+            } else {
+                tmp.push(nums1[j]);
+                j += 1;
+            }
+        }
+        while i <= mid {
+            tmp.push(nums1[i]);
+            i += 1;
+        }
+        while j <= end {
+            tmp.push(nums1[j]);
+            j += 1;
+        }
+        nums1[start..=end].clone_from_slice(&tmp);
+    }
+
+    pub fn bubble_sort(nums1: &mut Vec<i32>) {
+        let len = nums1.len();
+        for i in 0..len {
+            for j in 0..len - i - 1 {
+                if nums1[j] > nums1[j + 1] {
+                    nums1.swap(j, j + 1);
+                }
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -93,6 +169,27 @@ mod test {
     fn test_heap_sort() {
         let mut data = vec![4, 10, 3, 5, 1];
         SortSolution::heap_sort(&mut data);
+        assert_eq!(data, vec![1, 3, 4, 5, 10]);
+    }
+
+    #[test]
+    fn test_quick_sort() {
+        let mut data = vec![4, 10, 3, 5, 1];
+        SortSolution::quick_sort(&mut data);
+        assert_eq!(data, vec![1, 3, 4, 5, 10]);
+    }
+
+    #[test]
+    fn test_merge_sort() {
+        let mut data = vec![4, 10, 3, 5, 1];
+        SortSolution::merge_sort(&mut data);
+        assert_eq!(data, vec![1, 3, 4, 5, 10]);
+    }
+
+    #[test]
+    fn test_bubble_sort() {
+        let mut data = vec![4, 10, 3, 5, 1];
+        SortSolution::bubble_sort(&mut data);
         assert_eq!(data, vec![1, 3, 4, 5, 10]);
     }
 }
