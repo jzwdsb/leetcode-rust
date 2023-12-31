@@ -10,4 +10,3 @@ name = "leetcode-rust"
 path = "src/main.rs"
 
 [dependencies]
-clap = { version = "4.2.7", features = ["derive"] }
