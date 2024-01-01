@@ -141,6 +141,37 @@ impl MathSolution {
         }
         true
     }
+
+    pub fn gnerate_pascal_triangle(num_rows: usize) -> Vec<Vec<i32>> {
+        let mut res: Vec<Vec<i32>> = vec![];
+        for i in 0..num_rows {
+            let mut curr_row = vec![1; i + 1];
+            if let Some(prev_row) = res.get(i.checked_sub(1).unwrap_or(0)) {
+                for j in 0..=i {
+                    if j == i || j == 0 {
+                        curr_row[j] = 1;
+                    } else {
+                        curr_row[j] = prev_row[j - 1] + prev_row[j];
+                    }
+                }
+            }
+
+            res.push(curr_row);
+        }
+
+        res
+    }
+
+    pub fn get_pascal_triangle_row(row_index: i32) -> Vec<i32> {
+        let row_index = row_index as usize;
+        let mut res = vec![1; row_index + 1 ];
+        for i in 0..=row_index {
+            for j in (1..i).rev() {
+                res[j] += res[j - 1];
+            }
+        }
+        res
+    }
 }
 
 mod tests {
@@ -199,5 +230,26 @@ mod tests {
     fn test_is_happy() {
         assert!(MathSolution::is_happy(19));
         assert!(!MathSolution::is_happy(2));
+    }
+
+    #[test]
+    fn test_pascal_triangle() {
+        assert_eq!(
+            MathSolution::gnerate_pascal_triangle(5),
+            vec![
+                vec![1],
+                vec![1, 1],
+                vec![1, 2, 1],
+                vec![1, 3, 3, 1],
+                vec![1, 4, 6, 4, 1]
+            ]
+        );
+    }
+
+    #[test]
+    fn test_get_row_in_pascal_triangle() {
+        assert_eq!(MathSolution::get_pascal_triangle_row(3), vec![1, 3, 3, 1]);
+        assert_eq!(MathSolution::get_pascal_triangle_row(0), vec![1]);
+        assert_eq!(MathSolution::get_pascal_triangle_row(1), vec![1, 1]);
     }
 }
