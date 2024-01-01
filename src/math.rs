@@ -164,12 +164,35 @@ impl MathSolution {
 
     pub fn get_pascal_triangle_row(row_index: i32) -> Vec<i32> {
         let row_index = row_index as usize;
-        let mut res = vec![1; row_index + 1 ];
+        let mut res = vec![1; row_index + 1];
         for i in 0..=row_index {
             for j in (1..i).rev() {
                 res[j] += res[j - 1];
             }
         }
+        res
+    }
+
+    pub fn find_content_child(greedy: Vec<i32>, cookies: Vec<i32>) -> usize {
+        let mut greedy = greedy;
+        let mut cookies = cookies;
+        greedy.sort_unstable();
+        cookies.sort_unstable();
+
+        let mut i = 0;
+        let mut j = 0;
+        let mut res = 0;
+
+        while i < greedy.len() && j < cookies.len() {
+            if greedy[i] <= cookies[j] {
+                res += 1;
+                i += 1;
+                j += 1;
+            } else {
+                j += 1;
+            }
+        }
+
         res
     }
 }
@@ -251,5 +274,22 @@ mod tests {
         assert_eq!(MathSolution::get_pascal_triangle_row(3), vec![1, 3, 3, 1]);
         assert_eq!(MathSolution::get_pascal_triangle_row(0), vec![1]);
         assert_eq!(MathSolution::get_pascal_triangle_row(1), vec![1, 1]);
+    }
+
+    #[test]
+    fn test_find_content_child() {
+        assert_eq!(
+            MathSolution::find_content_child(vec![1, 2, 3], vec![1, 1]),
+            1
+        );
+        assert_eq!(
+            MathSolution::find_content_child(vec![1, 2], vec![1, 2, 3]),
+            2
+        );
+
+        assert_eq!(
+            MathSolution::find_content_child(vec![10, 9, 8, 7], vec![5, 6, 7, 8]),
+            2
+        )
     }
 }

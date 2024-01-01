@@ -206,6 +206,38 @@ impl TreeSolution {
         }
     }
 
+    pub fn level_order_traversal(root: Tree) -> Vec<Vec<i32>> {
+        let mut res = vec![];
+        if root.is_none() {
+            return res;
+        }
+        let mut queue = VecDeque::new();
+        queue.push_back(root.clone());
+        let mut level_cnt = 1;
+        while queue.len() > 0 {
+            let mut level_res = vec![];
+            let mut next_level_cnt = 0;
+            for _ in 0..level_cnt {
+                if let Some(node) = queue.pop_front().unwrap() {
+                    let node = node.borrow();
+                    level_res.push(node.val);
+                    if node.left.is_some() {
+                        queue.push_back(node.left.clone());
+                        next_level_cnt += 1
+                    }
+                    if node.right.is_some() {
+                        queue.push_back(node.right.clone());
+                        next_level_cnt += 1
+                    }
+                }
+            }
+            res.push(level_res);
+            level_cnt = next_level_cnt;
+        }
+
+        res
+    }
+
     /*
     https://leetcode.com/problems/symmetric-tree/
      */
@@ -418,7 +450,7 @@ impl TreeSolution {
                 }
                 if right.is_some() && right.as_ref().unwrap().borrow().val <= root.val {
                     return false;
-                }                
+                }
 
                 Self::is_binary_search_tree(root.left.clone())
                     && Self::is_binary_search_tree(root.right.clone())
@@ -815,10 +847,33 @@ mod tests {
         root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
         root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
         let res = TreeSolution::sorted_array_to_bst(nums.clone());
+        assert_eq!(TreeSolution::is_binary_search_tree(res), true);
+    }
+
+    #[test]
+    fn test_level_traversal() {
+        let mut root = TreeNode::new(3);
+        let mut left = TreeNode::new(9);
+        let right = TreeNode::new(20);
+        let left_left = TreeNode::new(15);
+        let left_right = TreeNode::new(7);
+
+        left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left)));
+        left.right = Some(std::rc::Rc::new(std::cell::RefCell::new(left_right)));
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
         assert_eq!(
-            TreeSolution::is_binary_search_tree(res),
-            true
+            TreeSolution::level_order_traversal(Some(std::rc::Rc::new(std::cell::RefCell::new(
+                root
+            )))),
+            vec![vec![3], vec![9, 20], vec![15, 7]]
         );
+
+        assert_eq!(
+            TreeSolution::level_order_traversal(None),
+            Vec::<Vec<i32>>::new()
+        )
     }
 
     #[allow(dead_code)]
