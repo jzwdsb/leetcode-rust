@@ -206,6 +206,7 @@ impl TreeSolution {
         }
     }
 
+    #[allow(dead_code)]
     pub fn level_order_traversal(root: Tree) -> Vec<Vec<i32>> {
         let mut res = vec![];
         if root.is_none() {
@@ -236,6 +237,65 @@ impl TreeSolution {
         }
 
         res
+    }
+
+    #[allow(dead_code)]
+    fn zigzag_level_traversal(root: Tree) -> Vec<Vec<i32>> {
+        let mut res = vec![];
+        if root.is_none() {
+            return res;
+        }
+        let mut queue = VecDeque::new();
+        queue.push_back(root.unwrap().clone());
+        let mut zigzag = false;
+        let mut level_cnt = 1;
+
+        while level_cnt > 0 {
+            let mut level_res = vec![];
+            let mut next_level_cnt = 0;
+            for _ in 0..level_cnt {
+                if let Some(node) = queue.pop_front() {
+                    let node = node.borrow();
+                    level_res.push(node.val);
+                    if let Some(left) = node.left.clone() {
+                        queue.push_back(left);
+                        next_level_cnt += 1;
+                    }
+                    if let Some(right) = node.right.clone() {
+                        queue.push_back(right);
+                        next_level_cnt += 1;
+                    }
+                }
+            }
+            if zigzag {
+                level_res.reverse();
+            }
+            level_cnt = next_level_cnt;
+            zigzag = !zigzag;
+            res.push(level_res);
+        }
+
+        res
+    }
+
+    #[allow(dead_code)]
+    pub fn build_tree(preorder_tree: Vec<i32>, inorder: Vec<i32>) -> Tree {
+        if preorder_tree.len() == 0 {
+            return None;
+        }
+        let mut preorder_tree = preorder_tree;
+        let inorder = inorder;
+        let root_val = preorder_tree.remove(0);
+        let mut root = TreeNode::new(root_val);
+        let root_idx = inorder.iter().position(|&x| x == root_val).unwrap();
+
+        let left_inorder = inorder[0..root_idx].to_vec();
+        let right_inorder = inorder[root_idx + 1..].to_vec();
+        let left_preorder = preorder_tree[0..left_inorder.len()].to_vec();
+        let right_preorder = preorder_tree[left_inorder.len()..].to_vec();
+        root.left = Self::build_tree(left_preorder, left_inorder);
+        root.right = Self::build_tree(right_preorder, right_inorder);
+        Some(Rc::new(RefCell::new(root)))
     }
 
     /*
@@ -874,6 +934,54 @@ mod tests {
             TreeSolution::level_order_traversal(None),
             Vec::<Vec<i32>>::new()
         )
+    }
+
+    #[test]
+    fn test_zigzag_level_traversal() {
+        let mut root = TreeNode::new(3);
+        let mut left = TreeNode::new(9);
+        let right = TreeNode::new(20);
+        let left_left = TreeNode::new(15);
+        let left_right = TreeNode::new(7);
+
+        left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left)));
+        left.right = Some(std::rc::Rc::new(std::cell::RefCell::new(left_right)));
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+        assert_eq!(
+            TreeSolution::zigzag_level_traversal(Some(std::rc::Rc::new(std::cell::RefCell::new(
+                root
+            )))),
+            vec![vec![3], vec![20, 9], vec![15, 7]]
+        );
+
+        assert_eq!(
+            TreeSolution::zigzag_level_traversal(None),
+            Vec::<Vec<i32>>::new()
+        )
+    }
+
+    #[test]
+    fn test_build_tree() {
+        let preorder = vec![3, 9, 20, 15, 7];
+        let inorder = vec![9, 3, 15, 20, 7];
+        let mut root = TreeNode::new(3);
+        let left = TreeNode::new(9);
+        let mut right = TreeNode::new(20);
+        let right_left = TreeNode::new(15);
+        let right_right = TreeNode::new(7);
+
+        right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(right_left)));
+        right.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right_right)));
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeSolution::build_tree(preorder, inorder),
+            Some(std::rc::Rc::new(std::cell::RefCell::new(root)))
+        );
     }
 
     #[allow(dead_code)]

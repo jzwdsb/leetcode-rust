@@ -34,6 +34,36 @@ impl SearchSolution {
         -1
     }
 
+    pub fn search_in_rotated_sorted_array_ii(nums1: Vec<i32>, target: i32) -> bool {
+        let mut left = 0;
+        let mut right = nums1.len() - 1;
+        while left <= right {
+            let mid = (right + left) / 2;
+            if nums1[mid] == target {
+                return true;
+            }
+            // if nums[left] <= nums[mid], it means the left part is sorted
+            if nums1[left] < nums1[mid] {
+                if nums1[left] <= target && target < nums1[mid] {
+                    right = mid - 1;
+                } else {
+                    left = mid + 1;
+                }
+            }
+            // if nums[mid] <= nums[right], it means the right part is sorted
+            else if nums1[left] > nums1[mid] {
+                if nums1[mid] < target && target <= nums1[right] {
+                    left = mid + 1;
+                } else {
+                    right = mid - 1;
+                }
+            } else {
+                left += 1;
+            }
+        }
+        false
+    }
+
     /*
     link: https://leetcode.com/problems/find-first-and-last-position-of-element-in-sorted-array/
     we can solve this with binary search
@@ -303,6 +333,30 @@ mod search_test {
         assert_eq!(
             SearchSolution::search_in_rotated_sorted_array(vec![1, 3], 3),
             1
+        );
+    }
+
+    #[test]
+    fn test_search_in_rotated_sorted_arrary_ii() {
+        assert_eq!(
+            SearchSolution::search_in_rotated_sorted_array_ii(vec![2, 5, 6, 0, 0, 1, 2], 0),
+            true
+        );
+        assert_eq!(
+            SearchSolution::search_in_rotated_sorted_array_ii(vec![2, 5, 6, 0, 0, 1, 2], 3),
+            false
+        );
+        assert_eq!(
+            SearchSolution::search_in_rotated_sorted_array_ii(vec![1, 3], 3),
+            true
+        );
+        assert_eq!(
+            SearchSolution::search_in_rotated_sorted_array_ii(vec![1, 3], 0),
+            false
+        );
+        assert_eq!(
+            SearchSolution::search_in_rotated_sorted_array_ii(vec![1, 0, 1, 1, 1], 0),
+            true
         );
     }
 
