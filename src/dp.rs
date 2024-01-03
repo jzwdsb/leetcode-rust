@@ -385,6 +385,29 @@ impl DPSolution {
         }
         dp[s.len()][t.len()]
     }
+
+    /*
+    https://leetcode.com/problems/triangle/
+
+    find the minimum path sum from top to bottom.
+
+    def dp[i][j] be the minimum path sum from triangle[i][j] to the bottom
+    dp[i][j] = triangle[i][j] + min(dp[i+1][j], dp[i+1][j+1])
+    build the dp matrix from bottom to top
+     */
+
+    pub fn minimum_triangle(triangle: Vec<Vec<i32>>) -> i32 {
+        let mut dp = vec![vec![0; triangle.len()]; triangle.len()];
+        for i in 0..triangle.len() {
+            dp[triangle.len() - 1][i] = triangle[triangle.len() - 1][i];
+        }
+        for i in (0..triangle.len() - 1).rev() {
+            for j in 0..triangle[i].len() {
+                dp[i][j] = triangle[i][j] + dp[i + 1][j].min(dp[i + 1][j + 1]);
+            }
+        }
+        dp[0][0]
+    }
 }
 
 #[cfg(test)]
@@ -518,5 +541,31 @@ mod test {
             DPSolution::num_distinct("babgbag".to_string(), "bag".to_string()),
             5
         );
+    }
+
+    #[test]
+    fn test_minimum_triangle() {
+        assert_eq!(
+            DPSolution::minimum_triangle(vec![
+                vec![2],
+                vec![3, 4],
+                vec![6, 5, 7],
+                vec![4, 1, 8, 3]
+            ]),
+            11
+        );
+        assert_eq!(
+            DPSolution::minimum_triangle(vec![vec![-1], vec![2, 3], vec![1, -1, -3]],),
+            -1
+        );
+        assert_eq!(
+            DPSolution::minimum_triangle(vec![
+                vec![1],
+                vec![-2, -5],
+                vec![3, 6, 9],
+                vec![-1, 2, 4, -3]
+            ]),
+            1
+        )
     }
 }

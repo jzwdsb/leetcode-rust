@@ -1094,6 +1094,53 @@ impl ArraySolution {
 
         res
     }
+
+    /*
+    https://leetcode.com/problems/surrounded-regions/description/
+     */
+
+    #[allow(dead_code)]
+    pub fn surrond_regions(board: &mut Vec<Vec<char>>) {
+        let mut visited = vec![vec![false; board[0].len()]; board.len()];
+        for i in 1..board.len() - 1 {
+            for j in 1..board[i].len() - 1 {
+                if board[i][j] == 'O' && !visited[i][j] {
+                    let mut is_surrounded = true;
+                    let mut queue = std::collections::VecDeque::new();
+                    queue.push_back((i, j));
+                    visited[i][j] = true;
+                    while let Some((x, y)) = queue.pop_front() {
+                        if x == 0 || x == board.len() - 1 || y == 0 || y == board[0].len() - 1 {
+                            is_surrounded = false;
+                        }
+                        for (dx, dy) in [(0, 1), (0, -1), (1, 0), (-1, 0)].iter() {
+                            let (nx, ny) = (x as i32 + dx, y as i32 + dy);
+                            if nx >= 0
+                                && nx < board.len() as i32
+                                && ny >= 0
+                                && ny < board[0].len() as i32
+                                && board[nx as usize][ny as usize] == 'O'
+                                && !visited[nx as usize][ny as usize]
+                            {
+                                queue.push_back((nx as usize, ny as usize));
+                                visited[nx as usize][ny as usize] = true;
+                            }
+                        }
+                    }
+                    if is_surrounded {
+                        for i in 0..board.len() {
+                            for j in 0..board[i].len() {
+                                if visited[i][j] {
+                                    board[i][j] = 'X';
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+   
 }
 
 pub fn main() {}
@@ -1604,5 +1651,61 @@ mod tests {
         }
         res.sort();
         assert_eq!(res, vec![vec![1], vec![1, 2, 3, 4], vec![1, 3]]);
+    }
+
+    #[test]
+    fn test_surrond_regions() {
+        let mut input = vec![
+            vec!['X', 'X', 'X', 'X'],
+            vec!['X', 'O', 'O', 'X'],
+            vec!['X', 'X', 'O', 'X'],
+            vec!['X', 'O', 'X', 'X'],
+        ];
+        ArraySolution::surrond_regions(&mut input);
+        assert_eq!(
+            input,
+            vec![
+                vec!['X', 'X', 'X', 'X'],
+                vec!['X', 'X', 'X', 'X'],
+                vec!['X', 'X', 'X', 'X'],
+                vec!['X', 'O', 'X', 'X'],
+            ]
+        );
+        let mut input = vec![
+            vec!['X', 'O', 'X', 'O', 'X', 'O'],
+            vec!['O', 'X', 'O', 'X', 'O', 'X'],
+            vec!['X', 'O', 'X', 'O', 'X', 'O'],
+            vec!['O', 'X', 'O', 'X', 'O', 'X'],
+        ];
+        ArraySolution::surrond_regions(&mut input);
+        assert_eq!(
+            input,
+            vec![
+                vec!['X', 'O', 'X', 'O', 'X', 'O'],
+                vec!['O', 'X', 'X', 'X', 'X', 'X'],
+                vec!['X', 'X', 'X', 'X', 'X', 'O'],
+                vec!['O', 'X', 'O', 'X', 'O', 'X'],
+            ]
+        );
+        let mut input = vec![
+            vec!['O', 'O', 'O', 'O', 'X', 'X'],
+            vec!['O', 'O', 'O', 'O', 'O', 'O'],
+            vec!['O', 'X', 'O', 'X', 'O', 'O'],
+            vec!['O', 'X', 'O', 'O', 'X', 'O'],
+            vec!['O', 'X', 'O', 'X', 'O', 'O'],
+            vec!['O', 'X', 'O', 'O', 'O', 'O'],
+        ];
+        ArraySolution::surrond_regions(&mut input);
+        assert_eq!(
+            input,
+            vec![
+                vec!['O', 'O', 'O', 'O', 'X', 'X'],
+                vec!['O', 'O', 'O', 'O', 'O', 'O'],
+                vec!['O', 'X', 'O', 'X', 'O', 'O'],
+                vec!['O', 'X', 'O', 'O', 'X', 'O'],
+                vec!['O', 'X', 'O', 'X', 'O', 'O'],
+                vec!['O', 'X', 'O', 'O', 'O', 'O']
+            ]
+        );
     }
 }

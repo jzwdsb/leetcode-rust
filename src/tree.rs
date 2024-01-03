@@ -215,7 +215,7 @@ impl TreeSolution {
         let mut queue = VecDeque::new();
         queue.push_back(root.clone());
         let mut level_cnt = 1;
-        while queue.len() > 0 {
+        while !queue.is_empty() {
             let mut level_res = vec![];
             let mut next_level_cnt = 0;
             for _ in 0..level_cnt {
@@ -275,6 +275,14 @@ impl TreeSolution {
             res.push(level_res);
         }
 
+        res
+    }
+
+    #[allow(dead_code)]
+    pub fn level_order_bottom(root: Tree) -> Vec<Vec<i32>> {
+        let mut res = Self::level_order_traversal(root);
+
+        res.reverse();
         res
     }
 
@@ -533,6 +541,34 @@ impl TreeSolution {
                     return false;
                 }
                 Self::is_balance(root.left.clone()) && Self::is_balance(root.right.clone())
+            }
+        }
+    }
+
+    /*
+    https://leetcode.com/problems/flatten-binary-tree-to-linked-list/
+
+    flatten tree in preorder
+    thus: root -> left -> right
+     */
+    #[allow(dead_code)]
+    pub fn flatten(root: &mut Tree) {
+        if root.is_none() {
+            return;
+        }
+        let mut stack = vec![];
+        stack.push(root.clone());
+        while let Some(node) = stack.pop() {
+            let node = node.unwrap();
+            if node.as_ref().borrow().right.is_some() {
+                stack.push(node.as_ref().borrow_mut().right.clone());
+            }
+            if node.as_ref().borrow().left.is_some() {
+                stack.push(node.as_ref().borrow_mut().left.clone());
+            }
+            if let Some(last) = stack.last() {
+                node.as_ref().borrow_mut().right = last.clone();
+                node.as_ref().borrow_mut().left = None;
             }
         }
     }
@@ -963,6 +999,30 @@ mod tests {
     }
 
     #[test]
+    fn test_level_order_bottom() {
+        let mut root = TreeNode::new(3);
+        let mut left = TreeNode::new(9);
+        let right = TreeNode::new(20);
+        let left_left = TreeNode::new(15);
+        let left_right = TreeNode::new(7);
+
+        left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left)));
+        left.right = Some(std::rc::Rc::new(std::cell::RefCell::new(left_right)));
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+        assert_eq!(
+            TreeSolution::level_order_bottom(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
+            vec![vec![15, 7], vec![9, 20], vec![3]]
+        );
+
+        assert_eq!(
+            TreeSolution::level_order_bottom(None),
+            Vec::<Vec<i32>>::new()
+        )
+    }
+
+    #[test]
     fn test_build_tree() {
         let preorder = vec![3, 9, 20, 15, 7];
         let inorder = vec![9, 3, 15, 20, 7];
@@ -981,6 +1041,73 @@ mod tests {
         assert_eq!(
             TreeSolution::build_tree(preorder, inorder),
             Some(std::rc::Rc::new(std::cell::RefCell::new(root)))
+        );
+    }
+
+    #[test]
+    fn test_flatten() {
+        let mut root = TreeNode::new(1);
+        let mut left = TreeNode::new(2);
+        let mut right = TreeNode::new(5);
+        let left_left = TreeNode::new(3);
+        let left_right = TreeNode::new(4);
+        let right_right = TreeNode::new(6);
+
+        left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left)));
+        left.right = Some(std::rc::Rc::new(std::cell::RefCell::new(left_right)));
+        right.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right_right)));
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+        let root = Some(std::rc::Rc::new(std::cell::RefCell::new(root)));
+
+        TreeSolution::flatten(&mut root.clone());
+
+        assert_eq!(root.as_ref().unwrap().borrow().val, 1);
+        assert_eq!(
+            root.as_ref()
+                .unwrap()
+                .borrow()
+                .right
+                .as_ref()
+                .unwrap()
+                .borrow()
+                .val,
+            2
+        );
+        assert_eq!(root.as_ref().unwrap().borrow().left, None);
+        assert_eq!(
+            root.as_ref()
+                .unwrap()
+                .borrow()
+                .right
+                .as_ref()
+                .unwrap()
+                .borrow()
+                .right
+                .as_ref()
+                .unwrap()
+                .borrow()
+                .val,
+            3
+        );
+        assert_eq!(
+            root.as_ref()
+                .unwrap()
+                .borrow()
+                .right
+                .as_ref()
+                .unwrap()
+                .borrow()
+                .right
+                .as_ref()
+                .unwrap()
+                .borrow()
+                .right
+                .as_ref()
+                .unwrap()
+                .borrow()
+                .val,
+            4
         );
     }
 
