@@ -1140,6 +1140,38 @@ impl ArraySolution {
             }
         }
     }
+
+    /*
+    https://leetcode.com/problems/gas-station/
+     */
+
+    #[allow(dead_code)]
+    pub fn can_complete_circuit(gas: Vec<i32>, cost: Vec<i32>) -> i32 {
+        let mut total = 0;
+        let mut curr = 0;
+        let mut start = 0;
+        for i in 0..gas.len() {
+            total += gas[i] - cost[i];
+            curr += gas[i] - cost[i];
+            // if we run out of gas at station i
+            // all the station between start and i can't be the start station
+            // because we can't reach station i from these stations
+            // so we can start from station i+1
+            // and reset the curr to 0
+            if curr < 0 {
+                start = i + 1;
+                curr = 0;
+            }
+        }
+        // if total < 0, that means we can't reach the end
+        if total < 0 {
+            -1
+        } else {
+            start as i32
+        }
+    }
+
+   
    
 }
 
@@ -1706,6 +1738,22 @@ mod tests {
                 vec!['O', 'X', 'O', 'X', 'O', 'O'],
                 vec!['O', 'X', 'O', 'O', 'O', 'O']
             ]
+        );
+    }
+
+    #[test]
+    fn test_can_complete_circuit() {
+        assert_eq!(
+            ArraySolution::can_complete_circuit(vec![1, 2, 3, 4, 5], vec![3, 4, 5, 1, 2]),
+            3
+        );
+        assert_eq!(
+            ArraySolution::can_complete_circuit(vec![2, 3, 4], vec![3, 4, 3]),
+            -1
+        );
+        assert_eq!(
+            ArraySolution::can_complete_circuit(vec![5, 1, 2, 3, 4], vec![4, 4, 1, 5, 1]),
+            4
         );
     }
 }

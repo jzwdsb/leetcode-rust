@@ -1,6 +1,8 @@
 use std::collections::VecDeque;
 use std::{cell::RefCell, rc::Rc};
 
+use crate::list::ListNode;
+
 #[derive(Debug, PartialEq, Eq)]
 pub struct TreeNode {
     pub val: i32,
@@ -19,7 +21,7 @@ impl TreeNode {
         }
     }
 }
-type Tree = Option<Rc<RefCell<TreeNode>>>;
+pub type Tree = Option<Rc<RefCell<TreeNode>>>;
 
 struct TreeSolution {}
 
@@ -306,6 +308,26 @@ impl TreeSolution {
         Some(Rc::new(RefCell::new(root)))
     }
 
+    #[allow(dead_code)]
+    pub fn build_tree_from_inorder_and_postorder(inorder: Vec<i32>, postorder: Vec<i32>) -> Tree {
+        if inorder.is_empty() {
+            return None;
+        }
+        let mut postorder = postorder;
+        let last = postorder.pop().unwrap();
+        let mut root = TreeNode::new(last);
+        let root_idx = inorder.iter().position(|&x| x == root.val).unwrap();
+        let left_inorder = inorder[0..root_idx].to_vec();
+        let right_inorder = inorder[root_idx + 1..].to_vec();
+
+        let left_postorder = postorder[0..left_inorder.len()].to_vec();
+        let right_postorder = postorder[left_inorder.len()..].to_vec();
+        root.left = Self::build_tree_from_inorder_and_postorder(left_inorder, left_postorder);
+        root.right = Self::build_tree_from_inorder_and_postorder(right_inorder, right_postorder);
+
+        Some(Rc::new(RefCell::new(root)))
+    }
+
     /*
     https://leetcode.com/problems/symmetric-tree/
      */
@@ -488,7 +510,7 @@ impl TreeSolution {
 
     #[allow(dead_code)]
     pub fn sorted_array_to_bst(nums: Vec<i32>) -> Tree {
-        Self::sorted_array_to_bst_helper(&nums, 0, nums.len() - 1)
+        Self::sorted_array_to_bst_helper(&nums, 0, nums.len())
     }
 
     fn sorted_array_to_bst_helper(nums: &Vec<i32>, start: usize, end: usize) -> Tree {
@@ -571,6 +593,17 @@ impl TreeSolution {
                 node.as_ref().borrow_mut().left = None;
             }
         }
+    }
+
+    #[allow(dead_code)]
+    pub fn sorted_list_to_bst(head: Option<Box<ListNode<i32>>>) -> Tree {
+        let mut nums = vec![];
+        let mut head = head;
+        while let Some(node) = head {
+            nums.push(node.val);
+            head = node.next;
+        }
+        Self::sorted_array_to_bst(nums)
     }
 }
 
@@ -942,8 +975,31 @@ mod tests {
         right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(right_left)));
         root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
         root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
-        let res = TreeSolution::sorted_array_to_bst(nums.clone());
-        assert_eq!(TreeSolution::is_binary_search_tree(res), true);
+        assert_eq!(
+            TreeSolution::sorted_array_to_bst(nums.clone()),
+            Some(std::rc::Rc::new(std::cell::RefCell::new(root)))
+        );
+    }
+
+    #[test]
+    fn test_sorted_list_to_bst() {
+        let lists = ListNode::from_vec(vec![-10, -3, 0, 5, 9]);
+
+        let mut root = TreeNode::new(0);
+        let mut left = TreeNode::new(-3);
+        let mut right = TreeNode::new(9);
+        let left_left = TreeNode::new(-10);
+        let right_left = TreeNode::new(5);
+
+        left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left_left)));
+        right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(right_left)));
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeSolution::sorted_list_to_bst(lists),
+            Some(std::rc::Rc::new(std::cell::RefCell::new(root)))
+        );
     }
 
     #[test]
@@ -1040,6 +1096,28 @@ mod tests {
 
         assert_eq!(
             TreeSolution::build_tree(preorder, inorder),
+            Some(std::rc::Rc::new(std::cell::RefCell::new(root)))
+        );
+    }
+
+    #[test]
+    fn test_build_tree_from_inorder_postorder() {
+        let inorder = vec![9, 3, 15, 20, 7];
+        let postorder = vec![9, 15, 7, 20, 3];
+        let mut root = TreeNode::new(3);
+        let left = TreeNode::new(9);
+        let mut right = TreeNode::new(20);
+        let right_left = TreeNode::new(15);
+        let right_right = TreeNode::new(7);
+
+        right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(right_left)));
+        right.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right_right)));
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeSolution::build_tree_from_inorder_and_postorder(inorder, postorder),
             Some(std::rc::Rc::new(std::cell::RefCell::new(root)))
         );
     }

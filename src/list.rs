@@ -8,7 +8,7 @@ pub struct ListNode<T> {
 impl<T> ListNode<T> {
     #[inline]
     #[allow(dead_code)]
-    fn new(val: T) -> Self {
+    pub fn new(val: T) -> Self {
         ListNode {
             next: None,
             val: val,
@@ -16,7 +16,7 @@ impl<T> ListNode<T> {
     }
     #[inline]
     #[allow(dead_code)]
-    fn from_vec(v: Vec<T>) -> Option<Box<ListNode<T>>> {
+    pub fn from_vec(v: Vec<T>) -> Option<Box<ListNode<T>>> {
         let mut head = None;
         for i in v.into_iter().rev() {
             let mut node = ListNode::new(i);
