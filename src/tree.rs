@@ -605,6 +605,26 @@ impl TreeSolution {
         }
         Self::sorted_array_to_bst(nums)
     }
+
+    #[allow(dead_code)]
+    pub fn sum_numbers(root: Tree) -> i32 {
+        Self::sum_helper(root, 0)
+    }
+
+    pub fn sum_helper(root: Tree, path: i32) -> i32 {
+        match root {
+            None => 0,
+            Some(root) => {
+                let root = root.borrow();
+                if root.left.is_none() && root.left.is_none() {
+                    return path * 10 + root.val;
+                }
+                let sum = Self::sum_helper(root.left.clone(), path * 10 + root.val)
+                    + Self::sum_helper(root.right.clone(), path * 10 + root.val);
+                sum
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -1186,6 +1206,26 @@ mod tests {
                 .borrow()
                 .val,
             4
+        );
+    }
+
+    #[test]
+    fn test_sum_numbers() {
+        let mut root = TreeNode::new(1);
+        let left = TreeNode::new(2);
+        let right = TreeNode::new(3);
+
+        // left.left = Some(std::rc::Rc::new(std::cell::RefCell::new(TreeNode::new(4))));
+        // left.right = Some(std::rc::Rc::new(std::cell::RefCell::new(TreeNode::new(5))));
+        // right.left = Some(std::rc::Rc::new(std::cell::RefCell::new(TreeNode::new(6))));
+        // right.right = Some(std::rc::Rc::new(std::cell::RefCell::new(TreeNode::new(7))));
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeSolution::sum_numbers(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
+            12 + 13
         );
     }
 
