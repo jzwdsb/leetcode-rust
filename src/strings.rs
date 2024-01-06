@@ -668,16 +668,16 @@ impl StringSolution {
     }
 
     pub fn longest_common_subsequence(text1: String, text2: String) -> i32 {
-        let mut dp = vec![vec![0; text2.len()+1]; text1.len()+1];
+        let mut dp = vec![vec![0; text2.len() + 1]; text1.len() + 1];
         let text1 = text1.chars().collect::<Vec<char>>();
         let text2 = text2.chars().collect::<Vec<char>>();
-        for i in 1..=text1.len()  {
+        for i in 1..=text1.len() {
             for j in 1..=text2.len() {
-                if text1[i-1] == text2[j-1] {
-                    dp[i][j] = dp[i-1][j-1]+1;
+                if text1[i - 1] == text2[j - 1] {
+                    dp[i][j] = dp[i - 1][j - 1] + 1;
                     continue;
                 }
-                dp[i][j] = dp[i-1][j].max(dp[i][j-1]);
+                dp[i][j] = dp[i - 1][j].max(dp[i][j - 1]);
             }
         }
         dp[text1.len()][text2.len()]
@@ -697,6 +697,31 @@ impl StringSolution {
             }
         }
         max
+    }
+
+    /*
+    https://leetcode.com/problems/palindrome-partitioning/
+     */
+
+    pub fn partition_palindrome(s: String) -> Vec<Vec<String>> {
+        let mut res = Vec::new();
+        let mut path = Vec::new();
+        Self::dfs(&s, 0, &mut path, &mut res);
+        res
+    }
+
+    fn dfs(s: &String, start: usize, path: &mut Vec<String>, res: &mut Vec<Vec<String>>) {
+        if start == s.len() {
+            res.push(path.clone());
+            return;
+        }
+        for i in start..s.len() {
+            if Self::is_palindrome(s[start..=i].to_string()) {
+                path.push(s[start..=i].to_string());
+                Self::dfs(s, i + 1, path, res);
+                path.pop();
+            }
+        }
     }
 }
 
@@ -1046,10 +1071,7 @@ mod tests {
             3
         );
         assert_eq!(
-            StringSolution::longest_common_subsequence(
-                "abc".to_string(),
-                "def".to_string()
-            ),
+            StringSolution::longest_common_subsequence("abc".to_string(), "def".to_string()),
             0
         );
     }
@@ -1061,11 +1083,26 @@ mod tests {
             1
         );
         assert_eq!(
-            StringSolution::longest_common_sub_string(
-                "abc".to_string(),
-                "def".to_string()
-            ),
+            StringSolution::longest_common_sub_string("abc".to_string(), "def".to_string()),
             0
         );
+    }
+
+    #[test]
+    fn test_partition_palindrome() {
+        let mut result = StringSolution::partition_palindrome("aab".to_string());
+        for r in result.iter_mut() {
+            r.sort();
+        }
+        result.sort();
+        let mut expect = vec![
+            vec!["a".to_string(), "a".to_string(), "b".to_string()],
+            vec!["aa".to_string(), "b".to_string()],
+        ];
+        for e in expect.iter_mut() {
+            e.sort();
+        }
+        expect.sort();
+        assert_eq!(result, expect);
     }
 }

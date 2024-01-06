@@ -195,6 +195,46 @@ impl MathSolution {
 
         res
     }
+
+    /*
+    https://leetcode.com/problems/factorial-trailing-zeroes/description/
+
+    find out how many trailing zeroes in n!
+
+    the number of trailing zeroes is determined by the number of 5 in n!
+    5 * 2 = 10, so we only need to count the number of 5 in n!
+
+     */
+
+    pub fn trailing_zeroes(n: i32) -> i32 {
+        let mut n = n;
+        let mut res = 0;
+        while n > 0 {
+            res += n / 5;
+            n /= 5;
+        }
+        res
+    }
+
+    /*
+    https://leetcode.com/problems/gray-code/description/
+
+    The gray code is a binary numeral system where two successive values differ in only one bit.
+     */
+
+    pub fn gray_code(n: i32) -> Vec<i32> {
+        let mut res = vec![0]; // start with 0
+        for i in 0..n {
+            let mut curr = res.clone(); 
+            curr.reverse(); 
+            let  add = 1 << i;
+            for j in 0..curr.len() {
+                curr[j] += add;
+            }
+            res.append(&mut curr);
+        }
+        res
+    }
 }
 
 mod tests {
@@ -291,5 +331,20 @@ mod tests {
             MathSolution::find_content_child(vec![10, 9, 8, 7], vec![5, 6, 7, 8]),
             2
         )
+    }
+
+    #[test]
+    fn test_trailing_zeros() {
+        assert_eq!(MathSolution::trailing_zeroes(3), 0);
+        assert_eq!(MathSolution::trailing_zeroes(5), 1);
+        assert_eq!(MathSolution::trailing_zeroes(0), 0);
+        assert_eq!(MathSolution::trailing_zeroes(10), 2);
+        assert_eq!(MathSolution::trailing_zeroes(30), 7);
+    }
+
+    #[test]
+    fn test_gray_code() {
+        assert_eq!(MathSolution::gray_code(2), vec![0, 1, 3, 2]);
+        assert_eq!(MathSolution::gray_code(0), vec![0]);
     }
 }

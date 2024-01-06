@@ -616,11 +616,12 @@ impl TreeSolution {
             None => 0,
             Some(root) => {
                 let root = root.borrow();
+                let path = path * 10 + root.val;
                 if root.left.is_none() && root.left.is_none() {
-                    return path * 10 + root.val;
+                    return path;
                 }
-                let sum = Self::sum_helper(root.left.clone(), path * 10 + root.val)
-                    + Self::sum_helper(root.right.clone(), path * 10 + root.val);
+                let sum = Self::sum_helper(root.left.clone(), path)
+                    + Self::sum_helper(root.right.clone(), path);
                 sum
             }
         }
