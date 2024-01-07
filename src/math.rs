@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub struct MathSolution {}
 
 impl MathSolution {
@@ -225,9 +227,9 @@ impl MathSolution {
     pub fn gray_code(n: i32) -> Vec<i32> {
         let mut res = vec![0]; // start with 0
         for i in 0..n {
-            let mut curr = res.clone(); 
-            curr.reverse(); 
-            let  add = 1 << i;
+            let mut curr = res.clone();
+            curr.reverse();
+            let add = 1 << i;
             for j in 0..curr.len() {
                 curr[j] += add;
             }

@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::cell::RefCell;
 use std::cmp::Reverse;
 use std::collections::{BinaryHeap, HashMap, VecDeque};
@@ -354,7 +356,6 @@ impl GraphSolution {
         diff == 1
     }
 
-    #[allow(dead_code)]
     fn breadth_first_traversal(node: Rc<RefCell<Node>>) -> Vec<i32> {
         let mut queue = VecDeque::new();
         let mut visited = vec![false; 100];

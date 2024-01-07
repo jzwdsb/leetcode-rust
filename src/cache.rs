@@ -1,6 +1,7 @@
+#![allow(dead_code)]
+
 use std::collections::{HashMap, VecDeque};
 
-#[allow(dead_code)]
 struct LRUCache {
     capacity: i32,
     cache: HashMap<i32, i32>,
@@ -8,7 +9,6 @@ struct LRUCache {
 }
 
 impl LRUCache {
-    #[allow(dead_code)]
     fn new(capacity: i32) -> Self {
         LRUCache {
             capacity,
@@ -17,7 +17,6 @@ impl LRUCache {
         }
     }
 
-    #[allow(dead_code)]
     fn get(&self, key: i32) -> i32 {
         match self.cache.get(&key) {
             Some(value) => *value,
@@ -25,7 +24,6 @@ impl LRUCache {
         }
     }
 
-    #[allow(dead_code)]
     fn put(&mut self, key: i32, value: i32) {
         self.cache.insert(key, value);
         self.queue.push_back(key);

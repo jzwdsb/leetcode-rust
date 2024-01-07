@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 // TODO: refactor the list node to use Rc<RefCell<ListNode<T>>> to avoid the ownership problem
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode<T> {
@@ -7,7 +9,6 @@ pub struct ListNode<T> {
 
 impl<T> ListNode<T> {
     #[inline]
-    #[allow(dead_code)]
     pub fn new(val: T) -> Self {
         ListNode {
             next: None,
@@ -15,7 +16,6 @@ impl<T> ListNode<T> {
         }
     }
     #[inline]
-    #[allow(dead_code)]
     pub fn from_vec(v: Vec<T>) -> Option<Box<ListNode<T>>> {
         let mut head = None;
         for i in v.into_iter().rev() {

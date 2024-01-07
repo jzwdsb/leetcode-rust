@@ -1,3 +1,4 @@
+#![allow(dead_code)]
 pub struct DPSolution {}
 
 impl DPSolution {
@@ -263,7 +264,6 @@ impl DPSolution {
         return prev1;
     }
 
-    #[allow(dead_code)]
     fn rob_helper(nums: &Vec<i32>, memo: &mut Vec<i32>, i: i32) -> i32 {
         if i < 0 {
             return 0;

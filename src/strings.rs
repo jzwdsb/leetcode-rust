@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub struct StringSolution {}
 
 // Solution from https://leetcode.com/problems/valid-number/solutions/3461898/finite-state-machine/

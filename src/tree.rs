@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 use std::collections::VecDeque;
 use std::{cell::RefCell, rc::Rc};
 
@@ -12,7 +14,6 @@ pub struct TreeNode {
 
 impl TreeNode {
     #[inline]
-    #[allow(dead_code)]
     pub fn new(val: i32) -> Self {
         TreeNode {
             val,
@@ -26,7 +27,6 @@ pub type Tree = Option<Rc<RefCell<TreeNode>>>;
 struct TreeSolution {}
 
 impl TreeSolution {
-    #[allow(dead_code)]
     pub fn max_depth(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
         if root.is_none() {
             return 0;
@@ -38,7 +38,6 @@ impl TreeSolution {
         left.max(right) + 1
     }
 
-    #[allow(dead_code)]
     pub fn min_depth(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
         if root.is_none() {
             return 0;
@@ -51,7 +50,6 @@ impl TreeSolution {
         left.min(right) + 1
     }
 
-    #[allow(dead_code)]
     pub fn is_valid_bst(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
         Self::is_valid_helper(&root, std::i64::MIN, std::i64::MAX)
     }
@@ -70,7 +68,6 @@ impl TreeSolution {
         }
     }
 
-    #[allow(dead_code)]
     pub fn is_same_tree(
         p: Option<Rc<RefCell<TreeNode>>>,
         q: Option<Rc<RefCell<TreeNode>>>,
@@ -114,7 +111,6 @@ impl TreeSolution {
     dp[i] represents the number of unique binary search trees that can be composited with i nodes
     dp[i] = dp[0] * dp[i - 1] + dp[1] * dp[i - 2] + ... + dp[i - 1] * dp[0]
      */
-    #[allow(dead_code)]
     pub fn num_trees(n: i32) -> i32 {
         let mut dp = vec![0; (n + 1) as usize];
         dp[0] = 1;
@@ -129,7 +125,6 @@ impl TreeSolution {
         dp[n as usize]
     }
 
-    #[allow(dead_code)]
     pub fn preorder_traversal(root: Tree) -> Vec<i32> {
         let mut res = vec![];
         Self::preorder_helper(root, &mut res);
@@ -148,7 +143,6 @@ impl TreeSolution {
         }
     }
 
-    #[allow(dead_code)]
     pub fn postorder_traversal(root: Tree) -> Vec<i32> {
         let mut res = vec![];
         Self::postorder_helper(root, &mut res);
@@ -167,7 +161,6 @@ impl TreeSolution {
         }
     }
 
-    #[allow(dead_code)]
     pub fn breadth_first_traversal(root: Tree) -> Vec<i32> {
         let mut res = vec![];
         let mut queue = VecDeque::new();
@@ -189,7 +182,6 @@ impl TreeSolution {
     /*
     https://leetcode.com/problems/binary-tree-inorder-traversal/
     */
-    #[allow(dead_code)]
     pub fn inorder_traversal(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
         let mut res = vec![];
         Self::inorder_helper(&root, &mut res);
@@ -208,7 +200,6 @@ impl TreeSolution {
         }
     }
 
-    #[allow(dead_code)]
     pub fn level_order_traversal(root: Tree) -> Vec<Vec<i32>> {
         let mut res = vec![];
         if root.is_none() {
@@ -241,7 +232,6 @@ impl TreeSolution {
         res
     }
 
-    #[allow(dead_code)]
     fn zigzag_level_traversal(root: Tree) -> Vec<Vec<i32>> {
         let mut res = vec![];
         if root.is_none() {
@@ -280,7 +270,6 @@ impl TreeSolution {
         res
     }
 
-    #[allow(dead_code)]
     pub fn level_order_bottom(root: Tree) -> Vec<Vec<i32>> {
         let mut res = Self::level_order_traversal(root);
 
@@ -288,7 +277,6 @@ impl TreeSolution {
         res
     }
 
-    #[allow(dead_code)]
     pub fn build_tree(preorder_tree: Vec<i32>, inorder: Vec<i32>) -> Tree {
         if preorder_tree.len() == 0 {
             return None;
@@ -308,7 +296,6 @@ impl TreeSolution {
         Some(Rc::new(RefCell::new(root)))
     }
 
-    #[allow(dead_code)]
     pub fn build_tree_from_inorder_and_postorder(inorder: Vec<i32>, postorder: Vec<i32>) -> Tree {
         if inorder.is_empty() {
             return None;
@@ -331,7 +318,6 @@ impl TreeSolution {
     /*
     https://leetcode.com/problems/symmetric-tree/
      */
-    #[allow(dead_code)]
     pub fn is_symmetric(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
         Self::is_symmetric_helper(&root, &root)
     }
@@ -352,7 +338,6 @@ impl TreeSolution {
             _ => false,
         }
     }
-    #[allow(dead_code)]
     pub fn is_balanced(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
         match root {
             None => return true,
@@ -368,7 +353,6 @@ impl TreeSolution {
         }
     }
 
-    #[allow(dead_code)]
     pub fn has_path_sum(root: Option<Rc<RefCell<TreeNode>>>, target_sum: i32) -> bool {
         match root {
             None => false,
@@ -383,7 +367,6 @@ impl TreeSolution {
         }
     }
 
-    #[allow(dead_code)]
     pub fn has_path_sum_ii(root: Option<Rc<RefCell<TreeNode>>>, target_sum: i32) -> Vec<Vec<i32>> {
         let mut res = vec![];
         let mut path = vec![];
@@ -419,7 +402,6 @@ impl TreeSolution {
     https://leetcode.com/problems/recover-binary-search-tree/
      */
 
-    #[allow(dead_code)]
     pub fn recover_tree(root: &mut Tree) {
         let mut first: Tree = None;
         let mut second: Tree = None;
@@ -452,7 +434,6 @@ impl TreeSolution {
 
     // calculate the sum of depth of all nodes
     // depth of a node is the number of edges from the node to the tree's root node
-    #[allow(dead_code)]
     pub fn sum_of_depth(root: Tree) -> usize {
         Self::sum_depth_helper(root, 0)
     }
@@ -469,7 +450,6 @@ impl TreeSolution {
         }
     }
 
-    #[allow(dead_code)]
     fn node_distance(root: Tree, p: i32, q: i32) -> i32 {
         let mut p_path = vec![];
         let mut q_path = vec![];
@@ -508,7 +488,6 @@ impl TreeSolution {
         }
     }
 
-    #[allow(dead_code)]
     pub fn sorted_array_to_bst(nums: Vec<i32>) -> Tree {
         Self::sorted_array_to_bst_helper(&nums, 0, nums.len())
     }
@@ -524,7 +503,6 @@ impl TreeSolution {
         Some(Rc::new(RefCell::new(root)))
     }
 
-    #[allow(dead_code)]
     pub fn is_binary_search_tree(root: Tree) -> bool {
         match root {
             None => true,
@@ -548,7 +526,6 @@ impl TreeSolution {
         }
     }
 
-    #[allow(dead_code)]
     pub fn is_balance(root: Tree) -> bool {
         match root {
             None => true,
@@ -573,7 +550,6 @@ impl TreeSolution {
     flatten tree in preorder
     thus: root -> left -> right
      */
-    #[allow(dead_code)]
     pub fn flatten(root: &mut Tree) {
         if root.is_none() {
             return;
@@ -595,7 +571,6 @@ impl TreeSolution {
         }
     }
 
-    #[allow(dead_code)]
     pub fn sorted_list_to_bst(head: Option<Box<ListNode<i32>>>) -> Tree {
         let mut nums = vec![];
         let mut head = head;
@@ -606,7 +581,6 @@ impl TreeSolution {
         Self::sorted_array_to_bst(nums)
     }
 
-    #[allow(dead_code)]
     pub fn sum_numbers(root: Tree) -> i32 {
         Self::sum_helper(root, 0)
     }
@@ -1230,7 +1204,6 @@ mod tests {
         );
     }
 
-    #[allow(dead_code)]
     fn new_node(val: i32) -> Tree {
         Some(Rc::new(RefCell::new(TreeNode::new(val))))
     }

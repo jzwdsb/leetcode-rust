@@ -1,3 +1,5 @@
+#![allow(dead_code)]
+
 pub struct SearchSolution {}
 
 impl SearchSolution {
@@ -295,7 +297,6 @@ impl SearchSolution {
         res
     }
 
-    #[allow(dead_code)]
     fn find_min_in_rotated_array(nums: Vec<i32>) -> i32 {
         let mut left = 0;
         let mut right = nums.len() - 1;
@@ -310,7 +311,6 @@ impl SearchSolution {
         nums[left]
     }
 
-    #[allow(dead_code)]
     pub fn find_peak_element(nums: Vec<i32>) -> i32 {
         let mut left = 0;
         let mut right = nums.len() - 1;
