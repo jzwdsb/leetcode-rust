@@ -309,6 +309,24 @@ impl SearchSolution {
         }
         nums[left]
     }
+
+    #[allow(dead_code)]
+    pub fn find_peak_element(nums: Vec<i32>) -> i32 {
+        let mut left = 0;
+        let mut right = nums.len() - 1;
+        while left < right {
+            let mid = (left + right) / 2;
+            // the different part from binary search
+            // if nums[mid] < nums[mid + 1], it means the peak is in the right part
+            // if nums[mid] > nums[mid + 1], it means the peak is in the left part
+            if nums[mid] < nums[mid + 1] {
+                left = mid + 1;
+            } else {
+                right = mid;
+            }
+        }
+        left as i32
+    }
 }
 
 pub fn main() {}
@@ -552,6 +570,15 @@ mod search_test {
         assert_eq!(
             SearchSolution::find_min_in_rotated_array(vec![11, 13, 15, 17]),
             11
+        );
+    }
+
+    #[test]
+    fn test_find_peak_element() {
+        assert_eq!(SearchSolution::find_peak_element(vec![1, 2, 3, 1]), 2);
+        assert_eq!(
+            SearchSolution::find_peak_element(vec![1, 2, 1, 3, 5, 6, 4]),
+            5
         );
     }
 }

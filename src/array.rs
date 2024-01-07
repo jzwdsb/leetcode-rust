@@ -679,6 +679,22 @@ impl ArraySolution {
         res
     }
 
+    pub fn single_number_ii(nums: Vec<i32>) -> i32 {
+        let mut res = 0;
+        for i in 0..32 {
+            let mut count = 0;
+            for num in nums.iter() {
+                if num >> i & 1 == 1 {
+                    count += 1;
+                }
+            }
+            if count % 3 != 0 {
+                res |= 1 << i;
+            }
+        }
+        res
+    }
+
     pub fn missing_number(nums: Vec<i32>) -> i32 {
         let mut res = 0;
         for (i, num) in nums.iter().enumerate() {
@@ -1169,13 +1185,8 @@ impl ArraySolution {
         } else {
             start as i32
         }
-    }
-
-   
-   
+    }  
 }
-
-pub fn main() {}
 
 #[cfg(test)]
 mod tests {
@@ -1488,6 +1499,18 @@ mod tests {
         assert_eq!(ArraySolution::max_product(vec![2, 3, -2, 4]), 6);
         assert_eq!(ArraySolution::max_product(vec![-2, 0, -1]), 0);
         assert_eq!(ArraySolution::max_product(vec![-4, -3, -2]), 12)
+    }
+
+    #[test]
+    pub fn test_single_number() {
+        assert_eq!(ArraySolution::single_number(vec![2, 2, 1]), 1);
+        assert_eq!(ArraySolution::single_number(vec![4, 1, 2, 1, 2]), 4);
+    }
+
+    #[test]
+    pub fn test_single_number_ii() {
+        assert_eq!(ArraySolution::single_number_ii(vec![2, 2, 3, 2]), 3);
+        assert_eq!(ArraySolution::single_number_ii(vec![0, 1, 0, 1, 0, 1, 99]), 99);
     }
 
     #[test]

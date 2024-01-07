@@ -16,3 +16,4 @@ pub mod sort;
 // pub mod postgres;
 
 pub mod cache;
+pub mod design;
