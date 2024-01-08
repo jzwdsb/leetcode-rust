@@ -10,3 +10,4 @@ name = "leetcode-rust"
 path = "src/main.rs"
 
 [dependencies]
+base-62 = "0.1.1"
