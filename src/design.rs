@@ -404,6 +404,159 @@ impl BowserHistory {
     }
 }
 
+struct CustomStack {
+    max_size: usize,
+    data: Vec<i32>,
+}
+
+impl CustomStack {
+    pub fn new(max_size: i32) -> Self {
+        Self {
+            max_size: max_size as usize,
+            data: Vec::new(),
+        }
+    }
+
+    pub fn push(&mut self, x: i32) {
+        if self.data.len() < self.max_size {
+            self.data.push(x);
+        }
+    }
+
+    pub fn pop(&mut self) -> i32 {
+        match self.data.pop() {
+            Some(v) => v,
+            None => -1,
+        }
+    }
+
+    pub fn increment(&mut self, k: i32, val: i32) {
+        for i in 0..k.min(self.data.len() as i32) as usize {
+            self.data[i] += val;
+        }
+    }
+}
+
+struct UndergroundSystem {
+    check_in: HashMap<i32, (String, i64)>, // id -> (station_name, time)
+
+    check_out: HashMap<(String, String), (i64, i64)>, // (start_station, end_station) -> (total_time, count)
+}
+
+impl UndergroundSystem {
+    pub fn new() -> Self {
+        Self {
+            check_in: HashMap::new(),
+            check_out: HashMap::new(),
+        }
+    }
+
+    pub fn check_in(&mut self, id: i32, station_name: String, t: i32) {
+        self.check_in.insert(id, (station_name, t as i64));
+    }
+
+    pub fn check_out(&mut self, id: i32, station_name: String, t: i32) {
+        let (check_in_station, check_in_time) = self.check_in.remove(&id).unwrap();
+        let (total_time, count) = self
+            .check_out
+            .entry((check_in_station, station_name))
+            .or_default();
+        *total_time += t as i64 - check_in_time;
+        *count += 1;
+    }
+
+    pub fn get_average_time(&self, start_station: String, end_station: String) -> f64 {
+        let (total_time, count) = self.check_out.get(&(start_station, end_station)).unwrap();
+        *total_time as f64 / *count as f64
+    }
+}
+
+use std::collections::BTreeSet;
+
+struct SmallestInfiniteSet {
+    set: BTreeSet<i32>, // keep track of added numbers
+    smallest: i32,      // the current smallest number when add_back is not called
+}
+
+impl SmallestInfiniteSet {
+    pub fn new() -> Self {
+        Self {
+            set: BTreeSet::new(),
+            smallest: 1,
+        }
+    }
+
+    pub fn add_back(&mut self, num: i32) {
+        if num >= self.smallest {
+            return;
+        }
+        self.set.insert(num);
+    }
+
+    pub fn pop_smallest(&mut self) -> i32 {
+        match self.set.pop_first() {
+            Some(n) => n,
+            None => {
+                self.smallest += 1;
+                self.smallest - 1
+            }
+        }
+    }
+}
+
+struct CombinationIterator {
+    combinations: Vec<String>,
+}
+
+impl CombinationIterator {
+    pub fn new(characters: String, combination_length: i32) -> Self {
+        let chars = characters.chars().collect();
+        let mut combinations = Vec::new();
+        Self::backtrack(
+            &mut combinations,
+            &chars,
+            0,
+            combination_length as usize,
+            &String::new(),
+        );
+        combinations.reverse();
+        Self { combinations }
+    }
+
+    fn backtrack(
+        combinations: &mut Vec<String>,
+        chars: &Vec<char>,
+        index: usize,
+        combination_length: usize,
+        curr: &String,
+    ) {
+        if combination_length == 0 {
+            combinations.push(curr.clone());
+            return;
+        }
+        if index >= chars.len() {
+            return;
+        }
+        let next = curr.to_owned() + &chars[index].to_string();
+        Self::backtrack(
+            combinations,
+            chars,
+            index + 1,
+            combination_length - 1,
+            &next,
+        );
+        Self::backtrack(combinations, chars, index + 1, combination_length, curr);
+    }
+
+    pub fn next(&mut self) -> String {
+        self.combinations.pop().unwrap()
+    }
+
+    pub fn has_next(&self) -> bool {
+        !self.combinations.is_empty()
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -506,5 +659,75 @@ mod tests {
         assert_eq!(obj.forward(2), "linkedin.com");
         assert_eq!(obj.back(2), "google.com");
         assert_eq!(obj.back(7), "leetcode.com");
+    }
+
+    #[test]
+    fn test_custom_stack() {
+        let mut obj = CustomStack::new(3);
+        obj.push(1);
+        obj.push(2);
+        assert_eq!(obj.pop(), 2);
+        obj.push(2);
+        obj.push(3);
+        obj.push(4);
+        obj.increment(5, 100);
+        obj.increment(2, 100);
+        assert_eq!(obj.pop(), 103);
+        assert_eq!(obj.pop(), 202);
+        assert_eq!(obj.pop(), 201);
+        assert_eq!(obj.pop(), -1);
+    }
+
+    #[test]
+    fn test_underground_system() {
+        let mut obj = UndergroundSystem::new();
+        obj.check_in(45, "Leyton".to_string(), 3);
+        obj.check_in(32, "Paradise".to_string(), 8);
+        obj.check_in(27, "Leyton".to_string(), 10);
+        obj.check_out(45, "Waterloo".to_string(), 15);
+        obj.check_out(27, "Waterloo".to_string(), 20);
+        obj.check_out(32, "Cambridge".to_string(), 22);
+        assert_eq!(
+            obj.get_average_time("Paradise".to_string(), "Cambridge".to_string()),
+            14.0
+        );
+        assert_eq!(
+            obj.get_average_time("Leyton".to_string(), "Waterloo".to_string()),
+            11.0
+        );
+        obj.check_in(10, "Leyton".to_string(), 24);
+        assert_eq!(
+            obj.get_average_time("Leyton".to_string(), "Waterloo".to_string()),
+            11.0
+        );
+        obj.check_out(10, "Waterloo".to_string(), 38);
+        assert_eq!(
+            obj.get_average_time("Leyton".to_string(), "Waterloo".to_string()),
+            12.0
+        );
+    }
+
+    #[test]
+    fn test_smallest_infinitest_set() {
+        let mut obj = SmallestInfiniteSet::new();
+        obj.add_back(2);
+        assert_eq!(obj.pop_smallest(), 1);
+        assert_eq!(obj.pop_smallest(), 2);
+        assert_eq!(obj.pop_smallest(), 3);
+        obj.add_back(1);
+        assert_eq!(obj.pop_smallest(), 1);
+        assert_eq!(obj.pop_smallest(), 4);
+        assert_eq!(obj.pop_smallest(), 5);
+    }
+
+    #[test]
+    fn test_combination_iterator() {
+        let mut obj = CombinationIterator::new("abc".to_string(), 2);
+        assert_eq!(obj.next(), "ab");
+        assert!(obj.has_next());
+        assert_eq!(obj.next(), "ac");
+        assert!(obj.has_next());
+        assert_eq!(obj.next(), "bc");
+        assert!(!obj.has_next());
     }
 }
