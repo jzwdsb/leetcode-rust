@@ -21,6 +21,35 @@ impl TreeNode {
             right: None,
         }
     }
+
+    pub fn from_vec(nums: Vec<Option<i32>>) -> Option<Rc<RefCell<TreeNode>>> {
+        if nums.is_empty() {
+            return None;
+        }
+        let mut queue = VecDeque::new();
+        let root = Rc::new(RefCell::new(TreeNode::new(nums[0].unwrap())));
+        let mut idx = 1;
+        queue.push_back(root.clone());
+        while !queue.is_empty() {
+            let mut next_level = VecDeque::new();
+            while let Some(node) = queue.pop_front() {
+                if idx < nums.len() && nums[idx].is_some() {
+                    let left = Rc::new(RefCell::new(TreeNode::new(nums[idx].unwrap())));
+                    node.borrow_mut().left = Some(left.clone());
+                    next_level.push_back(left);
+                }
+                idx += 1;
+                if idx < nums.len() && nums[idx].is_some() {
+                    let right = Rc::new(RefCell::new(TreeNode::new(nums[idx].unwrap())));
+                    node.borrow_mut().right = Some(right.clone());
+                    next_level.push_back(right);
+                }
+                idx += 1;
+            }
+            queue = next_level;
+        }
+        Some(root)
+    }
 }
 pub type Tree = Option<Rc<RefCell<TreeNode>>>;
 
@@ -1201,6 +1230,21 @@ mod tests {
         assert_eq!(
             TreeSolution::sum_numbers(Some(std::rc::Rc::new(std::cell::RefCell::new(root)))),
             12 + 13
+        );
+    }
+
+    #[test]
+    fn test_from_vec() {
+        let mut root = TreeNode::new(1);
+        let left = TreeNode::new(2);
+        let right = TreeNode::new(3);
+
+        root.left = Some(std::rc::Rc::new(std::cell::RefCell::new(left)));
+        root.right = Some(std::rc::Rc::new(std::cell::RefCell::new(right)));
+
+        assert_eq!(
+            TreeNode::from_vec(vec![Some(1), Some(2), Some(3)]),
+            Some(std::rc::Rc::new(std::cell::RefCell::new(root)))
         );
     }
 

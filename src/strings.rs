@@ -725,6 +725,23 @@ impl StringSolution {
             }
         }
     }
+
+    pub fn max_number_of_balloons(text: String) -> i32 {
+        let mut map = std::collections::HashMap::new();
+        for c in text.chars() {
+            *map.entry(c).or_insert(0) += 1;
+        }
+        map.entry('l').and_modify(|c| *c /= 2);
+        map.entry('o').and_modify(|c| *c /= 2);
+        let mut ans = std::i32::MAX;
+        for c in "balloon".chars() {
+            let count = map.entry(c).or_insert(0);
+            if *count < ans {
+                ans = *count;
+            }
+        }
+        ans
+    }
 }
 
 #[cfg(test)]
@@ -1106,5 +1123,21 @@ mod tests {
         }
         expect.sort();
         assert_eq!(result, expect);
+    }
+
+    #[test]
+    fn test_max_number_of_balloons() {
+        assert_eq!(
+            StringSolution::max_number_of_balloons("nlaebolko".to_string()),
+            1
+        );
+        assert_eq!(
+            StringSolution::max_number_of_balloons("loonbalxballpoon".to_string()),
+            2
+        );
+        assert_eq!(
+            StringSolution::max_number_of_balloons("leetcode".to_string()),
+            0
+        );
     }
 }

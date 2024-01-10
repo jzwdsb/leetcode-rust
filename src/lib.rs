@@ -15,5 +15,4 @@ pub mod sort;
 // pub mod http;
 // pub mod postgres;
 
-pub mod cache;
 pub mod design;

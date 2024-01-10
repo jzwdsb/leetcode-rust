@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
-use std::collections::{BTreeMap, HashMap, HashSet};
+use crate::tree::Tree;
+use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
 
 struct MinStack {
     stack: Vec<i32>,
@@ -456,7 +457,7 @@ impl UndergroundSystem {
     }
 
     pub fn check_out(&mut self, id: i32, station_name: String, t: i32) {
-        let (check_in_station, check_in_time) = self.check_in.remove(&id).unwrap();
+        let (check_in_station, check_in_time) = self.check_in.remove(&id).expect("no such id");
         let (total_time, count) = self
             .check_out
             .entry((check_in_station, station_name))
@@ -466,12 +467,13 @@ impl UndergroundSystem {
     }
 
     pub fn get_average_time(&self, start_station: String, end_station: String) -> f64 {
-        let (total_time, count) = self.check_out.get(&(start_station, end_station)).unwrap();
+        let (total_time, count) = self
+            .check_out
+            .get(&(start_station, end_station))
+            .expect("no such station");
         *total_time as f64 / *count as f64
     }
 }
-
-use std::collections::BTreeSet;
 
 struct SmallestInfiniteSet {
     set: BTreeSet<i32>, // keep track of added numbers
@@ -557,8 +559,294 @@ impl CombinationIterator {
     }
 }
 
+struct FindElements {
+    root: Tree,
+    sets: HashSet<i32>,
+}
+
+impl FindElements {
+    fn new(root: Tree) -> Self {
+        match root {
+            None => Self {
+                root: None,
+                sets: HashSet::new(),
+            },
+            Some(root) => {
+                root.borrow_mut().val = 0;
+                let mut obj = Self {
+                    root: Some(root.clone()),
+                    sets: HashSet::new(),
+                };
+                obj.recover_tree(Some(root.clone()));
+                obj
+            }
+        }
+    }
+
+    fn recover_tree(&mut self, root: Tree) {
+        match root {
+            None => {}
+            Some(root) => {
+                let root = root.borrow_mut();
+                self.sets.insert(root.val);
+                if root.left.is_some() {
+                    root.left.as_ref().unwrap().borrow_mut().val = root.val * 2 + 1;
+                    self.recover_tree(root.left.clone());
+                }
+                if root.right.is_some() {
+                    root.right.as_ref().unwrap().borrow_mut().val = root.val * 2 + 2;
+                    self.recover_tree(root.right.clone());
+                }
+            }
+        }
+    }
+
+    pub fn find(&self, target: i32) -> bool {
+        self.sets.contains(&target)
+    }
+
+    #[deprecated = "use sets instead"]
+    fn find_in_tree(root: Tree, target: i32) -> bool {
+        match root {
+            None => false,
+            Some(root) => {
+                let root = root.borrow();
+                if root.val == target {
+                    return true;
+                }
+                Self::find_in_tree(root.left.clone(), target)
+                    || Self::find_in_tree(root.right.clone(), target)
+            }
+        }
+    }
+}
+
+struct LRUCache {
+    capacity: usize,
+    cache: HashMap<i32, i32>,
+    queue: VecDeque<i32>,
+}
+
+impl LRUCache {
+    pub fn new(capacity: i32) -> Self {
+        Self {
+            capacity: capacity as usize,
+            cache: HashMap::new(),
+            queue: VecDeque::new(),
+        }
+    }
+
+    pub fn get(&mut self, key: i32) -> i32 {
+        match self.cache.get(&key) {
+            Some(v) => {
+                let idx = self
+                    .queue
+                    .iter()
+                    .position(|&x| x == key)
+                    .expect("key not found");
+                self.queue.remove(idx);
+                self.queue.push_back(key);
+                *v
+            }
+            None => -1,
+        }
+    }
+
+    pub fn put(&mut self, key: i32, value: i32) {
+        match self.cache.contains_key(&key) {
+            true => {
+                let idx = self
+                    .queue
+                    .iter()
+                    .position(|&x| x == key)
+                    .expect("key not found");
+                self.queue.remove(idx);
+                self.queue.push_back(key);
+                self.cache.insert(key, value);
+            }
+            false => {
+                if self.queue.len() == self.capacity {
+                    let key = self.queue.pop_front().unwrap();
+                    self.cache.remove(&key);
+                }
+                self.queue.push_back(key);
+                self.cache.insert(key, value);
+            }
+        }
+    }
+}
+
+struct BSTIterator {
+    stack: Vec<Tree>,
+}
+
+impl BSTIterator {
+    fn new(root: Tree) -> Self {
+        let mut stack = Vec::new();
+        let mut root = root;
+        while root.is_some() {
+            stack.push(root.clone());
+            root = root.unwrap().borrow().left.clone();
+        }
+
+        Self { stack }
+    }
+
+    fn next(&mut self) -> i32 {
+        let mut root = self.stack.pop().expect("stack is empty");
+        let val = root.as_ref().unwrap().borrow().val;
+        root = root.unwrap().borrow().right.clone();
+        while root.is_some() {
+            self.stack.push(root.clone());
+            root = root.unwrap().borrow().left.clone();
+        }
+        val
+    }
+
+    fn has_next(&self) -> bool {
+        !self.stack.is_empty()
+    }
+}
+
+struct TrieNode {
+    children: HashMap<char, TrieNode>,
+    is_word: bool,
+}
+
+impl TrieNode {
+    fn new() -> Self {
+        Self {
+            children: HashMap::new(),
+            is_word: false,
+        }
+    }
+}
+
+struct Trie {
+    root: TrieNode,
+}
+
+impl Trie {
+    fn new() -> Self {
+        Self {
+            root: TrieNode::new(),
+        }
+    }
+
+    fn insert(&mut self, word: String) {
+        let mut node = &mut self.root;
+        for c in word.chars() {
+            node = node.children.entry(c).or_insert(TrieNode::new());
+        }
+        node.is_word = true;
+    }
+
+    fn search(&self, word: String) -> bool {
+        let mut node = &self.root;
+        for c in word.chars() {
+            match node.children.get(&c) {
+                Some(v) => node = v,
+                None => return false,
+            }
+        }
+        node.is_word
+    }
+
+    fn starts_with(&self, prefix: String) -> bool {
+        let mut node = &self.root;
+        for c in prefix.chars() {
+            match node.children.get(&c) {
+                Some(v) => node = v,
+                None => return false,
+            }
+        }
+        true
+    }
+}
+
+// implement stack using queue
+struct MyStackUnderQueue {
+    queue: VecDeque<i32>,
+}
+
+impl MyStackUnderQueue {
+    fn new() -> Self {
+        Self {
+            queue: VecDeque::new(),
+        }
+    }
+
+    fn push(&mut self, x: i32) {
+        self.queue.push_back(x);
+        for _ in 0..self.queue.len() - 1 {
+            let x = self.queue.pop_front().unwrap();
+            self.queue.push_back(x);
+        }
+    }
+
+    fn pop(&mut self) -> i32 {
+        self.queue.pop_front().unwrap()
+    }
+
+    fn top(&self) -> i32 {
+        *self.queue.front().unwrap()
+    }
+
+    fn empty(&self) -> bool {
+        self.queue.is_empty()
+    }
+}
+
+struct MyQueue {
+    stack1: Vec<i32>,
+    stack2: Vec<i32>,
+}
+
+impl MyQueue {
+    fn new() -> Self {
+        Self {
+            stack1: Vec::new(),
+            stack2: Vec::new(),
+        }
+    }
+
+    fn push(&mut self, x: i32) {
+        self.stack1.push(x);
+    }
+
+    fn pop(&mut self) -> i32 {
+        match self.stack2.pop() {
+            Some(v) => v,
+            None => {
+                while let Some(v) = self.stack1.pop() {
+                    self.stack2.push(v);
+                }
+                self.stack2.pop().expect("stack is empty")
+            }
+        }
+    }
+
+    fn peek(&mut self) -> i32 {
+        match self.stack2.last() {
+            Some(v) => *v,
+            None => {
+                while let Some(v) = self.stack1.pop() {
+                    self.stack2.push(v);
+                }
+                *self.stack2.last().expect("stack is empty")
+            }
+        }
+    }
+
+    fn empty(&self) -> bool {
+        self.stack1.is_empty() && self.stack2.is_empty()
+    }
+}
+
 #[cfg(test)]
 mod tests {
+    use crate::tree::TreeNode;
+
     use super::*;
 
     #[test]
@@ -729,5 +1017,82 @@ mod tests {
         assert!(obj.has_next());
         assert_eq!(obj.next(), "bc");
         assert!(!obj.has_next());
+    }
+
+    #[test]
+    fn test_find_elements() {
+        let root = TreeNode::from_vec(vec![Some(-1), None, Some(-1)]);
+        let obj = FindElements::new(root);
+        assert!(!obj.find(1));
+        assert!(obj.find(2));
+        assert!(!obj.find(3));
+    }
+
+    #[test]
+    fn test_lru_cache() {
+        let mut obj = LRUCache::new(2);
+        obj.put(1, 1);
+        obj.put(2, 2);
+        assert_eq!(obj.get(1), 1);
+        obj.put(3, 3);
+        assert_eq!(obj.get(2), -1);
+        obj.put(4, 4);
+        assert_eq!(obj.get(1), -1);
+        assert_eq!(obj.get(3), 3);
+        assert_eq!(obj.get(4), 4);
+    }
+
+    #[test]
+    fn test_bst_iterator() {
+        let root = TreeNode::from_vec(vec![
+            Some(7),
+            Some(3),
+            Some(15),
+            None,
+            None,
+            Some(9),
+            Some(20),
+        ]);
+        let mut obj = BSTIterator::new(root);
+        assert_eq!(obj.next(), 3);
+        assert_eq!(obj.next(), 7);
+        assert!(obj.has_next());
+        assert_eq!(obj.next(), 9);
+        assert!(obj.has_next());
+        assert_eq!(obj.next(), 15);
+        assert!(obj.has_next());
+        assert_eq!(obj.next(), 20);
+        assert!(!obj.has_next());
+    }
+
+    #[test]
+    fn test_trie() {
+        let mut obj = Trie::new();
+        obj.insert("apple".to_string());
+        assert!(obj.search("apple".to_string()));
+        assert!(!obj.search("app".to_string()));
+        assert!(obj.starts_with("app".to_string()));
+        obj.insert("app".to_string());
+        assert!(obj.search("app".to_string()));
+    }
+
+    #[test]
+    fn test_mystack() {
+        let mut obj = MyStackUnderQueue::new();
+        obj.push(1);
+        obj.push(2);
+        assert_eq!(obj.top(), 2);
+        assert_eq!(obj.pop(), 2);
+        assert!(!obj.empty());
+    }
+
+    #[test]
+    fn test_myqueue() {
+        let mut obj = MyQueue::new();
+        obj.push(1);
+        obj.push(2);
+        assert_eq!(obj.peek(), 1);
+        assert_eq!(obj.pop(), 1);
+        assert!(!obj.empty());
     }
 }
