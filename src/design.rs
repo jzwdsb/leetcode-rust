@@ -785,11 +785,11 @@ impl MyStackUnderQueue {
     }
 
     fn pop(&mut self) -> i32 {
-        self.queue.pop_front().unwrap()
+        self.queue.pop_front().expect("queue is empty")
     }
 
     fn top(&self) -> i32 {
-        *self.queue.front().unwrap()
+        *self.queue.front().expect("queue is empty")
     }
 
     fn empty(&self) -> bool {
@@ -840,6 +840,30 @@ impl MyQueue {
 
     fn empty(&self) -> bool {
         self.stack1.is_empty() && self.stack2.is_empty()
+    }
+}
+
+struct NumArray {
+    nums: Vec<i32>,
+    sums: Vec<i32>,
+}
+
+impl NumArray {
+    fn new(nums: Vec<i32>) -> Self {
+        Self {
+            nums: nums.clone(),
+            sums: nums
+                .iter()
+                .scan(0, |acc, &x| {
+                    *acc += x;
+                    Some(*acc)
+                })
+                .collect(),
+        }
+    }
+
+    fn sum_range(&self, left: usize, right: usize) -> i32 {
+        self.sums[right] - self.sums[left] + self.nums[left]
     }
 }
 
@@ -1094,5 +1118,13 @@ mod tests {
         assert_eq!(obj.peek(), 1);
         assert_eq!(obj.pop(), 1);
         assert!(!obj.empty());
+    }
+
+    #[test]
+    fn test_num_array() {
+        let obj = NumArray::new(vec![-2, 0, 3, -5, 2, -1]);
+        assert_eq!(obj.sum_range(0, 2), 1);
+        assert_eq!(obj.sum_range(2, 5), -1);
+        assert_eq!(obj.sum_range(0, 5), -3);
     }
 }

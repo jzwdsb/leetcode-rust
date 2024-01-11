@@ -629,6 +629,50 @@ impl TreeSolution {
             }
         }
     }
+
+    // FIXME: some test cases failed
+    pub fn amount_of_time(root: Tree, target: i32) -> i32 {
+        if root.is_none() {
+            return 0;
+        }
+        let root = root.unwrap();
+        let root = root.borrow();
+        let left_distance = Self::distance(root.left.clone(), target, 1);
+        let right_distance = Self::distance(root.right.clone(), target, 1);
+
+        let left_depth = if root.left.is_some() {
+            Self::max_depth(root.left.clone()) + 1
+        } else {
+            0
+        };
+        let right_depth = if root.right.is_some() {
+            Self::max_depth(root.right.clone()) + 1
+        } else {
+            0
+        };
+
+        match (left_distance == 0, right_distance == 0) {
+            (false, true) => right_depth.max((left_depth - left_distance as i32) as i32),
+            (true, false) => left_depth.max((right_depth - right_distance as i32) as i32),
+            (true, true) => left_depth.max(right_depth) - 1,
+            (false, false) => unreachable!("impossible"),
+        }
+    }
+
+    fn distance(root: Tree, target: i32, distance: usize) -> usize {
+        match root {
+            None => 0,
+            Some(root) => {
+                let root = root.borrow();
+                if root.val == target {
+                    return distance;
+                }
+                let left = Self::distance(root.left.clone(), target, distance + 1);
+                let right = Self::distance(root.right.clone(), target, distance + 1);
+                left.max(right)
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -1246,6 +1290,38 @@ mod tests {
             TreeNode::from_vec(vec![Some(1), Some(2), Some(3)]),
             Some(std::rc::Rc::new(std::cell::RefCell::new(root)))
         );
+    }
+
+    #[test]
+    fn test_amount_of_time() {
+        let root = TreeNode::from_vec(vec![
+            Some(1),
+            Some(5),
+            Some(3),
+            None,
+            Some(4),
+            Some(10),
+            Some(6),
+            Some(9),
+            Some(2),
+        ]);
+
+        assert_eq!(TreeSolution::amount_of_time(root, 3), 4);
+
+        let root = TreeNode::from_vec(vec![
+            Some(1),
+            Some(2),
+            None,
+            Some(3),
+            None,
+            Some(4),
+            None,
+            Some(5),
+        ]);
+
+        assert_eq!(TreeSolution::amount_of_time(root.clone(), 1), 4);
+
+        assert_eq!(TreeSolution::amount_of_time(root, 2), 3);
     }
 
     fn new_node(val: i32) -> Tree {
