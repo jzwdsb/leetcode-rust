@@ -632,44 +632,38 @@ impl TreeSolution {
 
     // FIXME: some test cases failed
     pub fn amount_of_time(root: Tree, target: i32) -> i32 {
-        if root.is_none() {
-            return 0;
-        }
-        let root = root.unwrap();
-        let root = root.borrow();
-        let left_distance = Self::distance(root.left.clone(), target, 1);
-        let right_distance = Self::distance(root.right.clone(), target, 1);
-
-        let left_depth = if root.left.is_some() {
-            Self::max_depth(root.left.clone()) + 1
-        } else {
-            0
-        };
-        let right_depth = if root.right.is_some() {
-            Self::max_depth(root.right.clone()) + 1
-        } else {
-            0
-        };
-
-        match (left_distance == 0, right_distance == 0) {
-            (false, true) => right_depth.max((left_depth - left_distance as i32) as i32),
-            (true, false) => left_depth.max((right_depth - right_distance as i32) as i32),
-            (true, true) => left_depth.max(right_depth) - 1,
-            (false, false) => unreachable!("impossible"),
-        }
+        let mut res = 0;
+        Self::dfs_helper(root, target, &mut res);
+        res as i32
     }
 
-    fn distance(root: Tree, target: i32, distance: usize) -> usize {
+    fn dfs_helper(root: Tree, target: i32, res: &mut usize) -> (bool, usize) {
         match root {
-            None => 0,
+            None => (false, 0),
             Some(root) => {
                 let root = root.borrow();
+                let (left_found, left_distance) = Self::dfs_helper(root.left.clone(), target, res);
+                let (right_found, right_distance) =
+                    Self::dfs_helper(root.right.clone(), target, res);
                 if root.val == target {
-                    return distance;
+                    *res = (*res).max(left_distance.max(right_distance));
+                    return (true, 0);
                 }
-                let left = Self::distance(root.left.clone(), target, distance + 1);
-                let right = Self::distance(root.right.clone(), target, distance + 1);
-                left.max(right)
+
+                match (left_found, right_found) {
+                    (true, false) => {
+                        *res = (*res).max(left_distance + right_distance + 1);
+                        return (true, left_distance + 1);
+                    }
+                    (false, true) => {
+                        *res = (*res).max(left_distance + right_distance + 1);
+                        return (true, right_distance + 1);
+                    }
+                    (false, false) => {}
+                    _ => unreachable!("impossible"),
+                }
+                let sum = left_distance.max(right_distance);
+                (false, sum + 1)
             }
         }
     }
