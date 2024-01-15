@@ -1,7 +1,10 @@
 #![allow(dead_code)]
 
 use crate::tree::Tree;
-use std::collections::{BTreeMap, BTreeSet, HashMap, HashSet, VecDeque};
+use std::{
+    cmp::Reverse,
+    collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
+};
 
 struct MinStack {
     stack: Vec<i32>,
@@ -867,6 +870,76 @@ impl NumArray {
     }
 }
 
+struct WordDictionary {
+    root: TrieNode,
+}
+
+impl WordDictionary {
+    pub fn new() -> Self {
+        Self {
+            root: TrieNode::new(),
+        }
+    }
+
+    pub fn add_word(&mut self, word: String) {
+        let mut node = &mut self.root;
+        for c in word.chars() {
+            node = node.children.entry(c).or_insert(TrieNode::new());
+        }
+        node.is_word = true;
+    }
+
+    fn search_in_trie(node: &TrieNode, word: &[u8]) -> bool {
+        if word.is_empty() {
+            return node.is_word;
+        }
+        match word[0] {
+            b'.' => node
+                .children
+                .values()
+                .any(|v| Self::search_in_trie(v, &word[1..])),
+            c => match node.children.get(&(c as char)) {
+                Some(v) => Self::search_in_trie(v, &word[1..]),
+                None => false,
+            },
+        }
+    }
+
+    pub fn search(&self, word: String) -> bool {
+        Self::search_in_trie(&self.root, word.as_bytes())
+    }
+}
+
+struct MedianFinder {
+    low: BinaryHeap<i32>,           // the smaller half of the numbers
+    high: BinaryHeap<Reverse<i32>>, // the lagrer half of the numbers
+}
+
+impl MedianFinder {
+    pub fn new() -> Self {
+        Self {
+            high: BinaryHeap::new(),
+            low: BinaryHeap::new(),
+        }
+    }
+
+    pub fn add_num(&mut self, num: i32) {
+        self.low.push(num);
+        self.high.push(Reverse(self.low.pop().unwrap()));
+        if self.high.len() > self.low.len() {
+            self.low.push(self.high.pop().unwrap().0);
+        }
+    }
+
+    pub fn find_median(&self) -> f64 {
+        if self.low.len() > self.high.len() {
+            *self.low.peek().unwrap() as f64
+        } else {
+            (*self.low.peek().unwrap() as f64 + self.high.peek().unwrap().0 as f64) / 2.0
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::tree::TreeNode;
@@ -1126,5 +1199,27 @@ mod tests {
         assert_eq!(obj.sum_range(0, 2), 1);
         assert_eq!(obj.sum_range(2, 5), -1);
         assert_eq!(obj.sum_range(0, 5), -3);
+    }
+
+    #[test]
+    fn test_word_dictionary() {
+        let mut obj = WordDictionary::new();
+        obj.add_word("bad".to_string());
+        obj.add_word("dad".to_string());
+        obj.add_word("mad".to_string());
+        assert!(!obj.search("pad".to_string()));
+        assert!(obj.search("bad".to_string()));
+        assert!(obj.search(".ad".to_string()));
+        assert!(obj.search("b..".to_string()));
+    }
+
+    #[test]
+    fn test_find_median() {
+        let mut obj = MedianFinder::new();
+        obj.add_num(1);
+        obj.add_num(2);
+        assert_eq!(obj.find_median(), 1.5);
+        obj.add_num(3);
+        assert_eq!(obj.find_median(), 2.0);
     }
 }
