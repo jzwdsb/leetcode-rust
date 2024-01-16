@@ -940,6 +940,133 @@ impl MedianFinder {
     }
 }
 
+#[derive(Default, Clone, Copy)]
+struct Tweet {
+    publisher: i32,
+    tweet_id: i32,
+    order: i32,
+}
+
+struct Twitter {
+    user_tweet: HashMap<i32, Vec<Tweet>>, // user -> tweets(user, tweet_id)
+    followees: HashMap<i32, HashSet<i32>>, // followee -> followers
+    feeds: HashMap<i32, Vec<Tweet>>,      // user -> tweets(user, tweet_id)
+    order: i32,                           // the global order of tweets
+}
+
+impl Twitter {
+    pub fn new() -> Self {
+        Self {
+            user_tweet: HashMap::new(),
+            followees: HashMap::new(), // followee -> followers
+            feeds: HashMap::new(),
+            order: 0,
+        }
+    }
+
+    pub fn post_tweet(&mut self, user_id: i32, tweet_id: i32) {
+        let new_tweet = Tweet {
+            publisher: user_id,
+            tweet_id,
+            order: self.order,
+        };
+        self.order += 1;
+        self.user_tweet.entry(user_id).or_default().push(new_tweet);
+        self.order += 1;
+        self.feeds.entry(user_id).or_default().push(new_tweet);
+        for followee in self.followees.get(&user_id).unwrap_or(&HashSet::new()) {
+            self.feeds.entry(*followee).or_default().push(new_tweet);
+        }
+    }
+
+    pub fn get_news_feed(&self, user_id: i32) -> Vec<i32> {
+        self.feeds
+            .get(&user_id)
+            .unwrap_or(&Vec::new())
+            .iter()
+            .rev()
+            .map(|t| t.tweet_id)
+            .take(10)
+            .collect()
+    }
+
+    pub fn follow(&mut self, follower_id: i32, followee_id: i32) {
+        if self
+            .followees
+            .entry(followee_id)
+            .or_default()
+            .contains(&follower_id)
+        {
+            return;
+        }
+        if follower_id == followee_id {
+            return;
+        }
+
+        self.followees
+            .entry(followee_id)
+            .or_default()
+            .insert(follower_id);
+        self.feeds
+            .entry(follower_id)
+            .or_default()
+            .extend(self.user_tweet.get(&followee_id).unwrap_or(&Vec::new()));
+        self.feeds
+            .entry(follower_id)
+            .or_default()
+            .sort_by_key(|t| t.order);
+    }
+
+    pub fn unfollow(&mut self, follower_id: i32, followee_id: i32) {
+        if !self
+            .followees
+            .entry(followee_id)
+            .or_default()
+            .contains(&follower_id)
+        {
+            return;
+        }
+        if follower_id == followee_id {
+            return;
+        }
+        self.followees
+            .entry(followee_id)
+            .or_default()
+            .remove(&follower_id);
+        self.feeds
+            .entry(follower_id)
+            .or_default()
+            .retain(|t| t.publisher != followee_id);
+    }
+}
+
+struct KthLargest {
+    k: usize,
+    nums: BinaryHeap<Reverse<i32>>,
+}
+
+impl KthLargest {
+    fn new(k: i32, nums: Vec<i32>) -> Self {
+        let mut obj = Self {
+            k: k as usize,
+            nums: BinaryHeap::with_capacity(k as usize + 1),
+        };
+        for n in nums {
+            obj.nums.push(Reverse(n));
+        }
+
+        obj
+    }
+
+    fn add(&mut self, val: i32) -> i32 {
+        self.nums.push(Reverse(val));
+        while self.nums.len() > self.k {
+            self.nums.pop();
+        }
+        self.nums.peek().unwrap().0
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::tree::TreeNode;
@@ -1221,5 +1348,56 @@ mod tests {
         assert_eq!(obj.find_median(), 1.5);
         obj.add_num(3);
         assert_eq!(obj.find_median(), 2.0);
+    }
+
+    #[test]
+    fn test_tweet() {
+        let mut obj = Twitter::new();
+        obj.post_tweet(1, 5);
+        assert_eq!(obj.get_news_feed(1), vec![5]);
+        obj.follow(1, 2);
+        obj.post_tweet(2, 6);
+        assert_eq!(obj.get_news_feed(1), vec![6, 5]);
+        obj.unfollow(1, 2);
+        assert_eq!(obj.get_news_feed(1), vec![5]);
+
+        let mut obj = Twitter::new();
+        obj.post_tweet(2, 5);
+        obj.follow(1, 2);
+        obj.follow(1, 2); // duplicate follow
+        assert_eq!(obj.get_news_feed(1), vec![5]);
+
+        let mut obj = Twitter::new();
+        obj.post_tweet(1, 4);
+        obj.post_tweet(2, 5);
+        obj.unfollow(1, 2);
+        assert_eq!(obj.get_news_feed(1), vec![4]);
+
+        let mut obj = Twitter::new();
+        obj.post_tweet(1, 5);
+        obj.post_tweet(1, 3);
+        obj.post_tweet(1, 101);
+        obj.post_tweet(1, 13);
+        obj.post_tweet(1, 10);
+        obj.post_tweet(1, 2);
+        obj.post_tweet(1, 94);
+        obj.post_tweet(1, 505);
+        obj.post_tweet(1, 333);
+        obj.post_tweet(1, 22);
+        obj.post_tweet(1, 11);
+        assert_eq!(
+            obj.get_news_feed(1),
+            vec![11, 22, 333, 505, 94, 2, 10, 13, 101, 3]
+        );
+    }
+
+    #[test]
+    fn test_kth_largest() {
+        let mut obj = KthLargest::new(3, vec![4, 5, 8, 2]);
+        assert_eq!(obj.add(3), 4);
+        assert_eq!(obj.add(5), 5);
+        assert_eq!(obj.add(10), 5);
+        assert_eq!(obj.add(9), 8);
+        assert_eq!(obj.add(4), 8);
     }
 }
