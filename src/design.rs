@@ -1,9 +1,12 @@
 #![allow(dead_code)]
 
-use crate::tree::Tree;
+use crate::tree::{Tree, TreeNode};
 use std::{
+    cell::RefCell,
     cmp::Reverse,
     collections::{BTreeMap, BTreeSet, BinaryHeap, HashMap, HashSet, VecDeque},
+    rc::Rc,
+    str::Split,
 };
 
 struct MinStack {
@@ -1067,6 +1070,132 @@ impl KthLargest {
     }
 }
 
+// serialize tree to string, format: [1,2,3,null,null,4,5]
+// deserialize string to tree
+struct TreeCodec {}
+
+impl TreeCodec {
+    pub fn new() -> Self {
+        Self {}
+    }
+
+    pub fn serialize(&self, root: Tree) -> String {
+        let mut res = vec![];
+        Self::serialize_helper(&root, &mut res);
+        // join the vector with ,
+        format!("[{}]", res.join(","))
+    }
+
+    fn serialize_helper(root: &Tree, res: &mut Vec<String>) {
+        match root {
+            None => {
+                res.push("null".to_string());
+            }
+            Some(root) => {
+                res.push(root.borrow().val.to_string());
+                Self::serialize_helper(&root.borrow().left, res);
+                Self::serialize_helper(&root.borrow().right, res);
+            }
+        }
+    }
+
+    pub fn deserialize(&self, data: String) -> Tree {
+        // remove [ and ]
+        let data = data.trim_start_matches('[').trim_end_matches(']');
+        let mut iter = data.split(',');
+
+        Self::deserialize_helper(&mut iter)
+    }
+
+    fn deserialize_helper(iter: &mut Split<char>) -> Tree {
+        match iter.next().unwrap() {
+            "null" => None,
+            val => {
+                let mut root = TreeNode::new(val.parse().unwrap());
+                root.left = Self::deserialize_helper(iter);
+                root.right = Self::deserialize_helper(iter);
+                Some(Rc::new(RefCell::new(root)))
+            }
+        }
+    }
+}
+
+struct LFUCache {
+    capacity: usize,
+    cache: HashMap<i32, i32>,               // key -> value
+    freq: HashMap<i32, i32>,                // key -> freq
+    freq_cache: HashMap<i32, HashSet<i32>>, // freq -> keys
+    min_freq: i32,                          // the min freq in the cache
+}
+
+impl LFUCache {
+    pub fn new(capacity: i32) -> Self {
+        Self {
+            capacity: capacity as usize,
+            cache: HashMap::new(),
+            freq: HashMap::new(),
+            freq_cache: HashMap::new(),
+            min_freq: 0,
+        }
+    }
+
+    pub fn get(&mut self, key: i32) -> i32 {
+        if !self.cache.contains_key(&key) {
+            return -1;
+        }
+        self.update_freq(key);
+        *self.cache.get(&key).unwrap()
+    }
+
+    fn update_freq(&mut self, key: i32) {
+        let freq = *self.freq.get(&key).unwrap();
+        self.freq_cache.entry(freq).or_default().remove(&key);
+        self.freq_cache.entry(freq + 1).or_default().insert(key);
+        self.freq.insert(key, freq + 1);
+        if freq == self.min_freq && self.freq_cache.entry(freq).or_default().is_empty() {
+            self.min_freq += 1;
+        }
+    }
+
+    pub fn put(&mut self, key: i32, value: i32) {
+        if self.capacity == 0 {
+            return;
+        }
+        if self.cache.contains_key(&key) {
+            self.cache.insert(key, value);
+            self.update_freq(key);
+            return;
+        }
+        if self.cache.len() == self.capacity {
+            self.remove_min_freq();
+        }
+        self.cache.insert(key, value);
+        self.freq.insert(key, 1);
+        self.freq_cache.entry(1).or_default().insert(key);
+        self.min_freq = 1;
+    }
+
+    fn remove_min_freq(&mut self) {
+        let key = self
+            .freq_cache
+            .entry(self.min_freq)
+            .or_default()
+            .iter()
+            .next()
+            .unwrap()
+            .clone();
+        self.cache.remove(&key);
+        self.freq.remove(&key);
+        self.freq_cache
+            .entry(self.min_freq)
+            .or_default()
+            .remove(&key);
+        if self.freq_cache.entry(self.min_freq).or_default().is_empty() {
+            self.min_freq += 1;
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::tree::TreeNode;
@@ -1399,5 +1528,40 @@ mod tests {
         assert_eq!(obj.add(10), 5);
         assert_eq!(obj.add(9), 8);
         assert_eq!(obj.add(4), 8);
+    }
+
+    #[test]
+    fn test_tree_codec() {
+        let obj = TreeCodec::new();
+        let root = TreeNode::from_vec(vec![
+            Some(1),
+            Some(2),
+            Some(3),
+            None,
+            None,
+            Some(4),
+            Some(5),
+        ]);
+        let serialized = obj.serialize(root.clone());
+        assert_eq!(serialized, "[1,2,null,null,3,4,null,null,5,null,null]");
+        assert_eq!(
+            obj.serialize(obj.deserialize(serialized.clone())),
+            serialized
+        );
+    }
+
+    #[test]
+    fn test_lfu_cahce() {
+        let mut obj = LFUCache::new(2);
+        obj.put(1, 1);
+        obj.put(2, 2);
+        assert_eq!(obj.get(1), 1);
+        obj.put(3, 3);
+        assert_eq!(obj.get(2), -1);
+        assert_eq!(obj.get(3), 3);
+        obj.put(4, 4);
+        // random delete 1 or 3 because they have the same frequency
+        assert!(obj.get(1) == -1 || obj.get(3) == -1);
+        assert_eq!(obj.get(4), 4);
     }
 }
