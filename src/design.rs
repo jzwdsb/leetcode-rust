@@ -1196,6 +1196,80 @@ impl LFUCache {
     }
 }
 
+struct CirularQueue {
+    data: Vec<i32>,
+    head: usize, // the index of the first element
+    tail: usize, // the index of the last element
+    size: usize, // the number of elements in the queue
+    capacity: usize,
+}
+
+impl CirularQueue {
+    fn new(k: i32) -> Self {
+        Self {
+            data: vec![0; k as usize],
+            head: 0,
+            tail: 0,
+            size: 0,
+            capacity: k as usize,
+        }
+    }
+
+    fn en_queue(&mut self, value: i32) -> bool {
+        if self.is_full() {
+            return false;
+        }
+        // if the queue is empty, set the head to the first element
+        // don't have to update tail when there is one element
+        // otherwise, set the tail to the next element
+        if !self.is_empty() {
+            self.tail = (self.tail + 1) % self.capacity;
+        }
+
+        self.data[self.tail] = value;
+        self.size += 1;
+        true
+    }
+
+    fn de_queue(&mut self) -> bool {
+        if self.is_empty() {
+            return false;
+        }
+
+        self.head = (self.head + 1) % self.capacity;
+        self.size -= 1;
+        if self.is_empty() {
+            self.head = 0;
+            self.tail = 0;
+        }
+        true
+    }
+
+    fn front(&self) -> i32 {
+        if self.is_empty() {
+            return -1;
+        }
+        self.data[self.head]
+    }
+
+    fn rear(&self) -> i32 {
+        if self.is_empty() {
+            return -1;
+        }
+        self.data[self.tail]
+    }
+
+    // empty when head == tail
+    fn is_empty(&self) -> bool {
+        self.size == 0
+    }
+
+    // full when tail is one slot before head
+    fn is_full(&self) -> bool {
+        self.size == self.capacity
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::tree::TreeNode;
@@ -1563,5 +1637,38 @@ mod tests {
         // random delete 1 or 3 because they have the same frequency
         assert!(obj.get(1) == -1 || obj.get(3) == -1);
         assert_eq!(obj.get(4), 4);
+    }
+
+    #[test]
+    fn test_circul_queue() {
+        let mut obj = CirularQueue::new(3);
+        assert!(obj.en_queue(1));
+        assert!(obj.en_queue(2));
+        assert!(obj.en_queue(3));
+        assert!(!obj.en_queue(4));
+        assert_eq!(obj.rear(), 3);
+        assert!(obj.is_full());
+        assert!(obj.de_queue());
+        assert!(obj.en_queue(4));
+        assert_eq!(obj.rear(), 4);
+
+        let mut obj = CirularQueue::new(3);
+        assert!(obj.en_queue(2));
+        assert_eq!(obj.rear(), 2);
+        assert_eq!(obj.front(), 2);
+        assert!(obj.de_queue());
+        assert!(obj.is_empty());
+        assert_eq!(obj.front(), -1);
+        assert_eq!(obj.rear(), -1);
+
+        let mut obj = CirularQueue::new(81);
+        assert!(obj.en_queue(69));
+        assert!(obj.de_queue());
+        assert!(obj.en_queue(92));
+        assert!(obj.en_queue(12));
+        assert!(obj.de_queue());
+        assert!(!obj.is_full());
+        assert!(!obj.is_full());
+        assert_eq!(obj.front(), 12);
     }
 }
