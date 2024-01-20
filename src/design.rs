@@ -1270,6 +1270,83 @@ impl CirularQueue {
     }
 }
 
+struct SnapshotArray {
+    data: Vec<BTreeMap<i32, i32>>, // data[i] -> (snap_id, val)
+    snap_id: i32,
+}
+
+impl SnapshotArray {
+    pub fn new(length: i32) -> Self {
+        Self {
+            data: vec![BTreeMap::new(); length as usize],
+            snap_id: 0,
+        }
+    }
+
+    pub fn set(&mut self, index: i32, val: i32) {
+        self.data[index as usize].insert(self.snap_id, val);
+    }
+
+    pub fn snap(&mut self) -> i32 {
+        self.snap_id += 1;
+        self.snap_id - 1
+    }
+
+    pub fn get(&self, index: i32, snap_id: i32) -> i32 {
+        match self.data[index as usize].range(..=snap_id).next_back() {
+            Some((_, v)) => *v,
+            None => 0,
+        }
+    }
+}
+
+// get product of last key numbers
+struct ProductOfNumbers {
+    data: Vec<i32>,
+}
+
+impl ProductOfNumbers {
+    pub fn new() -> Self {
+        Self { data: vec![1] }
+    }
+
+    pub fn add(&mut self, num: i32) {
+        if num == 0 {
+            self.data = vec![1];
+        } else {
+            self.data.push(self.data.last().unwrap() * num);
+        }
+    }
+
+    pub fn get_product(&self, k: i32) -> i32 {
+        if k >= self.data.len() as i32 {
+            return 0;
+        }
+        self.data.last().unwrap() / self.data[self.data.len() - k as usize - 1]
+    }
+}
+
+struct ParkingSystem {
+    spaces: Vec<i32>,
+}
+
+impl ParkingSystem {
+    pub fn new(big: i32, medium: i32, small: i32) -> Self {
+        Self {
+            spaces: vec![big, medium, small],
+        }
+    }
+
+    pub fn add_car(&mut self, car_type: i32) -> bool {
+        if self.spaces[car_type as usize - 1] > 0 {
+            self.spaces[car_type as usize - 1] -= 1;
+            true
+        } else {
+            false
+        }
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::tree::TreeNode;
@@ -1670,5 +1747,48 @@ mod tests {
         assert!(!obj.is_full());
         assert!(!obj.is_full());
         assert_eq!(obj.front(), 12);
+    }
+
+    #[test]
+    fn test_snapshot_array() {
+        let mut obj = SnapshotArray::new(3);
+        obj.set(0, 5);
+        assert_eq!(obj.snap(), 0);
+        obj.set(0, 6);
+        assert_eq!(obj.get(0, 0), 5);
+
+        let mut obj = SnapshotArray::new(1);
+        obj.set(0, 15);
+        assert_eq!(obj.snap(), 0);
+        assert_eq!(obj.snap(), 1);
+        assert_eq!(obj.snap(), 2);
+        assert_eq!(obj.get(0, 2), 15);
+        assert_eq!(obj.snap(), 3);
+        assert_eq!(obj.snap(), 4);
+        assert_eq!(obj.get(0, 0), 15);
+    }
+
+    #[test]
+    fn test_product_of_numbers() {
+        let mut obj = ProductOfNumbers::new();
+        obj.add(3);
+        obj.add(0);
+        obj.add(2);
+        obj.add(5);
+        obj.add(4);
+        assert_eq!(obj.get_product(2), 20);
+        assert_eq!(obj.get_product(3), 40);
+        assert_eq!(obj.get_product(4), 0);
+        obj.add(8);
+        assert_eq!(obj.get_product(2), 32);
+    }
+
+    #[test]
+    fn test_parking_system() {
+        let mut obj = ParkingSystem::new(1, 1, 0);
+        assert!(obj.add_car(1));
+        assert!(obj.add_car(2));
+        assert!(!obj.add_car(3));
+        assert!(!obj.add_car(1));
     }
 }
