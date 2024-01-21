@@ -1347,6 +1347,181 @@ impl ParkingSystem {
     }
 }
 
+struct ATM {
+    banknotes: HashMap<i32, i32>,
+}
+
+impl ATM {
+    pub fn new() -> Self {
+        Self {
+            banknotes: HashMap::new(),
+        }
+    }
+
+    // banknotes is in the order [20, 50, 100, 200, 500]
+    pub fn deposit(&mut self, banknotes_count: Vec<i32>) -> bool {
+        let banknotes = [20, 50, 100, 200, 500];
+        for (banknote, &count) in banknotes_count.iter().enumerate() {
+            if count > 0 {
+                *self.banknotes.entry(banknotes[banknote]).or_default() += count;
+            }
+        }
+        true
+    }
+
+    pub fn withdraw(&mut self, amount: i32) -> Vec<i32> {
+        let banknotes = [20, 50, 100, 200, 500];
+        let mut res = vec![0; 5];
+        let mut amount = amount;
+        for (i, &banknote) in banknotes.iter().enumerate().rev() {
+            let count = amount / banknote;
+            if count > 0 {
+                let count = count.min(*self.banknotes.get(&banknote).unwrap_or(&0));
+                amount -= count * banknote;
+                res[i] = count;
+            }
+        }
+        if amount > 0 {
+            return vec![-1];
+        }
+        for (i, &banknote) in banknotes.iter().enumerate() {
+            *self.banknotes.entry(banknote).or_default() -= res[i];
+        }
+        res
+    }
+}
+
+struct CircularDeque {
+    data: Vec<i32>,
+    head: usize, // the index of the first element
+    tail: usize, // the index of the last element
+    size: usize, // the number of elements in the queue
+    capacity: usize,
+}
+
+impl CircularDeque {
+    pub fn new(capacity: i32) -> Self {
+        Self {
+            data: vec![0; capacity as usize],
+            head: 0,
+            tail: 0,
+            size: 0,
+            capacity: capacity as usize,
+        }
+    }
+
+    pub fn insert_front(&mut self, value: i32) -> bool {
+        if self.is_full() {
+            return false;
+        }
+        if !self.is_empty() {
+            // move head to the previous slot
+            self.head = (self.head + self.capacity - 1) % self.capacity;
+        }
+
+        self.data[self.head] = value;
+        self.size += 1;
+        true
+    }
+
+    pub fn insert_last(&mut self, value: i32) -> bool {
+        if self.is_full() {
+            return false;
+        }
+        if !self.is_empty() {
+            self.tail = (self.tail + 1) % self.capacity;
+        }
+
+        self.data[self.tail] = value;
+        self.size += 1;
+        true
+    }
+
+    pub fn delete_front(&mut self) -> bool {
+        if self.is_empty() {
+            return false;
+        }
+
+        self.head = (self.head + 1) % self.capacity;
+        self.size -= 1;
+        if self.is_empty() {
+            self.head = 0;
+            self.tail = 0;
+        }
+        true
+    }
+
+    pub fn delete_last(&mut self) -> bool {
+        if self.is_empty() {
+            return false;
+        }
+
+        // move tail to the previous slot
+        self.tail = (self.tail + self.capacity - 1) % self.capacity;
+        self.size -= 1;
+        if self.is_empty() {
+            self.head = 0;
+            self.tail = 0;
+        }
+        true
+    }
+
+    pub fn get_front(&self) -> i32 {
+        if self.is_empty() {
+            return -1;
+        }
+        self.data[self.head]
+    }
+
+    pub fn get_rear(&self) -> i32 {
+        if self.is_empty() {
+            return -1;
+        }
+        self.data[self.tail]
+    }
+
+    pub fn is_empty(&self) -> bool {
+        self.size == 0
+    }
+
+    pub fn is_full(&self) -> bool {
+        self.size == self.capacity
+    }
+}
+
+struct NumMatrix {
+    sums: Vec<Vec<i32>>, // sums[i][j] -> sum of matrix[i][0..=j]
+}
+
+impl NumMatrix {
+    fn new(matrix: Vec<Vec<i32>>) -> Self {
+        Self {
+            sums: matrix
+                .iter()
+                .map(|row| {
+                    row.iter()
+                        .scan(0, |acc, &x| {
+                            *acc += x;
+                            Some(*acc)
+                        })
+                        .collect()
+                })
+                .collect(),
+        }
+    }
+
+    fn sum_region(&self, row1: i32, col1: i32, row2: i32, col2: i32) -> i32 {
+        let mut res = 0;
+        for row in row1..=row2 {
+            res += self.sums[row as usize][col2 as usize];
+            if col1 > 0 {
+                res -= self.sums[row as usize][col1 as usize - 1];
+            }
+        }
+        res
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::tree::TreeNode;
@@ -1790,5 +1965,62 @@ mod tests {
         assert!(obj.add_car(2));
         assert!(!obj.add_car(3));
         assert!(!obj.add_car(1));
+    }
+
+    #[test]
+    fn test_atm() {
+        let mut obj = ATM::new();
+        assert!(obj.deposit(vec![0, 0, 1, 2, 1]));
+        assert_eq!(obj.withdraw(600), vec![0, 0, 1, 0, 1]);
+        assert!(obj.deposit(vec![0, 1, 0, 1, 1]));
+        assert_eq!(obj.withdraw(600), vec![-1]);
+        assert_eq!(obj.withdraw(550), vec![0, 1, 0, 0, 1]);
+    }
+
+    #[test]
+    fn test_circul_deque() {
+        let mut obj = CircularDeque::new(3);
+        assert!(obj.insert_last(1));
+        assert!(obj.insert_last(2));
+        assert!(obj.insert_front(3));
+        assert!(!obj.insert_front(4));
+        assert_eq!(obj.get_rear(), 2);
+        assert!(obj.is_full());
+        assert!(obj.delete_last());
+        assert!(obj.insert_front(4));
+        assert_eq!(obj.get_front(), 4);
+
+        let mut obj = CircularDeque::new(3);
+        assert!(obj.insert_front(2));
+        assert_eq!(obj.get_rear(), 2);
+        assert_eq!(obj.get_front(), 2);
+        assert!(obj.delete_last());
+        assert!(obj.is_empty());
+        assert_eq!(obj.get_front(), -1);
+        assert_eq!(obj.get_rear(), -1);
+
+        let mut obj = CircularDeque::new(81);
+        assert!(obj.insert_front(69));
+        assert!(obj.delete_last());
+        assert!(obj.insert_front(92));
+        assert!(obj.insert_front(12));
+        assert!(obj.delete_last());
+        assert!(!obj.is_full());
+        assert!(!obj.is_full());
+        assert_eq!(obj.get_front(), 12);
+    }
+
+    #[test]
+    fn test_num_matrix() {
+        let obj = NumMatrix::new(vec![
+            vec![3, 0, 1, 4, 2],
+            vec![5, 6, 3, 2, 1],
+            vec![1, 2, 0, 1, 5],
+            vec![4, 1, 0, 1, 7],
+            vec![1, 0, 3, 0, 5],
+        ]);
+        assert_eq!(obj.sum_region(2, 1, 4, 3), 8);
+        assert_eq!(obj.sum_region(1, 1, 2, 2), 11);
+        assert_eq!(obj.sum_region(1, 2, 2, 4), 12);
     }
 }
