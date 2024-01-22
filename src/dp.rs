@@ -408,6 +408,37 @@ impl DPSolution {
         }
         dp[0][0]
     }
+
+    /*
+    https://leetcode.com/problems/wildcard-matching/
+    define dp[i][j] be the result of s[0..i] matches p[0..j]
+    dp[i][j] = dp[i-1][j-1], if s[i] == p[j] || p[j] == '?'
+               dp[i-1][j] || dp[i][j-1], if p[j] == '*'
+     */
+
+    pub fn is_match(s: String, p: String) -> bool {
+        let mut dp = vec![vec![false; p.len() + 1]; s.len() + 1];
+        let s = s.chars().collect::<Vec<char>>();
+        let p = p.chars().collect::<Vec<char>>();
+        dp[0][0] = true;
+        for i in 1..=p.len() {
+            if p[i - 1] == '*' {
+                dp[0][i] = dp[0][i - 1];
+            }
+        }
+        for i in 1..=s.len() {
+            for j in 1..=p.len() {
+                if p[j - 1] == '?' || p[j - 1] == s[i - 1] {
+                    dp[i][j] = dp[i - 1][j - 1];
+                    continue;
+                }
+                if p[j - 1] == '*' {
+                    dp[i][j] = dp[i - 1][j] || dp[i][j - 1];
+                }
+            }
+        }
+        dp[s.len()][p.len()]
+    }
 }
 
 #[cfg(test)]
@@ -567,5 +598,29 @@ mod test {
             ]),
             1
         )
+    }
+
+    #[test]
+    fn test_is_match() {
+        assert_eq!(
+            DPSolution::is_match("aa".to_string(), "a".to_string()),
+            false
+        );
+        assert_eq!(
+            DPSolution::is_match("aa".to_string(), "*".to_string()),
+            true
+        );
+        assert_eq!(
+            DPSolution::is_match("cb".to_string(), "?a".to_string()),
+            false
+        );
+        assert_eq!(
+            DPSolution::is_match("adceb".to_string(), "*a*b".to_string()),
+            true
+        );
+        assert_eq!(
+            DPSolution::is_match("acdcb".to_string(), "a*c?b".to_string()),
+            false
+        );
     }
 }
