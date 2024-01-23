@@ -174,6 +174,31 @@ impl BackStrackSolution {
         true
     }
 
+    pub fn total_n_queens(n: i32) -> i32 {
+        let mut res = 0;
+        let mut curr = vec![];
+        Self::queen_backtrack2(&mut res, &mut curr, n);
+        res
+    }
+
+    fn queen_backtrack2(res: &mut i32, curr: &mut Vec<String>, n: i32) {
+        if curr.len() == n as usize {
+            *res += 1;
+            return;
+        }
+
+        // try to place a queen on each column
+        for i in 0..n {
+            if Self::is_valid_queen(curr, i, n) {
+                let mut s = vec!['.'; n as usize].iter().collect::<String>();
+                s.replace_range(i as usize..i as usize + 1, "Q");
+                curr.push(s);
+                Self::queen_backtrack2(res, curr, n);
+                curr.pop();
+            }
+        }
+    }
+
     pub fn subsets(num: Vec<i32>) -> Vec<Vec<i32>> {
         let mut res = vec![];
         let mut curr = vec![];
@@ -336,6 +361,11 @@ mod tests {
                 vec!["..Q.", "Q...", "...Q", ".Q.."]
             ]
         );
+    }
+
+    #[test]
+    fn test_solve_n_queen_ii() {
+        assert_eq!(BackStrackSolution::total_n_queens(4), 2);
     }
 
     #[test]
