@@ -439,6 +439,46 @@ impl DPSolution {
         }
         dp[s.len()][p.len()]
     }
+
+    /*
+    https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/
+    find the maximum profit you can achieve with at most two transactions.
+
+    in order to get the maximum profit,
+    we need to find the max profit we can make with at most one transaction on day j
+    then we can get the max profit we can make with at most two transactions on day j+1
+
+    define dp[i][j] represents the maximum profit you can achieve with at most i transactions on day j
+    dp[i][j] = max(dp[i][j-1], prices[j] - prices[m] + dp[i-1][m-1]), m is the index of the minimum price in prices[0..j-1]
+
+    the first dimension of dp is 3, because we can make at most two transactions
+    the second dimension of dp is prices.len(), because we can make transactions on each day
+
+    dp[2][prices.len()-1] is the max profit we can make with at most two transactions on the last day
+
+
+     */
+
+    pub fn max_profit_iii(prices: Vec<i32>) -> i32 {
+        if prices.len() < 2 {
+            return 0;
+        }
+        let mut dp = vec![vec![0; prices.len()]; 3];
+        for i in 1..=2 {
+            let mut min = prices[0];
+            for j in 1..prices.len() {
+                // min is the minimum price in prices[0..j]
+                min = min.min(prices[j] - dp[i - 1][j - 1]);
+                // update dp[i][j] by comparing dp[i][j-1] and prices[j] - min
+                // dp[i][j-1] is the max profit we can make with at most i transactions on day j-1
+                // prices[j] - min is the max profit we can make with at most i transactions on day j
+                // if we don't sell stock on day j, then dp[i][j] = dp[i][j-1]
+                // if we sell stock on day j, then dp[i][j] = prices[j] - min
+                dp[i][j] = dp[i][j - 1].max(prices[j] - min);
+            }
+        }
+        dp[2][prices.len() - 1]
+    }
 }
 
 #[cfg(test)]
@@ -622,5 +662,12 @@ mod test {
             DPSolution::is_match("acdcb".to_string(), "a*c?b".to_string()),
             false
         );
+    }
+
+    #[test]
+    fn test_max_profit_iii() {
+        assert_eq!(DPSolution::max_profit_iii(vec![3, 3, 5, 0, 0, 3, 1, 4]), 6);
+        assert_eq!(DPSolution::max_profit_iii(vec![1, 2, 3, 4, 5]), 4);
+        assert_eq!(DPSolution::max_profit_iii(vec![7, 6, 4, 3, 1]), 0);
     }
 }
