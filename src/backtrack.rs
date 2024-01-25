@@ -218,6 +218,28 @@ impl BackStrackSolution {
         }
     }
 
+    pub fn subsets_with_dup_ii(nums: Vec<i32>) -> Vec<Vec<i32>> {
+        let mut res = Vec::new();
+        let mut path = Vec::new();
+        let mut nums = nums;
+        nums.sort_unstable();
+        Self::backtrack_ii(&nums, 0, &mut path, &mut res);
+        res
+    }
+
+    fn backtrack_ii(nums: &Vec<i32>, start: usize, path: &mut Vec<i32>, res: &mut Vec<Vec<i32>>) {
+        res.push(path.clone());
+        for i in start..nums.len() {
+            if i > start && nums[i] == nums[i - 1] {
+                // skip duplicate
+                continue;
+            }
+            path.push(nums[i]);
+            Self::backtrack_ii(nums, i + 1, path, res);
+            path.pop();
+        }
+    }
+
     pub fn solve_sudoko(board: &mut Vec<Vec<char>>) {
         Self::sudoko_backtrack(board, 0, 0);
     }
@@ -424,5 +446,22 @@ mod tests {
         let mut expect = vec!["255.255.111.35", "255.255.11.135"];
         expect.sort();
         assert_eq!(result, expect);
+    }
+
+    #[test]
+    fn test_subsets_with_dup_ii() {
+        let mut result = BackStrackSolution::subsets_with_dup_ii(vec![1, 2, 2]);
+        result.sort();
+        assert_eq!(
+            result,
+            vec![
+                vec![],
+                vec![1],
+                vec![1, 2],
+                vec![1, 2, 2],
+                vec![2],
+                vec![2, 2]
+            ]
+        );
     }
 }
