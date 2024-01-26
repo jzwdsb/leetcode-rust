@@ -355,6 +355,26 @@ impl ListSolution {
 
         dummy?.next
     }
+
+    pub fn sort_list(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+        let mut node = head.as_ref();
+        // convert the list to vec
+        let mut v = Vec::new();
+        while let Some(n) = node {
+            v.push(n.val);
+            node = n.next.as_ref();
+        }
+        // sort the vec
+        v.sort();
+        // convert the vec to list
+        let mut head = None;
+        for i in v.into_iter().rev() {
+            let mut node = ListNode::new(i);
+            node.next = head;
+            head = Some(Box::new(node));
+        }
+        head
+    }
 }
 
 pub fn main() {}
@@ -574,5 +594,21 @@ mod tests {
         let head = ListNode::from_vec(vec![3, 5]);
         let ans = ListNode::from_vec(vec![5, 3]);
         assert_eq!(ListSolution::reverse_between(head, 1, 2), ans);
+    }
+
+    #[test]
+    fn test_sort_list() {
+        let head = ListNode::from_vec(vec![4, 2, 1, 3]);
+        let ans = ListNode::from_vec(vec![1, 2, 3, 4]);
+        assert_eq!(ListSolution::sort_list(head), ans);
+        let head = ListNode::from_vec(vec![-1, 5, 3, 4, 0]);
+        let ans = ListNode::from_vec(vec![-1, 0, 3, 4, 5]);
+        assert_eq!(ListSolution::sort_list(head), ans);
+        let head = ListNode::from_vec(vec![]);
+        let ans = ListNode::from_vec(vec![]);
+        assert_eq!(ListSolution::sort_list(head), ans);
+        let head = ListNode::from_vec(vec![1]);
+        let ans = ListNode::from_vec(vec![1]);
+        assert_eq!(ListSolution::sort_list(head), ans);
     }
 }

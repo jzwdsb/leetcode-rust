@@ -145,6 +145,20 @@ impl SortSolution {
             }
         }
     }
+
+    pub fn maximum_gap(nums: Vec<i32>) -> i32 {
+        if nums.len() < 2 {
+            return 0;
+        }
+        let mut nums = nums;
+        // O(nlogn), maybe we can use radix sort to achieve O(n)
+        nums.sort();
+        let mut max_gap = 0;
+        for i in 0..nums.len() - 1 {
+            max_gap = max_gap.max(nums[i + 1] - nums[i]);
+        }
+        max_gap
+    }
 }
 
 #[cfg(test)]
@@ -193,5 +207,11 @@ mod test {
         let mut data = vec![4, 10, 3, 5, 1];
         SortSolution::bubble_sort(&mut data);
         assert_eq!(data, vec![1, 3, 4, 5, 10]);
+    }
+
+    #[test]
+    fn test_maximum_gap() {
+        assert_eq!(SortSolution::maximum_gap(vec![3, 6, 9, 1]), 3);
+        assert_eq!(SortSolution::maximum_gap(vec![10]), 0);
     }
 }
