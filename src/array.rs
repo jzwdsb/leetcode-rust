@@ -1164,6 +1164,40 @@ impl ArraySolution {
             start as i32
         }
     }
+
+    /*
+    https://leetcode.com/problems/find-the-duplicate-number/description/
+
+    nums contains n + 1 integers where each integer is in the range [1, n] inclusive.
+    There is only one repeated number in nums, return this repeated number.
+
+    since the range is [1, n] and there is only one duplicate number
+    we can use index to store the information.
+    if we sort the array, the duplicate number should be nums[i] == nums[i+1]
+
+    if nums[i] == i, that means the num i exists in the array
+    if nums[i] != i, we can swap nums[i] and nums[nums[i]]
+    if nums[i] == nums[nums[i]], that means we found the duplicate number
+    if nums[i] != nums[nums[i]], we swap nums[i] and nums[nums[i]] and continue
+
+     */
+
+    pub fn find_duplicate(nums: Vec<i32>) -> i32 {
+        let mut nums = nums;
+        let mut i = 0;
+        while i < nums.len() {
+            if nums[i] == i as i32 {
+                i += 1;
+            } else {
+                let num = nums[i] as usize;
+                if nums[num] == nums[i] {
+                    return nums[i];
+                }
+                nums.swap(i, num);
+            }
+        }
+        -1
+    }
 }
 
 #[cfg(test)]
@@ -1759,5 +1793,13 @@ mod tests {
             ArraySolution::can_complete_circuit(vec![5, 1, 2, 3, 4], vec![4, 4, 1, 5, 1]),
             4
         );
+    }
+
+    #[test]
+    fn test_find_duplicate() {
+        assert_eq!(ArraySolution::find_duplicate(vec![1, 3, 4, 2, 2]), 2);
+        assert_eq!(ArraySolution::find_duplicate(vec![3, 1, 3, 4, 2]), 3);
+        assert_eq!(ArraySolution::find_duplicate(vec![1, 1]), 1);
+        assert_eq!(ArraySolution::find_duplicate(vec![1, 1, 2]), 1);
     }
 }
