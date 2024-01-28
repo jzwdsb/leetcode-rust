@@ -742,6 +742,15 @@ impl StringSolution {
         }
         ans
     }
+
+    pub fn reverse_words(s: String) -> String {
+        s.split_ascii_whitespace()
+            .rev()
+            .filter(|&word| !word.is_empty())
+            .map(|word| word.to_string())
+            .collect::<Vec<String>>()
+            .join(" ")
+    }
 }
 
 #[cfg(test)]
@@ -1138,6 +1147,14 @@ mod tests {
         assert_eq!(
             StringSolution::max_number_of_balloons("leetcode".to_string()),
             0
+        );
+    }
+
+    #[test]
+    fn test_reverse_words() {
+        assert_eq!(
+            StringSolution::reverse_words("The sky is blue".to_string()),
+            "blue is sky The".to_string()
         );
     }
 }

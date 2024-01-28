@@ -1198,6 +1198,20 @@ impl ArraySolution {
         }
         -1
     }
+
+    pub fn largest_number(nums: Vec<i32>) -> String {
+        let mut nums = nums.iter().map(|&n| n.to_string()).collect::<Vec<_>>();
+        nums.sort_by(|a, b| {
+            let ab = a.to_owned() + &b;
+            let ba = b.to_owned() + &a;
+            ab.cmp(&ba)
+        });
+        nums.reverse();
+        if nums[0] == "0" {
+            return "0".to_owned();
+        }
+        nums.join("")
+    }
 }
 
 #[cfg(test)]
@@ -1801,5 +1815,17 @@ mod tests {
         assert_eq!(ArraySolution::find_duplicate(vec![3, 1, 3, 4, 2]), 3);
         assert_eq!(ArraySolution::find_duplicate(vec![1, 1]), 1);
         assert_eq!(ArraySolution::find_duplicate(vec![1, 1, 2]), 1);
+    }
+
+    #[test]
+    fn test_largest_number() {
+        assert_eq!(ArraySolution::largest_number(vec![10, 2]), "210");
+        assert_eq!(
+            ArraySolution::largest_number(vec![3, 30, 34, 5, 9]),
+            "9534330"
+        );
+        assert_eq!(ArraySolution::largest_number(vec![1]), "1");
+        assert_eq!(ArraySolution::largest_number(vec![10]), "10");
+        assert_eq!(ArraySolution::largest_number(vec![0, 0]), "0");
     }
 }

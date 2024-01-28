@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+use std::collections::VecDeque;
+
 pub struct StackSolution {}
 
 impl StackSolution {
@@ -42,6 +44,43 @@ impl StackSolution {
             }
         }
         max
+    }
+
+    // evaluate reverse polish notation
+    // supported operators: +, -, *, /
+
+    pub fn eval_rpn(tokens: Vec<String>) -> i32 {
+        let mut stack = VecDeque::new();
+
+        for token in tokens {
+            match token.as_str() {
+                "+" => {
+                    let a = stack.pop_back().expect("invalid input");
+                    let b = stack.pop_back().expect("invalid input");
+                    stack.push_back(a + b);
+                }
+                "-" => {
+                    let a = stack.pop_back().expect("invalid input");
+                    let b = stack.pop_back().expect("invalid input");
+                    stack.push_back(b - a);
+                }
+                "*" => {
+                    let a = stack.pop_back().expect("invalid input");
+                    let b = stack.pop_back().expect("invalid input");
+                    stack.push_back(a * b);
+                }
+                "/" => {
+                    let a = stack.pop_back().expect("invalid input");
+                    let b = stack.pop_back().expect("invalid input");
+                    stack.push_back(b / a);
+                }
+                _ => {
+                    stack.push_back(token.parse::<i32>().expect("invalid input"));
+                }
+            }
+        }
+
+        stack.pop_back().unwrap()
     }
 }
 
@@ -86,6 +125,48 @@ mod test {
         assert_eq!(
             StackSolution::longest_valid_parentheses("()(()".to_string()),
             2
+        );
+    }
+
+    #[test]
+    fn test_eval_rpn() {
+        assert_eq!(
+            StackSolution::eval_rpn(vec![
+                "2".to_string(),
+                "1".to_string(),
+                "+".to_string(),
+                "3".to_string(),
+                "*".to_string()
+            ]),
+            9
+        );
+        assert_eq!(
+            StackSolution::eval_rpn(vec![
+                "4".to_string(),
+                "13".to_string(),
+                "5".to_string(),
+                "/".to_string(),
+                "+".to_string()
+            ]),
+            6
+        );
+        assert_eq!(
+            StackSolution::eval_rpn(vec![
+                "10".to_string(),
+                "6".to_string(),
+                "9".to_string(),
+                "3".to_string(),
+                "+".to_string(),
+                "-11".to_string(),
+                "*".to_string(),
+                "/".to_string(),
+                "*".to_string(),
+                "17".to_string(),
+                "+".to_string(),
+                "5".to_string(),
+                "+".to_string()
+            ]),
+            22
         );
     }
 }
