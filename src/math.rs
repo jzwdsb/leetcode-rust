@@ -237,6 +237,37 @@ impl MathSolution {
         }
         res
     }
+
+    pub fn fraction_to_decimal(numerator: i32, denominator: i32) -> String {
+        let mut res = String::new();
+        let mut numerator = numerator as i64;
+        let mut denominator = denominator as i64;
+        if (numerator.is_negative() ^ denominator.is_negative()) && numerator != 0 {
+            res.push('-');
+        }
+        numerator = numerator.abs();
+        denominator = denominator.abs();
+        res.push_str(&(numerator / denominator).to_string());
+        let mut remainder = numerator % denominator;
+        if remainder == 0 {
+            return res;
+        }
+        res.push('.');
+        let mut map = std::collections::HashMap::new();
+        while remainder != 0 {
+            if let Some(&index) = map.get(&remainder) {
+                // find the repeating part
+                res.insert(index, '(');
+                res.push(')');
+                break;
+            }
+            map.insert(remainder, res.len());
+            remainder *= 10;
+            res.push_str(&(remainder / denominator).to_string());
+            remainder %= denominator;
+        }
+        res
+    }
 }
 
 mod tests {
@@ -348,5 +379,20 @@ mod tests {
     fn test_gray_code() {
         assert_eq!(MathSolution::gray_code(2), vec![0, 1, 3, 2]);
         assert_eq!(MathSolution::gray_code(0), vec![0]);
+    }
+
+    #[test]
+    fn test_fraction_to_decimal() {
+        assert_eq!(MathSolution::fraction_to_decimal(1, 2), "0.5");
+        assert_eq!(MathSolution::fraction_to_decimal(2, 1), "2");
+        assert_eq!(MathSolution::fraction_to_decimal(2, 3), "0.(6)");
+        assert_eq!(MathSolution::fraction_to_decimal(4, 333), "0.(012)");
+        assert_eq!(MathSolution::fraction_to_decimal(1, 5), "0.2");
+        assert_eq!(MathSolution::fraction_to_decimal(1, 6), "0.1(6)");
+        assert_eq!(MathSolution::fraction_to_decimal(1, 7), "0.(142857)");
+        assert_eq!(MathSolution::fraction_to_decimal(1, 90), "0.0(1)");
+        assert_eq!(MathSolution::fraction_to_decimal(1, 99), "0.(01)");
+        assert_eq!(MathSolution::fraction_to_decimal(0, -5), "0");
+        assert_eq!(MathSolution::fraction_to_decimal(-22, -11), "2");
     }
 }
