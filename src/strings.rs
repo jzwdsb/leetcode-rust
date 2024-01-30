@@ -751,6 +751,34 @@ impl StringSolution {
             .collect::<Vec<String>>()
             .join(" ")
     }
+
+    pub fn get_hint(secret: String, guess: String) -> String {
+        let mut secret = secret.chars().collect::<Vec<char>>();
+        let mut guess = guess.chars().collect::<Vec<char>>();
+        let mut bulls = 0;
+        let mut cows = 0;
+        let mut map = std::collections::HashMap::new();
+        for i in 0..secret.len() {
+            if secret[i] == guess[i] {
+                bulls += 1;
+                secret[i] = ' ';
+                guess[i] = ' ';
+            } else {
+                *map.entry(secret[i]).or_default() += 1;
+            }
+        }
+        for i in 0..guess.len() {
+            if guess[i] != ' ' && map.contains_key(&guess[i]) {
+                cows += 1;
+                let count = map.entry(guess[i]).or_insert(0);
+                *count -= 1;
+                if *count == 0 {
+                    map.remove(&guess[i]);
+                }
+            }
+        }
+        format!("{}A{}B", bulls, cows)
+    }
 }
 
 #[cfg(test)]
@@ -1155,6 +1183,22 @@ mod tests {
         assert_eq!(
             StringSolution::reverse_words("The sky is blue".to_string()),
             "blue is sky The".to_string()
+        );
+    }
+
+    #[test]
+    fn test_get_hint() {
+        assert_eq!(
+            StringSolution::get_hint("1807".to_string(), "7810".to_string()),
+            "1A3B".to_string()
+        );
+        assert_eq!(
+            StringSolution::get_hint("1123".to_string(), "0111".to_string()),
+            "1A1B".to_string()
+        );
+        assert_eq!(
+            StringSolution::get_hint("1122".to_string(), "1222".to_string()),
+            "3A0B".to_string()
         );
     }
 }
