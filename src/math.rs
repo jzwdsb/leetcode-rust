@@ -268,6 +268,23 @@ impl MathSolution {
         }
         res
     }
+
+    pub fn get_permutation(n: i32, k: i32) -> String {
+        let mut nums: Vec<i32> = (1..=n).collect();
+        let mut res = String::new();
+        let mut k = k - 1;
+        let mut factorial = (1..n).fold(1, |acc, x| acc * x);
+        for i in (1..=n).rev() {
+            let index = (k / factorial) as usize;
+            res.push_str(&nums[index].to_string());
+            nums.remove(index);
+            if i > 1 {
+                k %= factorial;
+                factorial /= i - 1;
+            }
+        }
+        res
+    }
 }
 
 mod tests {
@@ -394,5 +411,16 @@ mod tests {
         assert_eq!(MathSolution::fraction_to_decimal(1, 99), "0.(01)");
         assert_eq!(MathSolution::fraction_to_decimal(0, -5), "0");
         assert_eq!(MathSolution::fraction_to_decimal(-22, -11), "2");
+    }
+
+    #[test]
+    fn test_get_permutation() {
+        assert_eq!(MathSolution::get_permutation(3, 3), "213");
+        assert_eq!(MathSolution::get_permutation(4, 9), "2314");
+        assert_eq!(MathSolution::get_permutation(3, 1), "123");
+        assert_eq!(MathSolution::get_permutation(3, 2), "132");
+        assert_eq!(MathSolution::get_permutation(3, 4), "231");
+        assert_eq!(MathSolution::get_permutation(3, 5), "312");
+        assert_eq!(MathSolution::get_permutation(3, 6), "321");
     }
 }
