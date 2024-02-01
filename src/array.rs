@@ -1212,6 +1212,20 @@ impl ArraySolution {
         }
         nums.join("")
     }
+
+    pub fn divide_array(mut nums: Vec<i32>, k: i32) -> Vec<Vec<i32>> {
+        nums.sort_unstable();
+        nums.chunks(3)
+            .map(|v| {
+                if v[2] - v[0] <= k {
+                    Some(v.to_vec())
+                } else {
+                    None
+                }
+            })
+            .collect::<Option<Vec<Vec<i32>>>>()
+            .unwrap_or_default()
+    }
 }
 
 #[cfg(test)]
@@ -1827,5 +1841,13 @@ mod tests {
         assert_eq!(ArraySolution::largest_number(vec![1]), "1");
         assert_eq!(ArraySolution::largest_number(vec![10]), "10");
         assert_eq!(ArraySolution::largest_number(vec![0, 0]), "0");
+    }
+
+    #[test]
+    fn test_divide_array() {
+        assert_eq!(
+            ArraySolution::divide_array(vec![1, 3, 4, 8, 7, 9, 3, 5, 1], 23),
+            vec![vec![1, 1, 3], vec![3, 4, 5], vec![7, 8, 9]]
+        )
     }
 }
