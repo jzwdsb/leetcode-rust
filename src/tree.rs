@@ -667,6 +667,28 @@ impl TreeSolution {
             }
         }
     }
+
+    pub fn leaf_similar(a: Tree, b: Tree) -> bool {
+        let mut leaf_a = vec![];
+        let mut leaf_b = vec![];
+        Self::leaf_similar_helper(a, &mut leaf_a);
+        Self::leaf_similar_helper(b, &mut leaf_b);
+        leaf_a == leaf_b
+    }
+
+    fn leaf_similar_helper(root: Tree, leaf: &mut Vec<i32>) {
+        match root {
+            None => {}
+            Some(root) => {
+                let root = root.borrow();
+                if root.left.is_none() && root.right.is_none() {
+                    leaf.push(root.val);
+                }
+                Self::leaf_similar_helper(root.left.clone(), leaf);
+                Self::leaf_similar_helper(root.right.clone(), leaf);
+            }
+        }
+    }
 }
 
 #[cfg(test)]
@@ -1316,6 +1338,42 @@ mod tests {
         assert_eq!(TreeSolution::amount_of_time(root.clone(), 1), 4);
 
         assert_eq!(TreeSolution::amount_of_time(root, 2), 3);
+    }
+
+    #[test]
+    fn test_leaf_similar() {
+        let root1 = TreeNode::from_vec(vec![
+            Some(3),
+            Some(5),
+            Some(1),
+            Some(6),
+            Some(2),
+            Some(9),
+            Some(8),
+            None,
+            None,
+            Some(7),
+            Some(4),
+        ]);
+        let root2 = TreeNode::from_vec(vec![
+            Some(3),
+            Some(5),
+            Some(1),
+            Some(6),
+            Some(7),
+            Some(4),
+            Some(2),
+            None,
+            None,
+            None,
+            None,
+            None,
+            None,
+            Some(9),
+            Some(8),
+        ]);
+
+        assert_eq!(TreeSolution::leaf_similar(root1, root2), true);
     }
 
     fn new_node(val: i32) -> Tree {

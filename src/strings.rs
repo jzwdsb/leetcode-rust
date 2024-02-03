@@ -779,6 +779,38 @@ impl StringSolution {
         }
         format!("{}A{}B", bulls, cows)
     }
+
+    pub fn halves_are_alike(s: String) -> bool {
+        let s = s.to_ascii_lowercase();
+        let (mut count1, mut count2) = (0, 0);
+        for (i, c) in s.chars().enumerate() {
+            if i < s.len() / 2 {
+                if matches!(c, 'a' | 'e' | 'i' | 'o' | 'u') {
+                    count1 += 1;
+                }
+            } else {
+                if matches!(c, 'a' | 'e' | 'i' | 'o' | 'u') {
+                    count2 += 1;
+                }
+            }
+        }
+        count1 == count2
+    }
+
+    pub fn max_length_between_equal_characters(s: String) -> i32 {
+        let mut map = std::collections::HashMap::new();
+        let s = s.chars().collect::<Vec<char>>();
+        let mut max = -1;
+        for i in 0..s.len() {
+            if let Some(&j) = map.get(&s[i]) {
+                max = std::cmp::max(max, (i - j - 1) as i32);
+            } else {
+                map.insert(s[i], i);
+            }
+        }
+        max
+    
+    }
 }
 
 #[cfg(test)]
@@ -1199,6 +1231,43 @@ mod tests {
         assert_eq!(
             StringSolution::get_hint("1122".to_string(), "1222".to_string()),
             "3A0B".to_string()
+        );
+    }
+
+    #[test]
+    fn test_halves_are_alike() {
+        assert_eq!(StringSolution::halves_are_alike("book".to_string()), true);
+        assert_eq!(
+            StringSolution::halves_are_alike("textbook".to_string()),
+            false
+        );
+        assert_eq!(
+            StringSolution::halves_are_alike("MerryChristmas".to_string()),
+            false
+        );
+        assert_eq!(
+            StringSolution::halves_are_alike("AbCdEfGh".to_string()),
+            true
+        );
+    }
+
+    #[test]
+    fn test_max_length_between_equal_characters() {
+        assert_eq!(
+            StringSolution::max_length_between_equal_characters("aa".to_string()),
+            0
+        );
+        assert_eq!(
+            StringSolution::max_length_between_equal_characters("abca".to_string()),
+            2
+        );
+        assert_eq!(
+            StringSolution::max_length_between_equal_characters("cbzxy".to_string()),
+            -1
+        );
+        assert_eq!(
+            StringSolution::max_length_between_equal_characters("cabbac".to_string()),
+            4
         );
     }
 }
