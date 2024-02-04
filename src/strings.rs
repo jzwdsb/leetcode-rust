@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+use std::collections::HashSet;
+
 pub struct StringSolution {}
 
 // Solution from https://leetcode.com/problems/valid-number/solutions/3461898/finite-state-machine/
@@ -809,7 +811,69 @@ impl StringSolution {
             }
         }
         max
-    
+    }
+
+    pub fn min_operations(s: String) -> i32 {
+        let s = s.chars().collect::<Vec<char>>();
+        let mut count1 = 0; // the number of operations to make s[i] == '0'
+        let mut count2 = 0; // the number of operations to make s[i] == '1'
+        for i in 0..s.len() {
+            if i % 2 == 0 {
+                if s[i] == '1' {
+                    count1 += 1;
+                } else {
+                    count2 += 1;
+                }
+            } else {
+                if s[i] == '0' {
+                    count1 += 1;
+                } else {
+                    count2 += 1;
+                }
+            }
+        }
+        count1.min(count2)
+    }
+
+    pub fn path_crossing(path: String) -> bool {
+        let mut visited = HashSet::new();
+        let mut curr = (0, 0);
+        visited.insert(curr);
+        for c in path.chars() {
+            match c {
+                'N' => curr.1 += 1,
+                'S' => curr.1 -= 1,
+                'E' => curr.0 += 1,
+                'W' => curr.0 -= 1,
+                _ => unreachable!(),
+            }
+            if visited.contains(&curr) {
+                return true;
+            }
+            visited.insert(curr);
+        }
+        false
+    }
+
+    pub fn max_score(s: String) -> i32 {
+        let s = s.chars().collect::<Vec<char>>();
+        let mut max = 0;
+        let mut zeros = 0;
+        let mut ones = 0;
+        for i in 0..s.len() {
+            if s[i] == '1' {
+                ones += 1;
+            }
+        }
+        for i in 0..s.len() - 1 {
+            if s[i] == '0' {
+                zeros += 1;
+            } else {
+                ones -= 1;
+            }
+            max = std::cmp::max(max, zeros + ones);
+        }
+        max
     }
 }
 
@@ -1269,5 +1333,25 @@ mod tests {
             StringSolution::max_length_between_equal_characters("cabbac".to_string()),
             4
         );
+    }
+
+    #[test]
+    fn test_min_operations() {
+        assert_eq!(StringSolution::min_operations("0100".to_string()), 1);
+        assert_eq!(StringSolution::min_operations("10".to_string()), 0);
+        assert_eq!(StringSolution::min_operations("1111".to_string()), 2);
+    }
+
+    #[test]
+    fn test_path_crossing() {
+        assert_eq!(StringSolution::path_crossing("NES".to_string()), false);
+        assert_eq!(StringSolution::path_crossing("NESWW".to_string()), true);
+    }
+
+    #[test]
+    fn test_max_score() {
+        assert_eq!(StringSolution::max_score("011101".to_string()), 5);
+        assert_eq!(StringSolution::max_score("00111".to_string()), 5);
+        assert_eq!(StringSolution::max_score("1111".to_string()), 3);
     }
 }
