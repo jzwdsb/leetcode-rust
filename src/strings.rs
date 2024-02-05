@@ -859,12 +859,7 @@ impl StringSolution {
         let s = s.chars().collect::<Vec<char>>();
         let mut max = 0;
         let mut zeros = 0;
-        let mut ones = 0;
-        for i in 0..s.len() {
-            if s[i] == '1' {
-                ones += 1;
-            }
-        }
+        let mut ones = s.iter().filter(|&&c| c == '1').count() as i32;
         for i in 0..s.len() - 1 {
             if s[i] == '0' {
                 zeros += 1;

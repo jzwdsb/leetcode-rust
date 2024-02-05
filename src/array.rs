@@ -1226,6 +1226,25 @@ impl ArraySolution {
             .collect::<Option<Vec<Vec<i32>>>>()
             .unwrap_or_default()
     }
+
+    /*
+    https://leetcode.com/problems/group-the-people-given-the-group-size-they-belong-to/
+
+    position i can join a group with size group_sizes[i]
+
+    */
+
+    pub fn group_the_people(group_sizes: Vec<i32>) -> Vec<Vec<i32>> {
+        let mut res = Vec::new();
+        let mut size2people = std::collections::HashMap::new();
+        for (i, &size) in group_sizes.iter().enumerate() {
+            size2people.entry(size).or_insert(Vec::new()).push(i as i32);
+            if size2people[&size].len() == size as usize {
+                res.push(size2people.remove(&size).unwrap());
+            }
+        }
+        res
+    }
 }
 
 #[cfg(test)]
@@ -1849,5 +1868,21 @@ mod tests {
             ArraySolution::divide_array(vec![1, 3, 4, 8, 7, 9, 3, 5, 1], 23),
             vec![vec![1, 1, 3], vec![3, 4, 5], vec![7, 8, 9]]
         )
+    }
+
+    #[test]
+    fn test_group_the_people() {
+        let mut res = ArraySolution::group_the_people(vec![3, 3, 3, 3, 3, 1, 3]);
+        for row in res.iter_mut() {
+            row.sort();
+        }
+        res.sort();
+        assert_eq!(res, vec![vec![0, 1, 2], vec![3, 4, 6], vec![5]]);
+        let mut res = ArraySolution::group_the_people(vec![2, 1, 3, 3, 3, 2]);
+        for row in res.iter_mut() {
+            row.sort();
+        }
+        res.sort();
+        assert_eq!(res, vec![vec![0, 5], vec![1], vec![2, 3, 4]]);
     }
 }

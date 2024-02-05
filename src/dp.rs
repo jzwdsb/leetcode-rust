@@ -479,6 +479,28 @@ impl DPSolution {
         }
         dp[2][prices.len() - 1]
     }
+
+    /*
+    https://leetcode.com/problems/combination-sum-iv/
+    define dp
+    dp[i] = the number of combinations that make up amount i
+    dp[i] = dp[i] + dp[i-coin] if i >= coin
+    
+     
+     */
+
+    pub fn combination_sum4(nums: Vec<i32>, target: i32) -> i32 {
+        let mut dp = vec![0; target as usize + 1];
+        dp[0] = 1;
+        for i in 1..=target {
+            for num in &nums {
+                if i >= *num {
+                    dp[i as usize] += dp[(i - num) as usize];
+                }
+            }
+        }
+        dp[target as usize]
+    }
 }
 
 #[cfg(test)]
@@ -669,5 +691,11 @@ mod test {
         assert_eq!(DPSolution::max_profit_iii(vec![3, 3, 5, 0, 0, 3, 1, 4]), 6);
         assert_eq!(DPSolution::max_profit_iii(vec![1, 2, 3, 4, 5]), 4);
         assert_eq!(DPSolution::max_profit_iii(vec![7, 6, 4, 3, 1]), 0);
+    }
+
+    #[test]
+    fn test_combination_sum4() {
+        assert_eq!(DPSolution::combination_sum4(vec![1, 2, 3], 4), 7);
+        assert_eq!(DPSolution::combination_sum4(vec![9], 3), 0);
     }
 }
