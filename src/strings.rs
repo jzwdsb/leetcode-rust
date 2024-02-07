@@ -870,6 +870,34 @@ impl StringSolution {
         }
         max
     }
+
+    pub fn min_deletions(s: String) -> i32 {
+        let mut freqs = vec![0; 26];
+        for c in s.chars() {
+            freqs[c as usize - 'a' as usize] += 1;
+        }
+
+        let mut count = 0;
+        let mut set = HashSet::new();
+        for freq in freqs {
+            if freq == 0 {
+                continue;
+            }
+            if set.contains(&freq) {
+                let mut freq = freq;
+                while freq > 0 && set.contains(&freq) {
+                    freq -= 1;
+                    count += 1;
+                }
+                if freq > 0 {
+                    set.insert(freq);
+                }
+            } else {
+                set.insert(freq);
+            }
+        }
+        count
+    }
 }
 
 #[cfg(test)]
@@ -1348,5 +1376,12 @@ mod tests {
         assert_eq!(StringSolution::max_score("011101".to_string()), 5);
         assert_eq!(StringSolution::max_score("00111".to_string()), 5);
         assert_eq!(StringSolution::max_score("1111".to_string()), 3);
+    }
+
+    #[test]
+    fn test_min_deletions() {
+        assert_eq!(StringSolution::min_deletions("aab".to_string()), 0);
+        assert_eq!(StringSolution::min_deletions("aaabbbcc".to_string()), 2);
+        assert_eq!(StringSolution::min_deletions("ceabaacb".to_string()), 2);
     }
 }

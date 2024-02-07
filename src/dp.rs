@@ -485,9 +485,7 @@ impl DPSolution {
     define dp
     dp[i] = the number of combinations that make up amount i
     dp[i] = dp[i] + dp[i-coin] if i >= coin
-    
-     
-     */
+    */
 
     pub fn combination_sum4(nums: Vec<i32>, target: i32) -> i32 {
         let mut dp = vec![0; target as usize + 1];
