@@ -294,6 +294,29 @@ impl ListSolution {
         dummy.unwrap().next
     }
 
+    pub fn delete_duplicates_ii(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+        let mut dummy = Some(Box::new(ListNode { val: 0, next: head }));
+        let mut prev = dummy.as_mut();
+
+        while prev.as_ref().unwrap().next.is_some() {
+            let mut curr = prev.as_mut().unwrap().next.take();
+            let mut duplicate = false;
+            while curr.as_ref().unwrap().next.is_some()
+                && curr.as_ref().unwrap().val == curr.as_ref().unwrap().next.as_ref().unwrap().val
+            {
+                curr = curr.unwrap().next;
+                duplicate = true;
+            }
+            if duplicate {
+                prev.as_mut().unwrap().next = curr.unwrap().next.take();
+            } else {
+                prev.as_mut().unwrap().next = curr;
+                prev = prev.unwrap().next.as_mut();
+            }
+        }
+
+        dummy.unwrap().next
+    }
     /*
     link: https://leetcode.com/problems/partition-list/
 
@@ -556,6 +579,19 @@ mod tests {
         let head = ListNode::from_vec(vec![1, 1, 1, 1, 1]);
         let ans = ListNode::from_vec(vec![1]);
         assert_eq!(ListSolution::delete_duplicates(head), ans);
+    }
+
+    #[test]
+    fn test_delete_duplicates_ii() {
+        let head = ListNode::from_vec(vec![1, 2, 3, 3, 4, 4, 5]);
+        let ans = ListNode::from_vec(vec![1, 2, 5]);
+        assert_eq!(ListSolution::delete_duplicates_ii(head), ans);
+        let head = ListNode::from_vec(vec![1, 1, 1, 2, 3]);
+        let ans = ListNode::from_vec(vec![2, 3]);
+        assert_eq!(ListSolution::delete_duplicates_ii(head), ans);
+        let head = ListNode::from_vec(vec![1, 1, 1, 1, 1]);
+        let ans = ListNode::from_vec(vec![]);
+        assert_eq!(ListSolution::delete_duplicates_ii(head), ans);
     }
 
     #[test]
