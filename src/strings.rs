@@ -898,6 +898,32 @@ impl StringSolution {
         }
         count
     }
+
+    pub fn find_anagrams(s: String, p: String) -> Vec<i32> {
+        if p.len() > s.len() {
+            return vec![];
+        }
+        let mut patterns = vec![0; 26];
+        let mut freqs = vec![0; 26];
+        let s = s.chars().collect::<Vec<char>>();
+        let p = p.chars().collect::<Vec<char>>();
+        let mut res = Vec::new();
+        for i in 0..p.len() {
+            patterns[p[i] as usize - 'a' as usize] += 1;
+            freqs[s[i] as usize - 'a' as usize] += 1;
+        }
+        if patterns == freqs {
+            res.push(0);
+        }
+        for i in p.len()..s.len() {
+            freqs[s[i] as usize - 'a' as usize] += 1;
+            freqs[s[i - p.len()] as usize - 'a' as usize] -= 1;
+            if patterns == freqs {
+                res.push((i - p.len() + 1) as i32);
+            }
+        }
+        res
+    }
 }
 
 #[cfg(test)]
@@ -1387,5 +1413,17 @@ mod tests {
         assert_eq!(StringSolution::min_deletions("aab".to_string()), 0);
         assert_eq!(StringSolution::min_deletions("aaabbbcc".to_string()), 2);
         assert_eq!(StringSolution::min_deletions("ceabaacb".to_string()), 2);
+    }
+
+    #[test]
+    fn test_find_anagrams() {
+        assert_eq!(
+            StringSolution::find_anagrams("cbaebabacd".to_string(), "abc".to_string()),
+            vec![0, 6]
+        );
+        assert_eq!(
+            StringSolution::find_anagrams("abab".to_string(), "ab".to_string()),
+            vec![0, 1, 2]
+        );
     }
 }
