@@ -1260,6 +1260,23 @@ impl ArraySolution {
         }
         candies.iter().sum()
     }
+
+    pub fn zigzag_convert(s: String, num_rows: i32) -> String {
+        if s.len() <= 1 || num_rows == 1 {
+            return s;
+        }
+        let mut rows = vec![String::new(); num_rows as usize];
+        let mut curr_row = 0;
+        let mut go_down = false;
+        for c in s.chars() {
+            rows[curr_row as usize].push(c);
+            if curr_row == 0 || curr_row == num_rows - 1 {
+                go_down = !go_down;
+            }
+            curr_row += if go_down { 1 } else { -1 };
+        }
+        rows.concat()
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -1905,5 +1922,18 @@ mod tests {
     fn test_candy() {
         assert_eq!(ArraySolution::candy(vec![1, 0, 2]), 5);
         assert_eq!(ArraySolution::candy(vec![1, 2, 2]), 4);
+    }
+
+    #[test]
+    fn test_zigzag_convert() {
+        assert_eq!(
+            ArraySolution::zigzag_convert("PAYPALISHIRING".to_string(), 3),
+            "PAHNAPLSIIGYIR"
+        );
+        assert_eq!(
+            ArraySolution::zigzag_convert("PAYPALISHIRING".to_string(), 4),
+            "PINALSIGYAHRPI"
+        );
+        assert_eq!(ArraySolution::zigzag_convert("A".to_string(), 1), "A");
     }
 }

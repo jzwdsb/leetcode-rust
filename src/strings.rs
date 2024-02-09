@@ -1148,6 +1148,10 @@ mod tests {
             StringSolution::longest_palindrome("ac".to_string()),
             "c".to_string()
         );
+        assert_eq!(
+            StringSolution::longest_palindrome("aaaa".to_string()),
+            "aaaa".to_string()
+        );
     }
 
     #[test]
