@@ -285,8 +285,29 @@ impl MathSolution {
         }
         res
     }
-}
 
+    pub fn can_messure_water(jug1: i32, jug2: i32, target_capacity: i32) -> bool {
+        if jug1 + jug2 < target_capacity {
+            return false;
+        }
+        if jug1 == target_capacity || jug2 == target_capacity || jug1 + jug2 == target_capacity {
+            return true;
+        }
+        if jug1 == 0 || jug2 == 0 {
+            return target_capacity == 0;
+        }
+        target_capacity % Self::gcd(jug1, jug2) == 0
+    }
+
+    fn gcd(a: i32, b: i32) -> i32 {
+        if b == 0 {
+            return a;
+        }
+        Self::gcd(b, a % b)
+    }
+} // impl MathSolution
+
+#[cfg(test)]
 mod tests {
     #[allow(unused_imports)]
     use super::*;

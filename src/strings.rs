@@ -924,7 +924,39 @@ impl StringSolution {
         }
         res
     }
-}
+
+    pub fn count_segments(s: String) -> i32 {
+        // one line
+        // s.split_ascii_whitespace().count() as i32
+        if s.len() == 0 {
+            return 0;
+        }
+        let mut space_cnt = 0;
+        let mut i = 0;
+        // skip heading spaces
+        let s = s.chars().collect::<Vec<char>>();
+        while i < s.len() && s[i] == ' ' {
+            i += 1;
+        }
+        while i < s.len() {
+            if s[i] == ' ' {
+                space_cnt += 1;
+                // skip subsequent spaces
+                while i < s.len() && s[i] == ' ' {
+                    i += 1;
+                }
+            }
+            i += 1;
+        }
+
+        // remove trailing space
+        if s.last().unwrap() == &' ' {
+            space_cnt -= 1;
+        }
+
+        space_cnt + 1
+    }
+} // impl StringSolution
 
 #[cfg(test)]
 mod tests {
@@ -1425,5 +1457,13 @@ mod tests {
             StringSolution::find_anagrams("abab".to_string(), "ab".to_string()),
             vec![0, 1, 2]
         );
+    }
+
+    #[test]
+    fn test_count_segments() {
+        assert_eq!(StringSolution::count_segments("Hello, my name is John".to_string()), 5);
+        assert_eq!(StringSolution::count_segments("Hello".to_string()), 1);
+        assert_eq!(StringSolution::count_segments("".to_string()), 0);
+        assert_eq!(StringSolution::count_segments("    ".to_string()), 0);
     }
 }
