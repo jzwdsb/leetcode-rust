@@ -499,6 +499,64 @@ impl DPSolution {
         }
         dp[target as usize]
     }
+
+    /*
+
+    https://leetcode.com/problems/cherry-pickup-ii/
+    follow: https://leetcode.com/problems/cherry-pickup-ii/solutions/660562/c-java-python-top-down-dp-clean-code
+    define dp[r][c1][c2], r is the row index, c1 and c2 are the column index for robot1 and robot2
+    dp[r][c1][c2] represents the maximum number of cherries that robot1 and robot2 can pick up from grid[r..grid.len()-1]
+    robot1 is at (r,c1), robot2 is at (r,c2)
+
+     */
+
+    pub fn cherry_pickup_ii(grid: Vec<Vec<i32>>) -> i32 {
+        let mut dp = vec![vec![vec![-1; grid[0].len()]; grid[0].len()]; grid.len()];
+        Self::solve_cherry_pickup_ii(&grid, &mut dp, 0, 0, grid[0].len() as i32 - 1)
+    }
+
+    pub fn solve_cherry_pickup_ii(
+        grid: &Vec<Vec<i32>>,
+        dp: &mut Vec<Vec<Vec<i32>>>,
+        r: i32,
+        c1: i32,
+        c2: i32,
+    ) -> i32 {
+        if r == grid.len() as i32 {
+            return 0;
+        }
+        if c1 < 0 || c1 >= grid[0].len() as i32 || c2 < 0 || c2 >= grid[0].len() as i32 {
+            return 0;
+        }
+        if dp[r as usize][c1 as usize][c2 as usize] != -1 {
+            return dp[r as usize][c1 as usize][c2 as usize];
+        }
+        let cherries = grid[r as usize][c1 as usize]
+            + if c1 != c2 {
+                grid[r as usize][c2 as usize]
+            } else {
+                0
+            };
+        let result = if r != grid.len() as i32 - 1 {
+            let mut max = 0;
+            for i in -1..=1 {
+                for j in -1..=1 {
+                    max = max.max(Self::solve_cherry_pickup_ii(
+                        grid,
+                        dp,
+                        r + 1,
+                        c1 + i,
+                        c2 + j,
+                    ));
+                }
+            }
+            max + cherries
+        } else {
+            cherries
+        };
+        dp[r as usize][c1 as usize][c2 as usize] = result;
+        result
+    }
 }
 
 #[cfg(test)]
@@ -695,5 +753,28 @@ mod test {
     fn test_combination_sum4() {
         assert_eq!(DPSolution::combination_sum4(vec![1, 2, 3], 4), 7);
         assert_eq!(DPSolution::combination_sum4(vec![9], 3), 0);
+    }
+
+    #[test]
+    fn test_cherry_pickup_ii() {
+        assert_eq!(
+            DPSolution::cherry_pickup_ii(vec![
+                vec![3, 1, 1],
+                vec![2, 5, 1],
+                vec![1, 5, 5],
+                vec![2, 1, 1]
+            ]),
+            24
+        );
+        assert_eq!(
+            DPSolution::cherry_pickup_ii(vec![
+                vec![1, 0, 0, 0, 0, 0, 1],
+                vec![2, 0, 0, 0, 0, 3, 0],
+                vec![2, 0, 9, 0, 0, 0, 0],
+                vec![0, 3, 0, 5, 4, 0, 0],
+                vec![1, 0, 2, 3, 0, 0, 6]
+            ]),
+            28
+        );
     }
 }
