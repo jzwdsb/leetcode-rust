@@ -16,7 +16,7 @@ impl PrintInOrder {
         }
     }
 
-    pub fn first(&mut self, f: Box<dyn Fn()>) {
+    pub fn first(&self, f: Box<dyn Fn()>) {
         let mut order = self.order.lock().unwrap();
 
         // do first
@@ -28,7 +28,7 @@ impl PrintInOrder {
     }
 
     // wait first
-    pub fn second(&mut self, f: Box<dyn Fn()>) {
+    pub fn second(&self, f: Box<dyn Fn()>) {
         // wait first
         let mut order = self.order.lock().unwrap();
         while *order != 2 {
@@ -43,7 +43,7 @@ impl PrintInOrder {
     }
 
     // wait second
-    pub fn thrid(&mut self, f: Box<dyn Fn()>) {
+    pub fn thrid(&self, f: Box<dyn Fn()>) {
         // wait second
         let mut order = self.order.lock().unwrap();
         while *order != 3 {
@@ -64,7 +64,7 @@ mod test {
     };
 
     #[test]
-    fn test_foo() {
+    fn test_print_in_order() {
         // retried 10 times to make sure the result is consistent
         for _ in 0..10 {
             let result = Arc::new(Mutex::new(String::new()));
@@ -74,13 +74,14 @@ mod test {
             let first = Box::new(move || res_a.lock().unwrap().push_str("first"));
             let second = Box::new(move || res_b.lock().unwrap().push_str("second"));
             let thrid = Box::new(move || res_c.lock().unwrap().push_str("thrid"));
-            let foo = Arc::new(Mutex::new(PrintInOrder::new()));
+            let foo = Arc::new(PrintInOrder::new());
             let one_obj = foo.clone();
             let two_obj = foo.clone();
             let three_obj = foo.clone();
-            let one = spawn(move || one_obj.lock().unwrap().first(first));
-            let two = spawn(move || two_obj.lock().unwrap().second(second));
-            let three = spawn(move || three_obj.lock().unwrap().thrid(thrid));
+            // dead locks
+            let one = spawn(move || one_obj.first(first));
+            let two = spawn(move || two_obj.second(second));
+            let three = spawn(move || three_obj.thrid(thrid));
             one.join().unwrap();
             two.join().unwrap();
             three.join().unwrap();
