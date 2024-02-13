@@ -35,7 +35,6 @@ impl BackStrackSolution {
             Self::backtrack(result, path, candidates, target - candidates[i], i);
             path.pop();
         }
-        return;
     }
 
     /*
@@ -78,7 +77,6 @@ impl BackStrackSolution {
             Self::backtrack2(result, path, candidates, target - candidates[i], i + 1);
             path.pop();
         }
-        return;
     }
 
     /*
@@ -141,7 +139,7 @@ impl BackStrackSolution {
     }
 
     // the current position is valid if there is no queen on the same column, same row and same diagonal
-    fn is_valid_queen(curr: &Vec<String>, col: i32, n: i32) -> bool {
+    fn is_valid_queen(curr: &[String], col: i32, n: i32) -> bool {
         let row = curr.len() as i32;
         // check if there multiple Q in the same col
         for i in 0..row {
@@ -206,8 +204,8 @@ impl BackStrackSolution {
         res
     }
 
-    fn subset_backtrack(res: &mut Vec<Vec<i32>>, curr: &mut Vec<i32>, num: &Vec<i32>, pos: usize) {
-        res.push(curr.clone());
+    fn subset_backtrack(res: &mut Vec<Vec<i32>>, curr: &mut Vec<i32>, num: &[i32], pos: usize) {
+        res.push(curr.to_vec());
         if pos == num.len() {
             return;
         }
@@ -227,7 +225,7 @@ impl BackStrackSolution {
         res
     }
 
-    fn backtrack_ii(nums: &Vec<i32>, start: usize, path: &mut Vec<i32>, res: &mut Vec<Vec<i32>>) {
+    fn backtrack_ii(nums: &[i32], start: usize, path: &mut Vec<i32>, res: &mut Vec<Vec<i32>>) {
         res.push(path.clone());
         for i in start..nums.len() {
             if i > start && nums[i] == nums[i - 1] {
@@ -260,7 +258,7 @@ impl BackStrackSolution {
         // try to fill the current position with 1 to 9
         for i in 1..=9 {
             if Self::is_valid_sudoko(board, row, col, i) {
-                board[row][col] = i.to_string().chars().nth(0).unwrap();
+                board[row][col] = i.to_string().chars().next().unwrap();
                 // if the next position is filled, return true
                 if Self::sudoko_backtrack(board, row, col + 1) {
                     return true;
@@ -270,11 +268,11 @@ impl BackStrackSolution {
                 }
             }
         }
-        return false;
+        false
     }
 
-    fn is_valid_sudoko(board: &Vec<Vec<char>>, row: usize, col: usize, num: i32) -> bool {
-        let num = (num as u8 + '0' as u8) as char;
+    fn is_valid_sudoko(board: &[Vec<char>], row: usize, col: usize, num: i32) -> bool {
+        let num = (num as u8 + b'0') as char;
         for i in 0..9 {
             if board[row][i] == num {
                 return false;
@@ -300,7 +298,7 @@ impl BackStrackSolution {
         res
     }
 
-    fn ip_backtrack(s: &String, start: usize, path: &mut Vec<String>, res: &mut Vec<String>) {
+    fn ip_backtrack(s: &str, start: usize, path: &mut Vec<String>, res: &mut Vec<String>) {
         // if the path is already 4 and the start is already the end of the string
         // push the path to the result and return
         if path.len() == 4 && start == s.len() {

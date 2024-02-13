@@ -149,7 +149,7 @@ impl StringSolution {
                 let n2 = num2[j] as i32 - '0' as i32;
                 let mut sum = n1 * n2 + carry + num_res[i + j];
                 carry = sum / 10;
-                sum = sum % 10;
+                sum %= 10;
                 num_res[i + j] = sum;
             }
             if carry > 0 {
@@ -193,16 +193,17 @@ impl StringSolution {
      */
 
     pub fn group_anagrams(strs: Vec<String>) -> Vec<Vec<String>> {
+        use std::collections::hash_map::Entry::Vacant;
         let mut map: std::collections::HashMap<String, Vec<String>> =
             std::collections::HashMap::new();
         for s in strs {
             let mut s_ = s.chars().collect::<Vec<char>>();
             s_.sort();
             let key = s_.iter().collect::<String>();
-            if map.contains_key(&key) {
-                map.get_mut(&key).unwrap().push(s);
+            if let Vacant(e) = map.entry(key.clone()) {
+                e.insert(vec![s]);
             } else {
-                map.insert(key, vec![s]);
+                map.get_mut(&key).unwrap().push(s);
             }
         }
 
@@ -224,58 +225,56 @@ impl StringSolution {
                 Err(()) => return false,
             }
         }
-        return state.is_valid_end_state();
+        state.is_valid_end_state()
     }
 
     pub fn is_number_brute(s: String) -> bool {
         // trim leading and trailing whitespace
         let s = s.trim().to_string();
-        if s.len() == 0 {
+        if s.is_empty() {
             return false;
         }
-        return Self::check_exp(&s) || Self::check_decimal(&s) || Self::check_integer(&s, false);
+        Self::check_exp(&s) || Self::check_decimal(&s) || Self::check_integer(&s, false)
     }
 
-    fn check_exp(s: &String) -> bool {
-        if s.len() == 0 {
+    fn check_exp(s: &str) -> bool {
+        if s.is_empty() {
             return false;
         }
         if !s.contains('e') {
             return false;
         }
 
-        let strs: Vec<&str> = s.split("e").collect();
+        let strs: Vec<&str> = s.split('e').collect();
         if strs.len() != 2 {
             return false;
         }
-        if strs[0].len() == 0 || strs[1].len() == 0 {
+        if strs[0].is_empty() || strs[1].is_empty() {
             return false;
         }
-        return (Self::check_decimal(&strs[0].to_string())
-            || Self::check_integer(&strs[0].to_string(), false))
-            && Self::check_integer(&strs[1].to_string(), true);
+        (Self::check_decimal(strs[0]) || Self::check_integer(strs[0], false))
+            && Self::check_integer(strs[1], true)
     }
 
-    fn check_decimal(s: &String) -> bool {
-        if s.len() == 0 {
+    fn check_decimal(s: &str) -> bool {
+        if s.is_empty() {
             return false;
         }
         if !s.contains('.') {
             return false;
         }
-        let strs: Vec<&str> = s.split(".").collect();
+        let strs: Vec<&str> = s.split('.').collect();
         if strs.len() == 1 {
-            return Self::check_integer(&strs[0].to_string(), true);
+            return Self::check_integer(strs[0], true);
         }
         if strs.len() == 2 {
-            return Self::check_integer(&strs[0].to_string(), false)
-                && Self::check_integer(&strs[1].to_string(), true);
+            return Self::check_integer(strs[0], false) && Self::check_integer(strs[1], true);
         }
-        return false;
+        false
     }
 
-    fn check_integer(s: &String, is_sub: bool) -> bool {
-        if s.len() == 0 {
+    fn check_integer(s: &str, is_sub: bool) -> bool {
+        if s.is_empty() {
             return false;
         }
         let mut i = 0;
@@ -290,7 +289,7 @@ impl StringSolution {
             return false;
         }
         while i < s.len() {
-            if !s.chars().nth(i).unwrap().is_digit(10) {
+            if !s.chars().nth(i).unwrap().is_ascii_digit() {
                 return false;
             }
             i += 1;
@@ -307,12 +306,12 @@ impl StringSolution {
         let mut b = b.chars().collect::<Vec<char>>();
         let mut res = String::new();
         let mut carry = 0;
-        while a.len() > 0 || b.len() > 0 {
+        while !a.is_empty() || !b.is_empty() {
             let mut sum = carry;
-            if a.len() > 0 {
+            if !a.is_empty() {
                 sum += a.pop().unwrap().to_digit(10).unwrap();
             }
-            if b.len() > 0 {
+            if !b.is_empty() {
                 sum += b.pop().unwrap().to_digit(10).unwrap();
             }
             carry = sum / 2;
@@ -359,7 +358,7 @@ impl StringSolution {
         // if diff.len() == 0, then we need to check if there is a duplicate character
         // if there is a duplicate character, then we can swap it with itself
         // otherwise, we cannot swap any character
-        if diff.len() == 0 {
+        if diff.is_empty() {
             let mut map = std::collections::HashSet::new();
             for c in s {
                 if map.contains(&c) {
@@ -446,7 +445,7 @@ impl StringSolution {
     // create a palindrome number from s
     // return the maximum palindrome number
     pub fn max_palindromic_number(s: String) -> String {
-        let mut digit_cnts = vec![0; 10];
+        let mut digit_cnts = [0; 10];
         for c in s.chars() {
             if let Some(digit) = c.to_digit(10) {
                 digit_cnts[digit as usize] += 1;
@@ -517,10 +516,10 @@ impl StringSolution {
                 .collect::<String>()
                 .parse::<i32>()
                 .unwrap();
-            if one >= 1 && one <= 9 {
+            if (1..=9).contains(&one) {
                 dp[i] += dp[i - 1];
             }
-            if two >= 10 && two <= 26 {
+            if (10..=26).contains(&two) {
                 dp[i] += dp[i - 2];
             }
         }
@@ -647,7 +646,7 @@ impl StringSolution {
                     map.insert(pattern[i], s[i]);
                 }
                 (None, None) => {
-                    map.insert(pattern[i], &s[i]);
+                    map.insert(pattern[i], s[i]);
                     map2.insert(s[i], pattern[i]);
                 }
             }
@@ -714,7 +713,7 @@ impl StringSolution {
         res
     }
 
-    fn dfs(s: &String, start: usize, path: &mut Vec<String>, res: &mut Vec<Vec<String>>) {
+    fn dfs(s: &str, start: usize, path: &mut Vec<String>, res: &mut Vec<Vec<String>>) {
         if start == s.len() {
             res.push(path.clone());
             return;
@@ -769,13 +768,13 @@ impl StringSolution {
                 *map.entry(secret[i]).or_default() += 1;
             }
         }
-        for i in 0..guess.len() {
-            if guess[i] != ' ' && map.contains_key(&guess[i]) {
+        for &c in &guess {
+            if c != ' ' && map.contains_key(&c) {
                 cows += 1;
-                let count = map.entry(guess[i]).or_insert(0);
+                let count = map.entry(c).or_insert(0);
                 *count -= 1;
                 if *count == 0 {
-                    map.remove(&guess[i]);
+                    map.remove(&c);
                 }
             }
         }
@@ -790,10 +789,8 @@ impl StringSolution {
                 if matches!(c, 'a' | 'e' | 'i' | 'o' | 'u') {
                     count1 += 1;
                 }
-            } else {
-                if matches!(c, 'a' | 'e' | 'i' | 'o' | 'u') {
-                    count2 += 1;
-                }
+            } else if matches!(c, 'a' | 'e' | 'i' | 'o' | 'u') {
+                count2 += 1;
             }
         }
         count1 == count2
@@ -803,8 +800,8 @@ impl StringSolution {
         let mut map = std::collections::HashMap::new();
         let s = s.chars().collect::<Vec<char>>();
         let mut max = -1;
-        for i in 0..s.len() {
-            if let Some(&j) = map.get(&s[i]) {
+        for (i, c) in s.iter().enumerate() {
+            if let Some(&j) = map.get(c) {
                 max = std::cmp::max(max, (i - j - 1) as i32);
             } else {
                 map.insert(s[i], i);
@@ -817,19 +814,17 @@ impl StringSolution {
         let s = s.chars().collect::<Vec<char>>();
         let mut count1 = 0; // the number of operations to make s[i] == '0'
         let mut count2 = 0; // the number of operations to make s[i] == '1'
-        for i in 0..s.len() {
+        for (i, &c) in s.iter().enumerate() {
             if i % 2 == 0 {
-                if s[i] == '1' {
+                if c == '1' {
                     count1 += 1;
                 } else {
                     count2 += 1;
                 }
+            } else if c == '0' {
+                count1 += 1;
             } else {
-                if s[i] == '0' {
-                    count1 += 1;
-                } else {
-                    count2 += 1;
-                }
+                count2 += 1;
             }
         }
         count1.min(count2)
@@ -860,8 +855,8 @@ impl StringSolution {
         let mut max = 0;
         let mut zeros = 0;
         let mut ones = s.iter().filter(|&&c| c == '1').count() as i32;
-        for i in 0..s.len() - 1 {
-            if s[i] == '0' {
+        for &c in s.iter().take(s.len() - 1) {
+            if c == '0' {
                 zeros += 1;
             } else {
                 ones -= 1;
@@ -928,7 +923,7 @@ impl StringSolution {
     pub fn count_segments(s: String) -> i32 {
         // one line
         // s.split_ascii_whitespace().count() as i32
-        if s.len() == 0 {
+        if s.is_empty() {
             return 0;
         }
         let mut space_cnt = 0;
@@ -1461,7 +1456,10 @@ mod tests {
 
     #[test]
     fn test_count_segments() {
-        assert_eq!(StringSolution::count_segments("Hello, my name is John".to_string()), 5);
+        assert_eq!(
+            StringSolution::count_segments("Hello, my name is John".to_string()),
+            5
+        );
         assert_eq!(StringSolution::count_segments("Hello".to_string()), 1);
         assert_eq!(StringSolution::count_segments("".to_string()), 0);
         assert_eq!(StringSolution::count_segments("    ".to_string()), 0);

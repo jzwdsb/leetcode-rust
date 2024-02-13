@@ -7,10 +7,10 @@ pub struct StackSolution {}
 impl StackSolution {
     pub fn simplify_path(path: String) -> String {
         let mut stack = std::collections::VecDeque::new();
-        let words = path.split("/");
+        let words = path.split('/');
 
         for word in words {
-            if word == "." || word == "" {
+            if word == "." || word.is_empty() {
                 continue;
             } else if word == ".." {
                 stack.pop_back();

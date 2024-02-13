@@ -16,7 +16,7 @@ impl SortSolution {
             .collect()
     }
 
-    pub fn merge_sorted_array(nums1: &mut Vec<i32>, nums2: &mut Vec<i32>) {
+    pub fn merge_sorted_array(nums1: &mut Vec<i32>, nums2: &mut [i32]) {
         let mut i = 0;
         let mut j = 0;
         let mut len1 = nums1.len() - nums2.len();
@@ -83,7 +83,7 @@ impl SortSolution {
         Self::quick_helper(nums, pivot + 1, end)
     }
 
-    fn quick_partition(nums: &mut Vec<i32>, start: usize, end: usize) -> usize {
+    fn quick_partition(nums: &mut [i32], start: usize, end: usize) -> usize {
         let piviot = nums[end];
         let mut i = start;
         for j in start..end {
@@ -111,7 +111,7 @@ impl SortSolution {
         Self::merge(nums1, start, mid, end);
     }
 
-    fn merge(nums1: &mut Vec<i32>, start: usize, mid: usize, end: usize) {
+    fn merge(nums1: &mut [i32], start: usize, mid: usize, end: usize) {
         let mut i = start;
         let mut j = mid + 1;
         let mut tmp = Vec::new();
@@ -135,7 +135,7 @@ impl SortSolution {
         nums1[start..=end].clone_from_slice(&tmp);
     }
 
-    pub fn bubble_sort(nums1: &mut Vec<i32>) {
+    pub fn bubble_sort(nums1: &mut [i32]) {
         let len = nums1.len();
         for i in 0..len {
             for j in 0..len - i - 1 {

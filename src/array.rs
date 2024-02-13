@@ -22,7 +22,7 @@ impl ArraySolution {
     use
      */
 
-    pub fn next_permutation(nums: &mut Vec<i32>) {
+    pub fn next_permutation(nums: &mut [i32]) {
         // rustic way: use windows and rposition to find the largest index k such that a[k] < a[k + 1]
         if let Some(k) = nums.windows(2).rposition(|w| w[0] < w[1]) {
             // use rposition to find the largest index l greater than k such that a[k] < a[l]
@@ -155,7 +155,7 @@ impl ArraySolution {
     time complexity: O(n) space complexity: O(1)
      */
 
-    pub fn remove_element(nums: &mut Vec<i32>, val: i32) -> i32 {
+    pub fn remove_element(nums: &mut [i32], val: i32) -> i32 {
         let mut i = 0;
         let mut j = 0;
         while j < nums.len() {
@@ -176,7 +176,7 @@ impl ArraySolution {
     2. swap the symmetry
      */
 
-    pub fn rotate(image: &mut Vec<Vec<i32>>) {
+    pub fn rotate(image: &mut [Vec<i32>]) {
         let n = image.len();
         // transpose
         for i in 0..n.div(2) {
@@ -460,7 +460,7 @@ impl ArraySolution {
     same solution at remove element
      */
 
-    pub fn move_zeros(nums: &mut Vec<i32>) {
+    pub fn move_zeros(nums: &mut [i32]) {
         let mut i = 0;
         let mut j = 0;
         while j < nums.len() {
@@ -811,7 +811,7 @@ impl ArraySolution {
     same time complexity, but more straightforward
 
      */
-    pub fn sort_colors(nums: &mut Vec<i32>) {
+    pub fn sort_colors(nums: &mut [i32]) {
         let (mut i, mut j, mut k) = (0, 0usize, nums.len() - 1);
         while j <= k {
             match nums[j] {
@@ -841,15 +841,15 @@ impl ArraySolution {
         let mut cols = vec![vec![false; 9]; 9];
         let mut boxes = vec![vec![false; 9]; 9];
         for i in 0..9 {
-            for j in 0..9 {
+            for (j, col) in cols.iter_mut().enumerate().take(9) {
                 if board[i][j] != '.' {
                     let num = board[i][j] as usize - '1' as usize;
                     let box_index = (i / 3) * 3 + j / 3;
-                    if rows[i][num] || cols[j][num] || boxes[box_index][num] {
+                    if rows[i][num] || col[num] || boxes[box_index][num] {
                         return false;
                     }
                     rows[i][num] = true;
-                    cols[j][num] = true;
+                    col[num] = true;
                     boxes[box_index][num] = true;
                 }
             }
@@ -864,11 +864,11 @@ impl ArraySolution {
     then we can use the first row and first col to set the matrix to zero
      */
 
-    pub fn set_zero(matrix: &mut Vec<Vec<i32>>) {
+    pub fn set_zero(matrix: &mut [Vec<i32>]) {
         let mut first_row = false;
         let mut first_col = false;
-        for i in 0..matrix.len() {
-            if matrix[i][0] == 0 {
+        for row in matrix.iter_mut() {
+            if row[0] == 0 {
                 first_col = true;
                 break;
             }
@@ -900,8 +900,8 @@ impl ArraySolution {
             }
         }
         if first_col {
-            for i in 0..matrix.len() {
-                matrix[i][0] = 0;
+            for row in matrix {
+                row[0] = 0;
             }
         }
     }
@@ -940,17 +940,17 @@ impl ArraySolution {
         // nums[i] = nums.len() + 1 means the num i+1 doesn't exist in the array
         // if nums[i] == num, we can set nums[num-1] = -nums[num-1].abs() so
         for i in 0..nums.len() {
-            let num = nums[i].abs() as usize;
-            if num <= nums.len() {
-                nums[num - 1] = -nums[num - 1].abs();
+            let num = nums[i].unsigned_abs();
+            if num as usize <= nums.len() {
+                nums[num as usize - 1] = -nums[num as usize - 1].abs();
             }
         }
         // find the first num that is greater than 0
         // if we can't find it, that means all the nums in the array exists
         // if we found a num that is > 0, that means there is a empty slot in the array
         // i is the index of the empty slot
-        for i in 0..nums.len() {
-            if nums[i] > 0 {
+        for (i, &num) in nums.iter().enumerate() {
+            if num > 0 {
                 return i as i32 + 1;
             }
         }
@@ -1095,7 +1095,7 @@ impl ArraySolution {
     https://leetcode.com/problems/surrounded-regions/description/
      */
 
-    pub fn surrond_regions(board: &mut Vec<Vec<char>>) {
+    pub fn surrond_regions(board: &mut [Vec<char>]) {
         let mut visited = vec![vec![false; board[0].len()]; board.len()];
         for i in 1..board.len() - 1 {
             for j in 1..board[i].len() - 1 {
@@ -1202,8 +1202,8 @@ impl ArraySolution {
     pub fn largest_number(nums: Vec<i32>) -> String {
         let mut nums = nums.iter().map(|&n| n.to_string()).collect::<Vec<_>>();
         nums.sort_by(|a, b| {
-            let ab = a.to_owned() + &b;
-            let ba = b.to_owned() + &a;
+            let ab = a.to_owned() + b;
+            let ba = b.to_owned() + a;
             ab.cmp(&ba)
         });
         nums.reverse();

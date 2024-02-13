@@ -118,7 +118,7 @@ impl GraphSolution {
             for (dx, dy) in direction {
                 let nx = x.wrapping_add_signed(dx as isize);
                 let ny = y.wrapping_add_signed(dy as isize);
-                if nx < heights.len() && ny < heights[0].len() && visited[nx][ny] == false {
+                if nx < heights.len() && ny < heights[0].len() && !visited[nx][ny] {
                     // the maximum cost of the path from (x, y) to (nx, ny) is the maximum of the current cost
                     // and the difference between the heights of (nx, ny) and (x, y)
                     let cost2 = cost.max((heights[nx][ny] - heights[x][y]).abs());
@@ -222,7 +222,7 @@ impl GraphSolution {
         let mut ans = false;
         for i in 0..board.len() {
             for j in 0..board[0].len() {
-                if board[i][j] == word.chars().nth(0).unwrap() {
+                if board[i][j] == word.chars().next_back().unwrap() {
                     ans = ans
                         || Self::dfs_word_search(
                             &board,
@@ -246,7 +246,7 @@ impl GraphSolution {
         visited: &mut Vec<Vec<bool>>,
         i: i32,
         j: i32,
-        word: &String,
+        word: &str,
         pos: usize,
     ) -> bool {
         if pos == word.len() {
@@ -343,7 +343,7 @@ impl GraphSolution {
         0
     }
 
-    fn is_one_char_diff(a: &String, b: &String) -> bool {
+    fn is_one_char_diff(a: &str, b: &str) -> bool {
         let mut diff = 0;
         for i in 0..a.len() {
             if a.chars().nth(i).unwrap() != b.chars().nth(i).unwrap() {
@@ -358,7 +358,7 @@ impl GraphSolution {
 
     fn breadth_first_traversal(node: Rc<RefCell<Node>>) -> Vec<i32> {
         let mut queue = VecDeque::new();
-        let mut visited = vec![false; 100];
+        let mut visited = [false; 100];
         let mut ans = vec![];
         queue.push_back(node);
         while let Some(node) = queue.pop_front() {

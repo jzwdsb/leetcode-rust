@@ -10,10 +10,7 @@ pub struct ListNode<T> {
 impl<T> ListNode<T> {
     #[inline]
     pub fn new(val: T) -> Self {
-        ListNode {
-            next: None,
-            val: val,
-        }
+        ListNode { next: None, val }
     }
     #[inline]
     pub fn from_vec(v: Vec<T>) -> Option<Box<ListNode<T>>> {
@@ -29,7 +26,7 @@ impl<T> ListNode<T> {
 
 impl<T> Iterator for ListNode<T> {
     type Item = T;
-    fn next<'a>(&'a mut self) -> Option<Self::Item> {
+    fn next(&mut self) -> Option<Self::Item> {
         let node = self;
         let mut res = None;
         std::mem::swap(&mut node.next, &mut res);
@@ -207,7 +204,7 @@ impl ListSolution {
         if k == 0 {
             return head;
         }
-        if let None = head {
+        if head.is_none() {
             return head;
         }
 

@@ -42,8 +42,8 @@ impl MathSolution {
             }
         }
         let ans: i64 = match is_neg {
-            true => -(left as i64),
-            false => left as i64,
+            true => -(left),
+            false => left,
         };
         if ans > (i32::MAX as i64) {
             return i32::MAX;
@@ -62,7 +62,7 @@ impl MathSolution {
             if y & 1 == 1 {
                 ans += add;
             }
-            y = y >> 1;
+            y >>= 1;
             add += add;
         }
 
@@ -92,7 +92,7 @@ impl MathSolution {
 
         let mut res = 1.0;
         let is_neg = n.is_negative();
-        let mut n = n.abs() as u32;
+        let mut n = n.unsigned_abs();
         let mut x = x;
         while n > 0 {
             if n & 1 == 1 {
@@ -108,7 +108,7 @@ impl MathSolution {
     }
 
     pub fn my_sqrt(x: i32) -> i32 {
-        let mut left = 0 as i64;
+        let mut left = 0_i64;
         let mut right = x as i64;
         while left < right {
             let mid = left + ((right - left + 1) >> 1);
@@ -148,7 +148,7 @@ impl MathSolution {
         let mut res: Vec<Vec<i32>> = vec![];
         for i in 0..num_rows {
             let mut curr_row = vec![1; i + 1];
-            if let Some(prev_row) = res.get(i.checked_sub(1).unwrap_or(0)) {
+            if let Some(prev_row) = res.get(i.saturating_sub(1)) {
                 for j in 0..=i {
                     if j == i || j == 0 {
                         curr_row[j] = 1;
@@ -230,8 +230,8 @@ impl MathSolution {
             let mut curr = res.clone();
             curr.reverse();
             let add = 1 << i;
-            for j in 0..curr.len() {
-                curr[j] += add;
+            for e in &mut curr {
+                *e += add;
             }
             res.append(&mut curr);
         }
@@ -273,7 +273,7 @@ impl MathSolution {
         let mut nums: Vec<i32> = (1..=n).collect();
         let mut res = String::new();
         let mut k = k - 1;
-        let mut factorial = (1..n).fold(1, |acc, x| acc * x);
+        let mut factorial = (1..n).product::<i32>();
         for i in (1..=n).rev() {
             let index = (k / factorial) as usize;
             res.push_str(&nums[index].to_string());

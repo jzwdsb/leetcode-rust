@@ -31,10 +31,7 @@ impl SlidingWindow {
     }
 
     fn is_vowel(c: u8) -> bool {
-        match c {
-            b'a' | b'e' | b'i' | b'o' | b'u' => true,
-            _ => false,
-        }
+        matches!(c, b'a' | b'e' | b'i' | b'o' | b'u')
     }
 
     /*
@@ -110,7 +107,7 @@ impl SlidingWindow {
     // k is the number of answer that can be changed
     // c is the char that we can change
     // return the max consecutive answers
-    fn consecutive_helper(answer_key: &String, k: i32, c: char) -> i32 {
+    fn consecutive_helper(answer_key: &str, k: i32, c: char) -> i32 {
         let mut res = 0;
         let (mut left, mut right) = (0, 0); // window size = right - left
         let mut count = 0; // the number of charachter in the window that can be changed

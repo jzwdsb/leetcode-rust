@@ -20,7 +20,7 @@ impl RecursiveSolution {
     pub fn is_match(s: String, p: String) -> bool {
         let s_char = s.chars().collect::<Vec<char>>();
         let p_char = p.chars().collect::<Vec<char>>();
-        return Self::match_helper(&s_char, &p_char, 0, 0);
+        Self::match_helper(&s_char, &p_char, 0, 0)
     }
 
     fn match_helper(s: &Vec<char>, p: &Vec<char>, s_index: usize, p_index: usize) -> bool {
@@ -58,7 +58,7 @@ impl RecursiveSolution {
             return Self::match_helper(s, p, s_index + 1, p_index + 1);
         }
         // nothing is matched
-        return false;
+        false
     }
 }
 

@@ -70,7 +70,7 @@ impl DPSolution {
                 count += 1;
             }
         }
-        return count as f64 / len;
+        count as f64 / len
     }
     fn calculate_prob(set: &mut Vec<i32>, sum: i32, k: i32, max_pts: i32) {
         if sum >= k {
@@ -98,11 +98,16 @@ impl DPSolution {
                 continue;
             }
             let mut min = i32::MAX;
-            for j in i + 1..=i + nums[i] as usize {
+            for (j, &n) in steps
+                .iter()
+                .enumerate()
+                .take(i + nums[i] as usize + 1)
+                .skip(i + 1)
+            {
                 if j >= nums.len() {
                     break;
                 }
-                min = min.min(steps[j]);
+                min = min.min(n);
             }
             if min != i32::MAX {
                 steps[i] = min + 1;
@@ -193,7 +198,7 @@ impl DPSolution {
             return i32::MAX;
         }
         if i == grid.len() - 1 && j == grid[0].len() - 1 {
-            return grid[i as usize][j as usize];
+            return grid[i][j];
         }
         if steps[i][j] != 0 {
             return steps[i][j];
@@ -250,7 +255,7 @@ impl DPSolution {
      */
 
     pub fn rob(nums: Vec<i32>) -> i32 {
-        if nums.len() == 0 {
+        if nums.is_empty() {
             return 0;
         }
         let (mut prev1, mut prev2) = (0, 0);
@@ -261,7 +266,7 @@ impl DPSolution {
             prev2 = tmp;
         }
 
-        return prev1;
+        prev1
     }
 
     fn rob_helper(nums: &Vec<i32>, memo: &mut Vec<i32>, i: i32) -> i32 {
@@ -336,12 +341,17 @@ impl DPSolution {
 
     pub fn min_distance(word1: String, word2: String) -> i32 {
         let mut dp = vec![vec![0; word2.len() + 1]; word1.len() + 1];
-        for i in 0..=word1.len() {
-            dp[i][0] = i; // initialize the first column
-        }
-        for j in 0..=word2.len() {
-            dp[0][j] = j; // initialize the first row
-        }
+        dp.iter_mut()
+            .enumerate()
+            .take(word1.len() + 1)
+            .for_each(|(i, d)| d[0] = i); // initialize the first column
+
+        dp[0]
+            .iter_mut()
+            .enumerate()
+            .take(word2.len() + 1)
+            .for_each(|(j, d)| *d = j); // initialize the first row
+
         for i in 1..=word1.len() {
             for j in 1..=word2.len() {
                 if word1.chars().nth(i - 1) == word2.chars().nth(j - 1) {
@@ -371,9 +381,8 @@ impl DPSolution {
      */
     pub fn num_distinct(s: String, t: String) -> i32 {
         let mut dp = vec![vec![0; t.len() + 1]; s.len() + 1];
-        for i in 0..=s.len() {
-            dp[i][0] = 1; // if s is empty, then there is only one way to make up t
-        }
+        dp.iter_mut().take(s.len() + 1).for_each(|d| d[0] = 1); // initialize the first column
+
         for i in 1..=s.len() {
             for j in 1..=t.len() {
                 dp[i][j] = if s.chars().nth(i - 1) == t.chars().nth(j - 1) {
@@ -466,15 +475,15 @@ impl DPSolution {
         let mut dp = vec![vec![0; prices.len()]; 3];
         for i in 1..=2 {
             let mut min = prices[0];
-            for j in 1..prices.len() {
+            for (j, p) in prices.iter().enumerate().skip(1) {
                 // min is the minimum price in prices[0..j]
-                min = min.min(prices[j] - dp[i - 1][j - 1]);
+                min = min.min(p - dp[i - 1][j - 1]);
                 // update dp[i][j] by comparing dp[i][j-1] and prices[j] - min
                 // dp[i][j-1] is the max profit we can make with at most i transactions on day j-1
                 // prices[j] - min is the max profit we can make with at most i transactions on day j
                 // if we don't sell stock on day j, then dp[i][j] = dp[i][j-1]
                 // if we sell stock on day j, then dp[i][j] = prices[j] - min
-                dp[i][j] = dp[i][j - 1].max(prices[j] - min);
+                dp[i][j] = dp[i][j - 1].max(p - min);
             }
         }
         dp[2][prices.len() - 1]

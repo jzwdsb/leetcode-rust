@@ -69,7 +69,7 @@ impl Allocator {
                     .insert(index + size as i32, ptr_size - size as i32);
                 (index, size as i32)
             };
-            self.allocated.entry(m_id).or_insert(Vec::new()).push(ptr);
+            self.allocated.entry(m_id).or_default().push(ptr);
             return Some(ptr.0 as usize);
         }
         None
@@ -83,7 +83,7 @@ impl Allocator {
             let adjacent_ptr = self.free_memory.remove(&right_index).unwrap();
             size += adjacent_ptr;
         }
-        if let Some((&left_index, &left_size)) = self.free_memory.range(0..index).rev().next() {
+        if let Some((&left_index, &left_size)) = self.free_memory.range(0..index).next_back() {
             if left_index + left_size == index {
                 index = left_index;
                 size += left_size;
@@ -143,8 +143,8 @@ impl FrequencyTracker {
         let freq = self.nums.entry(num).or_insert(0);
         if *freq > 0 {
             self.nums_by_freq.entry(*freq).or_default().remove(&num);
-            if self.nums_by_freq[&freq].is_empty() {
-                self.nums_by_freq.remove(&freq);
+            if self.nums_by_freq[freq].is_empty() {
+                self.nums_by_freq.remove(freq);
             }
         }
         *freq += 1;
@@ -154,8 +154,8 @@ impl FrequencyTracker {
     pub fn delete_one(&mut self, num: i32) {
         if let Some(v) = self.nums.get_mut(&num) {
             self.nums_by_freq.entry(*v).or_default().remove(&num);
-            if self.nums_by_freq[&v].is_empty() {
-                self.nums_by_freq.remove(&v);
+            if self.nums_by_freq[v].is_empty() {
+                self.nums_by_freq.remove(v);
             }
             *v -= 1;
             if *v == 0 {
@@ -431,10 +431,7 @@ impl CustomStack {
     }
 
     pub fn pop(&mut self) -> i32 {
-        match self.data.pop() {
-            Some(v) => v,
-            None => -1,
-        }
+        self.data.pop().unwrap_or(-1)
     }
 
     pub fn increment(&mut self, k: i32, val: i32) {
@@ -518,14 +515,14 @@ struct CombinationIterator {
 
 impl CombinationIterator {
     pub fn new(characters: String, combination_length: i32) -> Self {
-        let chars = characters.chars().collect();
+        let chars: Vec<char> = characters.chars().collect();
         let mut combinations = Vec::new();
         Self::backtrack(
             &mut combinations,
             &chars,
             0,
             combination_length as usize,
-            &String::new(),
+            "",
         );
         combinations.reverse();
         Self { combinations }
@@ -533,13 +530,13 @@ impl CombinationIterator {
 
     fn backtrack(
         combinations: &mut Vec<String>,
-        chars: &Vec<char>,
+        chars: &[char],
         index: usize,
         combination_length: usize,
-        curr: &String,
+        curr: &str,
     ) {
         if combination_length == 0 {
-            combinations.push(curr.clone());
+            combinations.push(curr.to_string());
             return;
         }
         if index >= chars.len() {
@@ -1158,14 +1155,16 @@ impl LFUCache {
     }
 
     pub fn put(&mut self, key: i32, value: i32) {
+        use std::collections::hash_map::Entry::Occupied;
         if self.capacity == 0 {
             return;
         }
-        if self.cache.contains_key(&key) {
-            self.cache.insert(key, value);
+        if let Occupied(mut entry) = self.cache.entry(key) {
+            entry.insert(value);
             self.update_freq(key);
             return;
         }
+
         if self.cache.len() == self.capacity {
             self.remove_min_freq();
         }
@@ -1176,14 +1175,13 @@ impl LFUCache {
     }
 
     fn remove_min_freq(&mut self) {
-        let key = self
+        let key = *self
             .freq_cache
             .entry(self.min_freq)
             .or_default()
             .iter()
             .next()
-            .unwrap()
-            .clone();
+            .unwrap();
         self.cache.remove(&key);
         self.freq.remove(&key);
         self.freq_cache
@@ -1347,11 +1345,11 @@ impl ParkingSystem {
     }
 }
 
-struct ATM {
+struct Atm {
     banknotes: HashMap<i32, i32>,
 }
 
-impl ATM {
+impl Atm {
     pub fn new() -> Self {
         Self {
             banknotes: HashMap::new(),
@@ -1969,7 +1967,7 @@ mod tests {
 
     #[test]
     fn test_atm() {
-        let mut obj = ATM::new();
+        let mut obj = Atm::new();
         assert!(obj.deposit(vec![0, 0, 1, 2, 1]));
         assert_eq!(obj.withdraw(600), vec![0, 0, 1, 0, 1]);
         assert!(obj.deposit(vec![0, 1, 0, 1, 1]));

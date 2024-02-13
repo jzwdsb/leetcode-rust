@@ -25,12 +25,10 @@ impl SearchSolution {
                 }
             }
             // if nums[mid] <= nums[right], it means the right part is sorted
-            else {
-                if nums[mid] < target && target <= nums[right] {
-                    left = mid + 1;
-                } else {
-                    right = mid - 1;
-                }
+            else if nums[mid] < target && target <= nums[right] {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
             }
         }
         -1
@@ -44,23 +42,27 @@ impl SearchSolution {
             if nums1[mid] == target {
                 return true;
             }
-            // if nums[left] <= nums[mid], it means the left part is sorted
-            if nums1[left] < nums1[mid] {
-                if nums1[left] <= target && target < nums1[mid] {
-                    right = mid - 1;
-                } else {
-                    left = mid + 1;
+
+            match nums1[left].cmp(&nums1[mid]) {
+                // if nums[left] < nums[mid], it means the left part is sorted
+                std::cmp::Ordering::Less => {
+                    if nums1[left] <= target && target < nums1[mid] {
+                        right = mid - 1;
+                    } else {
+                        left = mid + 1;
+                    }
                 }
-            }
-            // if nums[mid] <= nums[right], it means the right part is sorted
-            else if nums1[left] > nums1[mid] {
-                if nums1[mid] < target && target <= nums1[right] {
-                    left = mid + 1;
-                } else {
-                    right = mid - 1;
+                // if nums[left] > nums[right], it means the right part is sorted
+                std::cmp::Ordering::Greater => {
+                    if nums1[mid] < target && target <= nums1[right] {
+                        left = mid + 1;
+                    } else {
+                        right = mid - 1;
+                    }
                 }
-            } else {
-                left += 1;
+                std::cmp::Ordering::Equal => {
+                    left += 1;
+                }
             }
         }
         false
@@ -77,21 +79,20 @@ impl SearchSolution {
         let mut right = nums.len();
         while left < right {
             let mid = (left + right) / 2;
-            if nums[mid] == target {
-                let mut start = mid;
-                let mut end = mid;
-                while start > 0 && nums[start - 1] == target {
-                    start -= 1;
-                }
-                while end < nums.len() - 1 && nums[end + 1] == target {
-                    end += 1;
-                }
-                return vec![start as i32, end as i32];
-            } else {
-                if nums[mid] < target {
-                    left = mid + 1;
-                } else {
-                    right = mid;
+
+            match nums[mid].cmp(&target) {
+                std::cmp::Ordering::Less => left = mid + 1,
+                std::cmp::Ordering::Greater => right = mid,
+                std::cmp::Ordering::Equal => {
+                    let mut start = mid;
+                    let mut end = mid;
+                    while start > 0 && nums[start - 1] == target {
+                        start -= 1;
+                    }
+                    while end < nums.len() - 1 && nums[end + 1] == target {
+                        end += 1;
+                    }
+                    return vec![start as i32, end as i32];
                 }
             }
         }
@@ -245,8 +246,8 @@ impl SearchSolution {
         // *nums.select_nth_unstable(n-k as usize).1
         use std::cmp::Reverse;
         let mut min_heap = std::collections::BinaryHeap::<Reverse<i32>>::new();
-        for i in k as usize..nums.len() {
-            min_heap.push(Reverse(nums[i]));
+        for item in nums.iter().skip(k as usize) {
+            min_heap.push(Reverse(*item));
             if min_heap.len() > k as usize {
                 min_heap.pop();
             }

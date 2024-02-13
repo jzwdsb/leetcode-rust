@@ -307,11 +307,10 @@ impl TreeSolution {
     }
 
     pub fn build_tree(preorder_tree: Vec<i32>, inorder: Vec<i32>) -> Tree {
-        if preorder_tree.len() == 0 {
+        if preorder_tree.is_empty() {
             return None;
         }
         let mut preorder_tree = preorder_tree;
-        let inorder = inorder;
         let root_val = preorder_tree.remove(0);
         let mut root = TreeNode::new(root_val);
         let root_idx = inorder.iter().position(|&x| x == root_val).unwrap();
@@ -369,7 +368,7 @@ impl TreeSolution {
     }
     pub fn is_balanced(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
         match root {
-            None => return true,
+            None => true,
             Some(root) => {
                 let root = root.borrow();
                 let left = Self::max_depth(root.left.clone());
@@ -422,7 +421,6 @@ impl TreeSolution {
                 Self::path_sum_helper(root.left.clone(), target_sum - root.val, path, res);
                 Self::path_sum_helper(root.right.clone(), target_sum - root.val, path, res);
                 path.pop();
-                return;
             }
         }
     }
@@ -623,9 +621,8 @@ impl TreeSolution {
                 if root.left.is_none() && root.left.is_none() {
                     return path;
                 }
-                let sum = Self::sum_helper(root.left.clone(), path)
-                    + Self::sum_helper(root.right.clone(), path);
-                sum
+                Self::sum_helper(root.left.clone(), path)
+                    + Self::sum_helper(root.right.clone(), path)
             }
         }
     }
