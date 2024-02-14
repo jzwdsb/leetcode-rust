@@ -305,6 +305,43 @@ impl MathSolution {
         }
         Self::gcd(b, a % b)
     }
+
+    /*
+    break n into the sum of positive integers, find the maximum product of those integers
+
+    we can get a conculsion that the maximum product is the exponent.
+    product = n^x. so there are two factors, n and x.
+    the x gives more contribution to the product based on math knowledge.
+    so we need to break n into small numbers as much as possible.
+    2 and 3 are the best numbers to break n into.
+    we can do some test to find which one is better
+    n = 9, 3 * 3 = 9, 2 * 2 * 2 * 1 = 8
+    n = 10, 3 * 3 * 3 * 1 = 27, 2 * 2 * 2 * 2 * 1 = 16
+    n = 11, 3 * 3 * 3 * 2 = 54, 2 * 2 * 2 * 2 * 2 * 1 = 32
+
+    so we can get the conclusion that we need to break n into 3 as much as possible.
+    when we break the num into 2, we actually break it into 4, because 2 + 2 = 2 * 2 = 4,
+    which decrease the x in the product.
+
+    but if reminder is 4, we can break it into 2 * 2, so we can get the maximum product 4.
+    3 * 1 < 2 * 2, so we need to break 4 into 2 and 2
+     */
+
+    pub fn integer_break(n: i32) -> i32 {
+        if n == 2 {
+            return 1;
+        }
+        if n == 3 {
+            return 2;
+        }
+        let mut res = 1;
+        let mut n = n;
+        while n > 4 {
+            res *= 3;
+            n -= 3;
+        }
+        res * n
+    }
 } // impl MathSolution
 
 #[cfg(test)]

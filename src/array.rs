@@ -1277,6 +1277,17 @@ impl ArraySolution {
         }
         rows.concat()
     }
+
+    pub fn rearrange_array(nums: Vec<i32>) -> Vec<i32> {
+        let pos = nums.iter().filter(|&&n| n >= 0);
+        let negs = nums.iter().filter(|&&n| n < 0);
+        let mut res = Vec::new();
+        for (p, n) in pos.zip(negs) {
+            res.push(*p);
+            res.push(*n);
+        }
+        res
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -1935,5 +1946,13 @@ mod tests {
             "PINALSIGYAHRPI"
         );
         assert_eq!(ArraySolution::zigzag_convert("A".to_string(), 1), "A");
+    }
+
+    #[test]
+    fn test_rearrange_number() {
+        assert_eq!(
+            ArraySolution::rearrange_array(vec![3, 1, -2, -5, 2, -4]),
+            vec![3, -2, 1, -5, 2, -4]
+        );
     }
 }
