@@ -1288,6 +1288,32 @@ impl ArraySolution {
         }
         res
     }
+
+    pub fn generate_matrix(n: i32) -> Vec<Vec<i32>> {
+        let mut res = vec![vec![0; n as usize]; n as usize];
+        let mut layer = 0;
+        let mut num = 1;
+        while num <= n * n {
+            for i in layer..n - layer {
+                res[layer as usize][i as usize] = num;
+                num += 1;
+            }
+            for i in layer + 1..n - layer {
+                res[i as usize][(n - layer - 1) as usize] = num;
+                num += 1;
+            }
+            for i in (layer..n - layer - 1).rev() {
+                res[(n - layer - 1) as usize][i as usize] = num;
+                num += 1;
+            }
+            for i in (layer + 1..n - layer - 1).rev() {
+                res[i as usize][layer as usize] = num;
+                num += 1;
+            }
+            layer += 1;
+        }
+        res
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -1954,5 +1980,14 @@ mod tests {
             ArraySolution::rearrange_array(vec![3, 1, -2, -5, 2, -4]),
             vec![3, -2, 1, -5, 2, -4]
         );
+    }
+
+    #[test]
+    fn test_generate_matrix() {
+        assert_eq!(
+            ArraySolution::generate_matrix(3),
+            vec![vec![1, 2, 3], vec![8, 9, 4], vec![7, 6, 5]]
+        );
+        assert_eq!(ArraySolution::generate_matrix(1), vec![vec![1]]);
     }
 }
