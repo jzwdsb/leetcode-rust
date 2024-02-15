@@ -1314,6 +1314,24 @@ impl ArraySolution {
         }
         res
     }
+
+    pub fn largest_perimeter(nums: Vec<i32>) -> i64 {
+        use std::cmp::Reverse;
+        let mut nums = nums;
+        nums.sort_unstable_by_key(|&n| Reverse(n));
+        let mut sum = nums.iter().map(|v| *v as i64).sum();
+        let mut count = nums.len();
+        for n in nums {
+            let n = n as i64;
+            let remain = sum - n;
+            if remain > n && count >= 3 {
+                return sum;
+            }
+            count -= 1;
+            sum -= n;
+        }
+        -1
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -1989,5 +2007,17 @@ mod tests {
             vec![vec![1, 2, 3], vec![8, 9, 4], vec![7, 6, 5]]
         );
         assert_eq!(ArraySolution::generate_matrix(1), vec![vec![1]]);
+    }
+
+    #[test]
+    fn test_largest_perimeter() {
+        assert_eq!(ArraySolution::largest_perimeter(vec![2, 1, 2]), 5);
+        assert_eq!(ArraySolution::largest_perimeter(vec![5, 5, 5]), 15);
+        assert_eq!(
+            ArraySolution::largest_perimeter(vec![1, 12, 1, 2, 5, 50, 3]),
+            12
+        );
+
+        assert_eq!(ArraySolution::largest_perimeter(vec![5, 5, 50]), -1);
     }
 }
