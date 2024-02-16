@@ -1,6 +1,9 @@
 #![allow(dead_code)]
 
-use std::ops::Div;
+use std::{
+    collections::{BTreeMap, HashMap},
+    ops::Div,
+};
 
 pub struct ArraySolution {}
 
@@ -1332,6 +1335,44 @@ impl ArraySolution {
         }
         -1
     }
+
+    /*
+    remove the k number of elements to make least number of unique elements
+
+    a pretty stright forward solution is to remove the element that has the least repetitions
+    after k iterations, the remaining elements are the least number of unique elements
+
+    we can use a hashmap to store the repetitions of each element
+    and a BTreeMap to store the element that has the same repetitions
+    BTreeMap can help us to iterate the repetitions in ascending order
+     */
+
+    pub fn find_least_num_of_unique_ints(arr: Vec<i32>, k: i32) -> i32 {
+        let mut ele2cnt: HashMap<i32, i32> = HashMap::new();
+        let mut cnt2ele: BTreeMap<_, Vec<_>> = BTreeMap::new();
+        for num in arr {
+            *ele2cnt.entry(num).or_default() += 1;
+        }
+        for (&num, &count) in ele2cnt.iter() {
+            cnt2ele.entry(count).or_default().push(num);
+        }
+        let mut res = ele2cnt.len() as i32;
+        let iter = cnt2ele.iter();
+        let mut k = k;
+
+        for (_, nums) in iter {
+            for &num in nums.iter() {
+                if k >= ele2cnt[&num] {
+                    k -= ele2cnt[&num];
+                    res -= 1;
+                } else {
+                    break;
+                }
+            }
+        }
+
+        res
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2019,5 +2060,22 @@ mod tests {
         );
 
         assert_eq!(ArraySolution::largest_perimeter(vec![5, 5, 50]), -1);
+    }
+
+    #[test]
+    fn test_find_least_num_of_unique_ints() {
+        assert_eq!(
+            ArraySolution::find_least_num_of_unique_ints(vec![4, 3, 1, 1, 3, 3, 2], 3),
+            2
+        );
+        assert_eq!(
+            ArraySolution::find_least_num_of_unique_ints(vec![5, 5, 4], 1),
+            1
+        );
+        assert_eq!(
+            ArraySolution::find_least_num_of_unique_ints(vec![2, 1, 1, 3, 3, 3], 3),
+            1
+        );
+        assert_eq!(ArraySolution::find_least_num_of_unique_ints(vec![1], 1), 0,)
     }
 }
