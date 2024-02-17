@@ -1,7 +1,7 @@
 #![allow(dead_code)]
 
 use std::{
-    collections::{BTreeMap, HashMap},
+    collections::{BTreeMap, BinaryHeap, HashMap},
     ops::Div,
 };
 
@@ -1373,6 +1373,41 @@ impl ArraySolution {
 
         res
     }
+
+    pub fn furthest_building(heights: Vec<i32>, bricks: i32, ladders: i32) -> i32 {
+        if heights.is_empty() {
+            return 0;
+        }
+        let mut bricks = bricks;
+        let mut heap = BinaryHeap::new();
+        let mut ladders = ladders;
+        let mut res = 0;
+        let mut prev = heights[0];
+
+        for &curr in heights.iter().skip(1) {
+            if curr <= prev {
+                prev = curr;
+                res += 1;
+                continue;
+            }
+            let diff = curr - prev;
+            bricks -= diff;
+
+            heap.push(diff);
+            if bricks < 0 {
+                bricks += heap.pop().expect("heap is empty");
+                if ladders > 0 {
+                    ladders -= 1;
+                } else {
+                    return res;
+                }
+            }
+            res += 1;
+            prev = curr;
+        }
+
+        res
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2077,5 +2112,21 @@ mod tests {
             1
         );
         assert_eq!(ArraySolution::find_least_num_of_unique_ints(vec![1], 1), 0,)
+    }
+
+    #[test]
+    fn test_furthest_building() {
+        assert_eq!(
+            ArraySolution::furthest_building(vec![4, 2, 7, 6, 9, 14, 12], 5, 1),
+            4
+        );
+        assert_eq!(
+            ArraySolution::furthest_building(vec![4, 12, 2, 7, 3, 18, 20, 3, 19], 10, 2),
+            7
+        );
+        assert_eq!(
+            ArraySolution::furthest_building(vec![14, 3, 19, 3], 17, 0),
+            3
+        );
     }
 }
