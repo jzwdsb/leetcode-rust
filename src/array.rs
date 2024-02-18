@@ -1,6 +1,7 @@
 #![allow(dead_code)]
 
 use std::{
+    cmp::Reverse,
     collections::{BTreeMap, BinaryHeap, HashMap},
     ops::Div,
 };
@@ -1319,7 +1320,6 @@ impl ArraySolution {
     }
 
     pub fn largest_perimeter(nums: Vec<i32>) -> i64 {
-        use std::cmp::Reverse;
         let mut nums = nums;
         nums.sort_unstable_by_key(|&n| Reverse(n));
         let mut sum = nums.iter().map(|v| *v as i64).sum();
@@ -1407,6 +1407,36 @@ impl ArraySolution {
         }
 
         res
+    }
+
+    pub fn most_booked_iii(n: i32, mut meetings: Vec<(i64, i64)>) -> i32 {
+        meetings.sort();
+        let mut rooms: BinaryHeap<Reverse<(i64, i32)>> = BinaryHeap::new();
+        let mut ready: BinaryHeap<Reverse<i32>> =
+            BinaryHeap::from((0..n).map(Reverse).collect::<Vec<_>>());
+        let mut freqs = vec![0; n as usize];
+
+        for (start, end) in meetings {
+            while !rooms.is_empty() && rooms.peek().unwrap().0 .0 <= start {
+                ready.push(Reverse(rooms.pop().unwrap().0 .1));
+            }
+            if let Some(Reverse(room_id)) = ready.pop() {
+                rooms.push(Reverse((end, room_id)));
+                freqs[room_id as usize] += 1;
+            } else if let Some(Reverse((t, room_id))) = rooms.pop() {
+                rooms.push(Reverse((t + end - start, room_id)));
+                freqs[room_id as usize] += 1;
+            }
+        }
+
+        let mut max_room = 0;
+        for (r, &c) in freqs.iter().enumerate().skip(1) {
+            if c > freqs[max_room] {
+                max_room = r
+            }
+        }
+
+        max_room as i32
     }
 } // impl ArraySolution
 
@@ -2127,6 +2157,18 @@ mod tests {
         assert_eq!(
             ArraySolution::furthest_building(vec![14, 3, 19, 3], 17, 0),
             3
+        );
+    }
+
+    #[test]
+    fn test_most_booked_iii() {
+        assert_eq!(
+            ArraySolution::most_booked_iii(2, vec![(0, 10), (1, 5), (2, 7), (3, 4)]),
+            0
+        );
+        assert_eq!(
+            ArraySolution::most_booked_iii(3, vec![(1, 20), (2, 10), (3, 5), (4, 9), (6, 8)]),
+            1
         );
     }
 }
