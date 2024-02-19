@@ -1,6 +1,6 @@
 #![allow(dead_code)]
 
-use std::collections::HashSet;
+use std::collections::{HashMap, HashSet};
 
 pub struct StringSolution {}
 
@@ -951,6 +951,26 @@ impl StringSolution {
 
         space_cnt + 1
     }
+
+    // use dp to solve the problem
+    pub fn longest_str_chain(mut words: Vec<String>) -> i32 {
+        words.sort_unstable_by_key(String::len);
+        let mut map = HashMap::new();
+
+        let mut res = 0;
+        for word in words {
+            map.insert(word.clone(), 1);
+            for i in 0..word.len() {
+                let prev_word = format!("{}{}", &word[..i], &word[i + 1..]);
+                if let Some(&count) = map.get(&prev_word) {
+                    map.insert(word.clone(), map[&word].max(count + 1));
+                }
+            }
+            res = res.max(map[&word]);
+        }
+
+        res
+    }
 } // impl StringSolution
 
 #[cfg(test)]
@@ -1463,5 +1483,41 @@ mod tests {
         assert_eq!(StringSolution::count_segments("Hello".to_string()), 1);
         assert_eq!(StringSolution::count_segments("".to_string()), 0);
         assert_eq!(StringSolution::count_segments("    ".to_string()), 0);
+    }
+
+    #[test]
+    fn test_longest_str_chain() {
+        assert_eq!(
+            StringSolution::longest_str_chain(vec![
+                "a".to_string(),
+                "b".to_string(),
+                "ba".to_string(),
+                "bca".to_string(),
+                "bda".to_string(),
+                "bdca".to_string()
+            ]),
+            4
+        );
+        assert_eq!(
+            StringSolution::longest_str_chain(vec![
+                "xbc".to_string(),
+                "pcxbcf".to_string(),
+                "xb".to_string(),
+                "cxbc".to_string(),
+                "pcxbc".to_string()
+            ]),
+            5
+        );
+
+        assert_eq!(
+            StringSolution::longest_str_chain(vec![
+                "bdca".to_string(),
+                "bda".to_string(),
+                "ca".to_string(),
+                "dca".to_string(),
+                "a".to_string()
+            ]),
+            4
+        )
     }
 }

@@ -342,6 +342,17 @@ impl MathSolution {
         }
         res * n
     }
+
+    /*
+    if a number is power of two, then there should be only one bit is 1 in the binary representation
+    8 = 1000
+    n-1 will flip all the bits after the rightmost 1
+    8-1 = 7 = 0111
+    so n & (n-1) should be 0
+    */
+    pub fn is_power_of_two(n: i32) -> bool {
+        n > 0 && (n & (n - 1)) == 0
+    }
 } // impl MathSolution
 
 #[cfg(test)]
@@ -480,5 +491,12 @@ mod tests {
         assert_eq!(MathSolution::get_permutation(3, 4), "231");
         assert_eq!(MathSolution::get_permutation(3, 5), "312");
         assert_eq!(MathSolution::get_permutation(3, 6), "321");
+    }
+
+    #[test]
+    fn test_is_power_of_two() {
+        assert!(MathSolution::is_power_of_two(1));
+        assert!(MathSolution::is_power_of_two(16));
+        assert!(!MathSolution::is_power_of_two(218));
     }
 }
