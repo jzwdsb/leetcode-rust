@@ -99,9 +99,15 @@ impl ArraySolution {
      */
     pub fn max_profit_ii(prices: Vec<i32>) -> i32 {
         // one line solution
-        prices
-            .windows(2)
-            .fold(0, |acc, w| acc + (w[1] - w[0]).max(0))
+        // prices
+        //     .windows(2)
+        //     .fold(0, |acc, w| acc + (w[1] - w[0]).max(0));
+        let mut res = 0;
+        for i in 0..prices.len() - 1 {
+            res += (prices[i + 1] - prices[i]).max(0);
+        }
+
+        res
     }
 
     /*
@@ -129,6 +135,81 @@ impl ArraySolution {
         }
 
         sold[prices.len()]
+    }
+
+    /*
+    https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/
+    can only complete at most two transactions
+     */
+
+    pub fn max_profit_iii(prices: Vec<i32>) -> i32 {
+        if prices.len() < 2 {
+            return 0;
+        }
+        let mut dp = vec![vec![0; prices.len()]; 3];
+        for i in 1..=2 {
+            let mut min = prices[0];
+            for (j, &price) in prices.iter().skip(1).enumerate() {
+                min = min.min(price - dp[i - 1][j - 1]);
+                dp[i][j] = dp[i][j - 1].max(price - min);
+            }
+        }
+        dp[2][prices.len() - 1]
+    }
+
+    /*
+    https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/description/
+    can only complete at most k transactions
+
+    if k >= prices.len()/2, we can use the solution of best-time-to-buy-and-sell-stock-ii
+    else we can use dp to solve this problem
+    dp[i][j] represents the max profit at day[j] we can make if we complete at most i transactions
+    dp[i][j] = max(dp[i][j-1], max_diff + prices[j])
+    max_diff = max(max_diff, dp[i-1][j] - prices[j])
+    max_diff means the max profit at day[j] we can make if we complete at most i-1 transactions
+    time complexity: O(n*k) space complexity: O(n*k)
+
+    */
+    pub fn max_profit_iv(k: i32, prices: Vec<i32>) -> i32 {
+        let k = k as usize;
+        // if k >= prices.len() / 2 {
+        //     return prices
+        //         .windows(2)
+        //         .fold(0, |acc, w| acc + (w[1] - w[0]).max(0));
+        // }
+        let mut dp = vec![vec![0; prices.len()]; k + 1];
+        for i in 1..=k {
+            let mut max_diff = -prices[0];
+            for (j, &price) in prices.iter().skip(1).enumerate() {
+                dp[i][j] = dp[i][j - 1].max(max_diff + price);
+                max_diff = max_diff.max(dp[i - 1][j] - price);
+            }
+        }
+        dp[k][prices.len() - 1]
+    }
+
+    /*
+    https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/
+    we can buy and sell the stock at the same day
+    so we can use two variables to represent the max profit at day[i]
+    1. cash[i]: the max profit at day[i] we can make if we do not hold the stock
+    2. hold[i]: the max profit at day[i] we can make if we hold the stock
+    cash[i] = max(cash[i-1], hold[i-1] + prices[i] - fee)
+    hold[i] = max(hold[i-1], cash[i-1] - prices[i])
+    time complexity: O(n) space complexity: O(1)
+    at the end, we can get the max profit at day[n] from cash[n]
+    since we don't need to hold the stock at the end
+    we can get the max profit at day[n] from cash[n]
+     */
+
+    pub fn max_profit_with_fee(prices: Vec<i32>, fee: i32) -> i32 {
+        let mut cash = 0;
+        let mut hold = -prices[0];
+        for price in prices.iter().skip(1) {
+            cash = cash.max(hold + price - fee);
+            hold = hold.max(cash - price);
+        }
+        cash
     }
 
     /*
@@ -1496,12 +1577,6 @@ mod tests {
     }
 
     #[test]
-    fn test_max_profits() {
-        assert_eq!(ArraySolution::max_profits(vec![7, 1, 5, 3, 6, 4]), 5);
-        assert_eq!(ArraySolution::max_profits(vec![7, 6, 4, 3, 1]), 0);
-    }
-
-    #[test]
     fn test_remove_element() {
         let mut input = vec![3, 2, 2, 3];
         assert_eq!(ArraySolution::remove_element(&mut input, 3), 2);
@@ -1815,10 +1890,26 @@ mod tests {
     }
 
     #[test]
+    fn test_max_profits() {
+        assert_eq!(ArraySolution::max_profits(vec![7, 1, 5, 3, 6, 4]), 5);
+        assert_eq!(ArraySolution::max_profits(vec![7, 6, 4, 3, 1]), 0);
+    }
+
+    #[test]
     fn test_max_profit_ii() {
         assert_eq!(ArraySolution::max_profit_ii(vec![7, 1, 5, 3, 6, 4]), 7);
         assert_eq!(ArraySolution::max_profit_ii(vec![1, 2, 3, 4, 5]), 4);
         assert_eq!(ArraySolution::max_profit_ii(vec![7, 6, 4, 3, 1]), 0);
+    }
+
+    #[test]
+    fn test_max_profit_iii() {
+        assert_eq!(
+            ArraySolution::max_profit_iii(vec![3, 3, 5, 0, 0, 3, 1, 4]),
+            6
+        );
+        assert_eq!(ArraySolution::max_profit_iii(vec![1, 2, 3, 4, 5]), 4);
+        assert_eq!(ArraySolution::max_profit_iii(vec![7, 6, 4, 3, 1]), 0);
     }
 
     #[test]
@@ -1827,6 +1918,12 @@ mod tests {
             ArraySolution::max_profit_with_cool_down(vec![1, 2, 3, 0, 2]),
             3
         );
+    }
+
+    #[test]
+    fn test_max_profit_iv() {
+        assert_eq!(ArraySolution::max_profit_iv(2, vec![2, 4, 1]), 2);
+        assert_eq!(ArraySolution::max_profit_iv(2, vec![3, 2, 6, 5, 0, 3]), 7);
     }
 
     #[test]
