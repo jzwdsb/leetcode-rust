@@ -29,14 +29,33 @@ impl ArraySolution {
 
     pub fn next_permutation(nums: &mut [i32]) {
         // rustic way: use windows and rposition to find the largest index k such that a[k] < a[k + 1]
-        if let Some(k) = nums.windows(2).rposition(|w| w[0] < w[1]) {
-            // use rposition to find the largest index l greater than k such that a[k] < a[l]
-            let j = nums.iter().rposition(|&x| x > nums[k]).unwrap();
-            nums.swap(k, j);
-            nums[k + 1..].reverse();
-        } else {
-            nums.reverse();
+        // if let Some(k) = nums.windows(2).rposition(|w| w[0] < w[1]) {
+        // use rposition to find the largest index l greater than k such that a[k] < a[l]
+        //     let j = nums.iter().rposition(|&x| x > nums[k]).unwrap();
+        //     nums.swap(k, j);
+        //     nums[k + 1..].reverse();
+        // } else {
+        //     nums.reverse();
+        // }
+        if nums.len() <= 1 {
+            return;
         }
+        let mut k = nums.len() - 2;
+        while k > 0 && nums[k] >= nums[k + 1] {
+            k -= 1;
+        }
+        // no such index exists, the permutation is the last permutation
+        // so we can reverse the array
+        if k == 0 && nums[k] >= nums[k + 1] {
+            nums.reverse();
+            return;
+        }
+        let mut l = nums.len() - 1;
+        while l >= k && nums[k] >= nums[l] {
+            l -= 1;
+        }
+        nums.swap(k, l);
+        nums[k + 1..].reverse();
     }
 
     /*
