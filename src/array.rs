@@ -1,4 +1,5 @@
 #![allow(dead_code)]
+#![allow(clippy::needless_range_loop)]
 
 use std::{
     cmp::Reverse,
@@ -140,6 +141,8 @@ impl ArraySolution {
     /*
     https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/
     can only complete at most two transactions
+
+    define dp
      */
 
     pub fn max_profit_iii(prices: Vec<i32>) -> i32 {
@@ -149,9 +152,9 @@ impl ArraySolution {
         let mut dp = vec![vec![0; prices.len()]; 3];
         for i in 1..=2 {
             let mut min = prices[0];
-            for (j, &price) in prices.iter().skip(1).enumerate() {
-                min = min.min(price - dp[i - 1][j - 1]);
-                dp[i][j] = dp[i][j - 1].max(price - min);
+            for j in 1..prices.len() {
+                min = min.min(prices[j] - dp[i - 1][j - 1]);
+                dp[i][j] = dp[i][j - 1].max(prices[j] - min);
             }
         }
         dp[2][prices.len() - 1]
@@ -180,9 +183,9 @@ impl ArraySolution {
         let mut dp = vec![vec![0; prices.len()]; k + 1];
         for i in 1..=k {
             let mut max_diff = -prices[0];
-            for (j, &price) in prices.iter().skip(1).enumerate() {
-                dp[i][j] = dp[i][j - 1].max(max_diff + price);
-                max_diff = max_diff.max(dp[i - 1][j] - price);
+            for j in 1..prices.len() {
+                dp[i][j] = dp[i][j - 1].max(max_diff + prices[j]);
+                max_diff = max_diff.max(dp[i - 1][j] - prices[j]);
             }
         }
         dp[k][prices.len() - 1]
