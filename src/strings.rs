@@ -971,6 +971,49 @@ impl StringSolution {
 
         res
     }
+
+    pub fn find_the_difference(s: String, t: String) -> char {
+        let mut char_count = [0; 26];
+        for c in s.chars() {
+            char_count[c as usize - 'a' as usize] += 1;
+        }
+        for c in t.chars() {
+            char_count[c as usize - 'a' as usize] -= 1;
+        }
+        for (i, &count) in char_count.iter().enumerate() {
+            if count < 0 {
+                return (i as u8 + b'a') as char;
+            }
+        }
+        unreachable!("no extra char found")
+    }
+
+    // remove duplicate letters so that every letter appears exactly once
+    // return the result is the smallest in lexicographically order
+    pub fn remove_duplicate_letters(s: String) -> String {
+        let mut stack = vec![];
+        let mut seen = HashSet::new();
+        let mut last_occ = HashMap::new();
+        for (i, c) in s.chars().enumerate() {
+            last_occ.insert(c, i);
+        }
+        for (i, c) in s.chars().enumerate() {
+            if !seen.contains(&c) {
+                while let Some(&top) = stack.last() {
+                    if c < top && i < *last_occ.get(&top).unwrap() {
+                        seen.remove(&top);
+                        stack.pop();
+                    } else {
+                        break;
+                    }
+                }
+                seen.insert(c);
+                stack.push(c);
+            }
+        }
+
+        stack.iter().collect()
+    }
 } // impl StringSolution
 
 #[cfg(test)]
@@ -1518,6 +1561,18 @@ mod tests {
                 "a".to_string()
             ]),
             4
+        )
+    }
+
+    #[test]
+    fn test_remove_duplicates_letters() {
+        assert_eq!(
+            StringSolution::remove_duplicate_letters("bcabc".to_string()),
+            "abc".to_string()
+        );
+        assert_eq!(
+            StringSolution::remove_duplicate_letters("cbacdcbc".to_string()),
+            "acdb"
         )
     }
 }

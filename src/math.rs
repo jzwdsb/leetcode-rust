@@ -353,6 +353,23 @@ impl MathSolution {
     pub fn is_power_of_two(n: i32) -> bool {
         n > 0 && (n & (n - 1)) == 0
     }
+
+    /*
+    https://leetcode.com/problems/bitwise-and-of-numbers-range/
+    if right > left, then last bit must be zero, because the last bit changes every increment
+    then we can shift right and left to the right by 1, and do the same thing again
+    and then shift the result to the left by 1
+    if right == left, the bitwise itself is still itself, we can return it directly
+
+     */
+
+    pub fn range_bitwise_and(left: i32, right: i32) -> i32 {
+        if right > left {
+            Self::range_bitwise_and(left.wrapping_shr(1), right.wrapping_shr(1)).wrapping_shl(1)
+        } else {
+            right
+        }
+    }
 } // impl MathSolution
 
 #[cfg(test)]
@@ -498,5 +515,12 @@ mod tests {
         assert!(MathSolution::is_power_of_two(1));
         assert!(MathSolution::is_power_of_two(16));
         assert!(!MathSolution::is_power_of_two(218));
+    }
+
+    #[test]
+    fn test_range_bitwise_and() {
+        assert_eq!(MathSolution::range_bitwise_and(5, 7), 4);
+        assert_eq!(MathSolution::range_bitwise_and(0, 1), 0);
+        assert_eq!(MathSolution::range_bitwise_and(1, 2147483647), 0);
     }
 }
