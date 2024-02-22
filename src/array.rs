@@ -1541,6 +1541,22 @@ impl ArraySolution {
 
         max_room as i32
     }
+
+    pub fn find_judge(n: i32, trust: Vec<Vec<i32>>) -> i32 {
+        let mut trusts: HashMap<i32, Vec<_>> = HashMap::new();
+        let mut trust_by: HashMap<i32, i32> = HashMap::new();
+        for t in trust {
+            let (a, b) = (t[0], t[1]);
+            trusts.entry(a).or_default().push(b);
+            *trust_by.entry(b).or_default() += 1;
+        }
+        for i in 1..=n {
+            if trusts.get(&i).is_none() && trust_by.get(&i).unwrap_or(&0) == &(n - 1) {
+                return i;
+            }
+        }
+        -1
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2288,6 +2304,19 @@ mod tests {
         assert_eq!(
             ArraySolution::most_booked_iii(3, vec![(1, 20), (2, 10), (3, 5), (4, 9), (6, 8)]),
             1
+        );
+    }
+
+    #[test]
+    fn test_find_judge() {
+        assert_eq!(ArraySolution::find_judge(2, vec![vec![1, 2]]), 2);
+        assert_eq!(
+            ArraySolution::find_judge(3, vec![vec![1, 3], vec![2, 3]]),
+            3
+        );
+        assert_eq!(
+            ArraySolution::find_judge(3, vec![vec![1, 3], vec![2, 3], vec![3, 1]]),
+            -1
         );
     }
 }
