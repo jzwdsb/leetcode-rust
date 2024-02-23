@@ -374,6 +374,51 @@ impl GraphSolution {
         }
         ans
     }
+
+    /*
+    https://leetcode.com/problems/cheapest-flights-within-k-stops/
+
+    find the most cheapest price from src to dst with at most k stops.
+
+    https://en.wikipedia.org/wiki/Bellman-Ford_algorithm
+
+     */
+
+    pub fn find_cheapest_price(
+        n: i32,                        // number of cities
+        flights: Vec<(i32, i32, i32)>, // flights[i] = (src, dst, price)
+        src: i32,                      // source city
+        dst: i32,                      // destination city
+        k: i32,                        // maximum number of stops
+    ) -> i32 {
+        let mut matrix = vec![vec![0; n as usize]; n as usize];
+        for flight in flights {
+            matrix[flight.0 as usize][flight.1 as usize] = flight.2;
+        }
+        let mut cost = vec![i32::MAX; n as usize];
+        cost[src as usize] = 0;
+        for _ in 0..=k {
+            let mut cost_tmp = cost.clone();
+            for i in 0..n as usize {
+                if cost[i] == i32::MAX {
+                    continue;
+                }
+                for (j, &price) in matrix[i].iter().enumerate() {
+                    if price == 0 {
+                        continue;
+                    }
+                    cost_tmp[j] = cost_tmp[j].min(cost[i] + price);
+                }
+            }
+            cost = cost_tmp;
+        }
+
+        if cost[dst as usize] == i32::MAX {
+            -1
+        } else {
+            cost[dst as usize]
+        }
+    }
 }
 
 #[cfg(test)]
@@ -580,6 +625,81 @@ mod tests {
                 ]
             ),
             0
+        );
+    }
+
+    #[test]
+    fn test_find_cheapest_price() {
+        assert_eq!(
+            GraphSolution::find_cheapest_price(
+                3,
+                vec![(0, 1, 100), (1, 2, 100), (0, 2, 500)],
+                0,
+                2,
+                1
+            ),
+            200
+        );
+        assert_eq!(
+            GraphSolution::find_cheapest_price(
+                3,
+                vec![(0, 1, 100), (1, 2, 100), (0, 2, 500)],
+                0,
+                2,
+                0
+            ),
+            500
+        );
+        assert_eq!(
+            GraphSolution::find_cheapest_price(
+                4,
+                vec![
+                    (0, 1, 100),
+                    (1, 2, 100),
+                    (2, 0, 100),
+                    (1, 3, 600),
+                    (2, 3, 200)
+                ],
+                0,
+                3,
+                1
+            ),
+            700
+        );
+        assert_eq!(
+            GraphSolution::find_cheapest_price(
+                10,
+                vec![
+                    (3, 4, 4),
+                    (2, 5, 6),
+                    (4, 7, 10),
+                    (9, 6, 5),
+                    (7, 4, 4),
+                    (6, 2, 10),
+                    (6, 8, 6),
+                    (7, 9, 4),
+                    (1, 5, 4),
+                    (1, 0, 4),
+                    (9, 7, 3),
+                    (7, 0, 5),
+                    (6, 5, 8),
+                    (1, 7, 6),
+                    (4, 0, 9),
+                    (5, 9, 1),
+                    (8, 7, 3),
+                    (1, 2, 6),
+                    (4, 1, 5),
+                    (5, 2, 4),
+                    (1, 9, 1),
+                    (7, 8, 10),
+                    (0, 4, 2),
+                    (7, 2, 8)
+                ],
+                6,
+                0,
+                7
+            ),
+            14
         );
     }
 }
