@@ -419,6 +419,65 @@ impl GraphSolution {
             cost[dst as usize]
         }
     }
+    /*
+    https://leetcode.com/problems/find-all-people-with-secret/
+     */
+
+    pub fn find_all_people(
+        n: i32,
+        mut meetings: Vec<(i32, i32, i32)>,
+        first_person: i32,
+    ) -> Vec<i32> {
+        meetings.sort_unstable_by_key(|x| x.2);
+        let mut parent = (0..n as usize).collect::<Vec<usize>>();
+        parent[first_person as usize] = 0; // disjoint set
+        let mut i = 0;
+        while i < meetings.len() {
+            let mut j = i;
+            // merge people who are in the same group
+            while j < meetings.len() && meetings[j].2 == meetings[i].2 {
+                let mut a = Self::find_root(&mut parent, meetings[j].0 as usize);
+                let mut b = Self::find_root(&mut parent, meetings[j].1 as usize);
+
+                if a > b {
+                    std::mem::swap(&mut a, &mut b);
+                }
+                parent[b] = a;
+                j += 1;
+            }
+            j = i;
+            // reset each person who is not in the same group as the first person
+            while j < meetings.len() && meetings[j].2 == meetings[i].2 {
+                if Self::find_root(&mut parent, meetings[j].0 as usize) != 0 {
+                    parent[meetings[j].0 as usize] = meetings[j].0 as usize;
+                }
+                if Self::find_root(&mut parent, meetings[j].1 as usize) != 0 {
+                    parent[meetings[j].1 as usize] = meetings[j].1 as usize;
+                }
+                j += 1;
+            }
+            i = j;
+        }
+        let mut ans = Vec::new();
+        // find all the people who are in the same group as the 0
+        for i in 0..parent.len() {
+            // if the root of the disjoint set is 0
+            // then the person is in the same group as the first person
+            if Self::find_root(&mut parent, i) == 0 {
+                ans.push(i as i32);
+            }
+        }
+
+        ans
+    }
+
+    // find the root of the disjoint set for given i
+    fn find_root(parent: &mut Vec<usize>, i: usize) -> usize {
+        if parent[i] != i {
+            parent[i] = Self::find_root(parent, parent[i]);
+        }
+        parent[i]
+    }
 }
 
 #[cfg(test)]
@@ -701,5 +760,21 @@ mod tests {
             ),
             14
         );
+    }
+
+    #[test]
+    fn test_find_all_people() {
+        assert_eq!(
+            GraphSolution::find_all_people(6, vec![(1, 2, 5), (2, 3, 8), (1, 5, 10)], 1),
+            vec![0, 1, 2, 3, 5]
+        );
+        assert_eq!(
+            GraphSolution::find_all_people(4, vec![(3, 1, 3), (1, 2, 2), (0, 3, 3)], 3),
+            vec![0, 1, 3]
+        );
+        assert_eq!(
+            GraphSolution::find_all_people(6, vec![(0, 2, 1), (1, 3, 1), (4, 5, 1)], 1),
+            vec![0, 1, 2, 3]
+        )
     }
 }
