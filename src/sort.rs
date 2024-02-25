@@ -159,7 +159,24 @@ impl SortSolution {
         }
         max_gap
     }
-}
+
+    pub fn sort_array_by_parity(mut nums: Vec<i32>) -> Vec<i32> {
+        let (mut even, mut odd) = (0, nums.len() - 1);
+        while even < odd {
+            while nums[even] % 2 == 0 && even < odd {
+                even += 1;
+            }
+            while nums[odd] % 2 == 1 && even < odd {
+                odd -= 1;
+            }
+            if even < odd {
+                nums.swap(even, odd);
+            }
+        }
+
+        nums
+    }
+} // impl SortSolution
 
 #[cfg(test)]
 mod test {
@@ -213,5 +230,13 @@ mod test {
     fn test_maximum_gap() {
         assert_eq!(SortSolution::maximum_gap(vec![3, 6, 9, 1]), 3);
         assert_eq!(SortSolution::maximum_gap(vec![10]), 0);
+    }
+
+    #[test]
+    fn test_sort_array_by_parity() {
+        assert_eq!(
+            SortSolution::sort_array_by_parity(vec![3, 1, 2, 4]),
+            vec![4, 2, 1, 3]
+        );
     }
 }

@@ -2,7 +2,7 @@
 #![allow(clippy::needless_range_loop)]
 
 use std::{
-    cmp::Reverse,
+    cmp::{Ordering, Reverse},
     collections::{BTreeMap, BinaryHeap, HashMap},
     ops::Div,
 };
@@ -1557,6 +1557,19 @@ impl ArraySolution {
         }
         -1
     }
+
+    pub fn is_monotonic(nums: Vec<i32>) -> bool {
+        let mut inc = true;
+        let mut dec = true;
+        for i in 1..nums.len() {
+            match nums[i].cmp(&nums[i - 1]) {
+                Ordering::Less => inc = false,
+                Ordering::Greater => dec = false,
+                _ => {}
+            }
+        }
+        inc || dec
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2318,5 +2331,14 @@ mod tests {
             ArraySolution::find_judge(3, vec![vec![1, 3], vec![2, 3], vec![3, 1]]),
             -1
         );
+    }
+
+    #[test]
+    fn test_is_monotonic() {
+        assert_eq!(ArraySolution::is_monotonic(vec![1, 2, 2, 3]), true);
+        assert_eq!(ArraySolution::is_monotonic(vec![6, 5, 4, 4]), true);
+        assert_eq!(ArraySolution::is_monotonic(vec![1, 3, 2]), false);
+        assert_eq!(ArraySolution::is_monotonic(vec![1, 2, 4, 5]), true);
+        assert_eq!(ArraySolution::is_monotonic(vec![1, 1, 1]), true);
     }
 }
