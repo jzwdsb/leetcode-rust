@@ -286,24 +286,6 @@ impl DPSolution {
     }
 
     /*
-    link: https://leetcode.com/problems/coin-change-ii/
-    dp solve
-    dp[i] represents the number of combinations to make up amount i
-    we can update dp[i] by dp[i] += dp[i-coin]
-     */
-
-    pub fn change(amount: i32, coins: Vec<i32>) -> i32 {
-        let mut dp = vec![0; amount as usize + 1];
-        dp[0] = 1;
-        for coin in coins {
-            for i in coin..=amount {
-                dp[i as usize] += dp[(i - coin) as usize];
-            }
-        }
-        dp[amount as usize]
-    }
-
-    /*
     link https://leetcode.com/problems/coin-change/
     find the fewest number of coins that you need to make up that amount
     dp solve
@@ -313,18 +295,36 @@ impl DPSolution {
      */
 
     pub fn coin_change(coins: Vec<i32>, amount: i32) -> i32 {
-        let mut dp = vec![amount + 1; amount as usize + 1];
-        dp[0] = 0;
+        let mut dp = vec![amount + 1; amount as usize + 1]; // initialize the dp array with amount+1, because the maximum number of coins is amount
+        dp[0] = 0; // we only need 0 coin to make up amount 0
         for i in 1..=amount {
-            for coin in &coins {
-                if i >= *coin {
-                    // dp[i] = dp[i].min(dp[i-coin]+1); dp[i-coin] + 1 is the way to make up amount i with coin
+            for &coin in &coins {
+                if i >= coin {
+                    // the way to make up amount i with coin
                     dp[i as usize] = dp[i as usize].min(dp[(i - coin) as usize] + 1);
                 }
             }
         }
         if dp[amount as usize] > amount {
             return -1;
+        }
+        dp[amount as usize]
+    }
+
+    /*
+    link: https://leetcode.com/problems/coin-change-ii/
+    dp solve
+    dp[i] represents the number of combinations to make up amount i
+    for each coin in coins, we can update dp[i] by dp[i] += dp[i-coin]
+     */
+
+    pub fn coin_change_ii(amount: i32, coins: Vec<i32>) -> i32 {
+        let mut dp = vec![0; amount as usize + 1];
+        dp[0] = 1; // we only have one way to make up amount 0, that is using no coin
+        for coin in coins {
+            for i in coin..=amount {
+                dp[i as usize] += dp[(i - coin) as usize];
+            }
         }
         dp[amount as usize]
     }
@@ -666,9 +666,9 @@ mod test {
 
     #[test]
     fn test_change() {
-        assert_eq!(DPSolution::change(5, vec![1, 2, 5]), 4);
-        assert_eq!(DPSolution::change(3, vec![2]), 0);
-        assert_eq!(DPSolution::change(10, vec![10]), 1);
+        assert_eq!(DPSolution::coin_change_ii(5, vec![1, 2, 5]), 4);
+        assert_eq!(DPSolution::coin_change_ii(3, vec![2]), 0);
+        assert_eq!(DPSolution::coin_change_ii(10, vec![10]), 1);
     }
 
     #[test]
