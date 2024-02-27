@@ -484,7 +484,7 @@ impl TreeSolution {
         Self::node_distance_helper(root.clone(), q, &mut q_path);
         p_path.reverse();
         q_path.reverse();
-        let mut i = 0;
+        let mut i: usize = 0;
         while i < p_path.len() && i < q_path.len() {
             if p_path[i] != q_path[i] {
                 break;
@@ -686,7 +686,37 @@ impl TreeSolution {
             }
         }
     }
-}
+
+    /*
+    https://leetcode.com/problems/diameter-of-binary-tree/
+
+    the max distance between two nodes in a binary tree is the diameter of the binary tree
+
+    for each node, the max distance is the sum of the max depth of the left subtree and
+    the max depth of the right subtree, thus we can use a variable to store the max distance
+    and update it when we traverse the tree
+     */
+
+    pub fn diameter_of_binary_tree(root: Option<Rc<RefCell<TreeNode>>>) -> i32 {
+        let mut res = 0;
+        Self::diameter_helper(root, &mut res);
+        res
+    }
+
+    fn diameter_helper(root: Option<Rc<RefCell<TreeNode>>>, res: &mut i32) -> i32 {
+        match root {
+            None => 0,
+            Some(root) => {
+                let root = root.borrow();
+                let left = Self::diameter_helper(root.left.clone(), res);
+                let right = Self::diameter_helper(root.right.clone(), res);
+                *res = (*res).max(left + right);
+                // return max depth from the current node to the leaf node and plus 1
+                left.max(right) + 1
+            }
+        }
+    }
+} // impl TreeSolution
 
 #[cfg(test)]
 mod tests {
@@ -1371,6 +1401,13 @@ mod tests {
         ]);
 
         assert_eq!(TreeSolution::leaf_similar(root1, root2), true);
+    }
+
+    #[test]
+    fn test_diameter_of_binary_tree() {
+        let root = TreeNode::from_vec(vec![Some(1), Some(2), Some(3), Some(4), Some(5)]);
+
+        assert_eq!(TreeSolution::diameter_of_binary_tree(root), 3);
     }
 
     fn new_node(val: i32) -> Tree {
