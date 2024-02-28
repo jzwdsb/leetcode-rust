@@ -370,6 +370,27 @@ impl MathSolution {
             right
         }
     }
+
+    /*
+    https://leetcode.com/problems/arranging-coins/
+    use n number of coins to form a staircase, find the number of complete rows
+     */
+
+    pub fn arrange_coins(n: i32) -> i32 {
+        // binary search get TLE error
+        // let mut left = 0;
+        // let mut right = n;
+        // while left < right {
+        //     let mid = (left + right + 1) / 2;
+        //     if mid * (mid + 1) / 2 <= n {
+        //         left = mid;
+        //     } else {
+        //         right = mid - 1;
+        //     }
+        // }
+        // left
+        (((8.0 * n as f64 + 1.0).sqrt() - 1.0) / 2.0) as i32
+    }
 } // impl MathSolution
 
 #[cfg(test)]
@@ -522,5 +543,11 @@ mod tests {
         assert_eq!(MathSolution::range_bitwise_and(5, 7), 4);
         assert_eq!(MathSolution::range_bitwise_and(0, 1), 0);
         assert_eq!(MathSolution::range_bitwise_and(1, 2147483647), 0);
+    }
+
+    #[test]
+    fn test_arrange_coins() {
+        assert_eq!(MathSolution::arrange_coins(5), 2);
+        assert_eq!(MathSolution::arrange_coins(8), 3);
     }
 }
