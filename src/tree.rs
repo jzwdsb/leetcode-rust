@@ -51,6 +51,7 @@ impl TreeNode {
         Some(root)
     }
 }
+
 pub type Tree = Option<Rc<RefCell<TreeNode>>>;
 
 struct TreeSolution {}
@@ -715,6 +716,38 @@ impl TreeSolution {
                 left.max(right) + 1
             }
         }
+    }
+
+    pub fn is_even_odd_tree(root: Tree) -> bool {
+        let mut queue = VecDeque::new();
+        queue.push_back(root.clone());
+        let mut level = 0;
+        while !queue.is_empty() {
+            let mut prev = if level % 2 == 0 { i32::MIN } else { i32::MAX };
+            let size = queue.len();
+            for _ in 0..size {
+                if let Some(node) = queue.pop_front() {
+                    let node = node.unwrap();
+                    let node = node.borrow();
+                    if level % 2 == 0 {
+                        if node.val % 2 == 0 || node.val <= prev {
+                            return false;
+                        }
+                    } else if node.val % 2 != 0 || node.val >= prev {
+                        return false;
+                    }
+                    prev = node.val;
+                    if node.left.is_some() {
+                        queue.push_back(node.left.clone());
+                    }
+                    if node.right.is_some() {
+                        queue.push_back(node.right.clone());
+                    }
+                }
+            }
+            level += 1;
+        }
+        true
     }
 } // impl TreeSolution
 
@@ -1408,6 +1441,27 @@ mod tests {
         let root = TreeNode::from_vec(vec![Some(1), Some(2), Some(3), Some(4), Some(5)]);
 
         assert_eq!(TreeSolution::diameter_of_binary_tree(root), 3);
+    }
+
+    #[test]
+    fn test_is_even_odd_tree() {
+        let root = TreeNode::from_vec(vec![
+            Some(1),
+            Some(10),
+            Some(4),
+            Some(3),
+            None,
+            Some(7),
+            Some(9),
+            Some(12),
+            Some(8),
+            Some(6),
+            None,
+            None,
+            Some(2),
+        ]);
+
+        assert_eq!(TreeSolution::is_even_odd_tree(root), true);
     }
 
     fn new_node(val: i32) -> Tree {

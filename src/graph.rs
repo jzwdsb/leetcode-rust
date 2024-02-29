@@ -478,6 +478,78 @@ impl GraphSolution {
         }
         parent[i]
     }
+
+    pub fn count_island(matrix: Vec<Vec<i32>>) -> i32 {
+        let mut visited = vec![vec![false; matrix[0].len()]; matrix.len()];
+        let mut count = 0;
+        for i in 0..matrix.len() {
+            for j in 0..matrix[0].len() {
+                if matrix[i][j] == 1 && !visited[i][j] {
+                    Self::dfs_count_island(&matrix, &mut visited, i as i32, j as i32);
+                    count += 1;
+                }
+            }
+        }
+        count
+    }
+
+    fn dfs_count_island(matrix: &Vec<Vec<i32>>, visited: &mut Vec<Vec<bool>>, i: i32, j: i32) {
+        if i < 0
+            || j < 0
+            || i >= matrix.len() as i32
+            || j >= matrix[0].len() as i32
+            || visited[i as usize][j as usize]
+            || matrix[i as usize][j as usize] == 0
+        {
+            return;
+        }
+        visited[i as usize][j as usize] = true;
+        Self::dfs_count_island(matrix, visited, i + 1, j);
+        Self::dfs_count_island(matrix, visited, i - 1, j);
+        Self::dfs_count_island(matrix, visited, i, j + 1);
+        Self::dfs_count_island(matrix, visited, i, j - 1);
+    }
+
+    pub fn max_island(matrix: Vec<Vec<i32>>) -> i32 {
+        let mut visited = vec![vec![false; matrix[0].len()]; matrix.len()];
+        let mut max = 0;
+        for i in 0..matrix.len() {
+            for j in 0..matrix[0].len() {
+                if matrix[i][j] == 1 && !visited[i][j] {
+                    max = max.max(Self::dfs_max_island(
+                        &matrix,
+                        &mut visited,
+                        i as i32,
+                        j as i32,
+                    ));
+                }
+            }
+        }
+        max
+    }
+
+    fn dfs_max_island(
+        matrix: &Vec<Vec<i32>>,
+        visited: &mut Vec<Vec<bool>>,
+        row: i32,
+        col: i32,
+    ) -> i32 {
+        if row < 0
+            || col < 0
+            || row >= matrix.len() as i32
+            || col >= matrix[0].len() as i32
+            || visited[row as usize][col as usize]
+            || matrix[row as usize][col as usize] == 0
+        {
+            return 0;
+        }
+        visited[row as usize][col as usize] = true;
+
+        1 + Self::dfs_max_island(matrix, visited, row + 1, col)
+            + Self::dfs_max_island(matrix, visited, row - 1, col)
+            + Self::dfs_max_island(matrix, visited, row, col + 1)
+            + Self::dfs_max_island(matrix, visited, row, col - 1)
+    }
 }
 
 #[cfg(test)]
@@ -776,5 +848,40 @@ mod tests {
             GraphSolution::find_all_people(6, vec![(0, 2, 1), (1, 3, 1), (4, 5, 1)], 1),
             vec![0, 1, 2, 3]
         )
+    }
+
+    #[test]
+    fn test_count_island() {
+        assert_eq!(
+            GraphSolution::count_island(vec![
+                vec![1, 1, 1, 1, 0],
+                vec![1, 1, 0, 1, 0],
+                vec![1, 1, 0, 0, 0],
+                vec![0, 0, 0, 0, 0]
+            ]),
+            1
+        );
+        assert_eq!(
+            GraphSolution::count_island(vec![
+                vec![1, 1, 0, 0, 0],
+                vec![1, 1, 0, 0, 0],
+                vec![0, 0, 1, 0, 0],
+                vec![0, 0, 0, 1, 1]
+            ]),
+            3
+        );
+    }
+
+    #[test]
+    fn max_island() {
+        assert_eq!(
+            GraphSolution::max_island(vec![
+                vec![1, 1, 0, 0, 0],
+                vec![1, 1, 0, 0, 0],
+                vec![0, 0, 1, 0, 0],
+                vec![0, 0, 0, 1, 1]
+            ]),
+            4
+        );
     }
 }
