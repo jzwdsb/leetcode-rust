@@ -1014,6 +1014,18 @@ impl StringSolution {
 
         stack.iter().collect()
     }
+
+    pub fn maximum_odd_binary_number(s: String) -> String {
+        if s.is_empty() {
+            return s;
+        }
+        let ones = s.chars().filter(|&c| c == '1').count();
+        let mut res = String::new();
+        res.push_str(&"1".repeat(ones - 1));
+        res.push_str(&"0".repeat(s.len() - ones));
+        res.push('1');
+        res
+    }
 } // impl StringSolution
 
 #[cfg(test)]
@@ -1574,5 +1586,17 @@ mod tests {
             StringSolution::remove_duplicate_letters("cbacdcbc".to_string()),
             "acdb"
         )
+    }
+
+    #[test]
+    fn test_maximum_odd_binary_number() {
+        assert_eq!(
+            StringSolution::maximum_odd_binary_number("010".to_string()),
+            "001".to_string()
+        );
+        assert_eq!(
+            StringSolution::maximum_odd_binary_number("0101".to_string()),
+            "1001".to_string()
+        );
     }
 }
