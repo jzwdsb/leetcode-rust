@@ -1570,6 +1570,46 @@ impl ArraySolution {
         }
         inc || dec
     }
+
+    pub fn sorted_squares(nums: Vec<i32>) -> Vec<i32> {
+        // bad performance
+        // let mut heap = BinaryHeap::new();
+        // for n in nums {
+        //     heap.push(Reverse(n as i64 * n as i64));
+        // }
+        // let mut res = Vec::new();
+        // while let Some(Reverse(n)) = heap.pop() {
+        //     res.push(n as i32);
+        // }
+        // res
+        if nums.len() == 1 {
+            return vec![nums[0] * nums[0]];
+        }
+
+        let mut location = nums.len();
+        let mut res = vec![0; nums.len()];
+
+        let (mut left, mut right) = (0, nums.len() - 1);
+
+        let (mut left_square, mut right_square) =
+            (nums[left] * nums[left], nums[right] * nums[right]);
+
+        while left != right {
+            location -= 1;
+            if left_square > right_square {
+                res[location] = left_square;
+                left += 1;
+                left_square = nums[left] * nums[left];
+            } else {
+                res[location] = right_square;
+                right -= 1;
+                right_square = nums[right] * nums[right];
+            }
+        }
+
+        res[0] = right_square;
+        res
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2340,5 +2380,17 @@ mod tests {
         assert_eq!(ArraySolution::is_monotonic(vec![1, 3, 2]), false);
         assert_eq!(ArraySolution::is_monotonic(vec![1, 2, 4, 5]), true);
         assert_eq!(ArraySolution::is_monotonic(vec![1, 1, 1]), true);
+    }
+
+    #[test]
+    fn test_sort_squares() {
+        assert_eq!(
+            ArraySolution::sorted_squares(vec![-4, -1, 0, 3, 10]),
+            vec![0, 1, 9, 16, 100]
+        );
+        assert_eq!(
+            ArraySolution::sorted_squares(vec![-7, -3, 2, 3, 11]),
+            vec![4, 9, 9, 49, 121]
+        );
     }
 }
