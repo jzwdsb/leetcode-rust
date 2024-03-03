@@ -566,6 +566,29 @@ impl DPSolution {
         dp[r as usize][c1 as usize][c2 as usize] = result;
         result
     }
+
+    /*
+    https://leetcode.com/problems/min-cost-climbing-stairs/
+
+    define dp
+    dp[i] = the minimum cost to reach the i-th stair
+    do[i] = cost[i] + min(dp[i-1], dp[i-2])
+    dp[0] = cost[0]
+    dp[1] = cost[1]
+
+    return min(dp[n-1], dp[n-2])
+     */
+
+    pub fn min_cost_climbing_stairs(cost: Vec<i32>) -> i32 {
+        let mut dp = vec![0; cost.len()];
+        dp[0] = cost[0];
+        dp[1] = cost[1];
+        for i in 2..cost.len() {
+            dp[i] = cost[i] + dp[i - 1].min(dp[i - 2]);
+        }
+
+        dp[cost.len() - 1].min(dp[cost.len() - 2])
+    }
 }
 
 #[cfg(test)]
@@ -784,6 +807,15 @@ mod test {
                 vec![1, 0, 2, 3, 0, 0, 6]
             ]),
             28
+        );
+    }
+
+    #[test]
+    fn test_min_cost_climbing_stairs() {
+        assert_eq!(DPSolution::min_cost_climbing_stairs(vec![10, 15, 20]), 15);
+        assert_eq!(
+            DPSolution::min_cost_climbing_stairs(vec![1, 100, 1, 1, 1, 100, 1, 1, 100, 1]),
+            6
         );
     }
 }
