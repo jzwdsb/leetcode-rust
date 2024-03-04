@@ -1610,6 +1610,48 @@ impl ArraySolution {
         res[0] = right_square;
         res
     }
+
+    /*
+    https://leetcode.com/problems/bag-of-tokens/
+
+    greedy algorithm
+     */
+
+    pub fn bag_of_tokens_score(mut tokens: Vec<i32>, mut power: i32) -> i32 {
+        if tokens.is_empty() {
+            return 0;
+        }
+        let mut score = 0;
+
+        tokens.sort_unstable();
+        let (mut left, mut right) = (0, tokens.len() - 1);
+
+        // if we have enough power, we can use the power to gain score
+        // if we don't have enough power, we can use the score to gain power
+        // the greedy algorithm is to use less token to gain more score
+        // and use gain more power to gain more score
+        while left < right {
+            if power >= tokens[left] {
+                power -= tokens[left];
+                score += 1;
+                left += 1;
+            } else if score > 0 {
+                power += tokens[right];
+                score -= 1;
+                right -= 1;
+            } else {
+                break;
+            }
+        }
+        // if we still have enough power, we can use the power to gain score
+        while left < right + 1 && power >= tokens[left] {
+            power -= tokens[left];
+            score += 1;
+            left += 1;
+        }
+
+        score
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2391,6 +2433,16 @@ mod tests {
         assert_eq!(
             ArraySolution::sorted_squares(vec![-7, -3, 2, 3, 11]),
             vec![4, 9, 9, 49, 121]
+        );
+    }
+
+    #[test]
+    fn test_bag_of_tokens_score() {
+        assert_eq!(ArraySolution::bag_of_tokens_score(vec![100], 50), 0);
+        assert_eq!(ArraySolution::bag_of_tokens_score(vec![100, 200], 150), 1);
+        assert_eq!(
+            ArraySolution::bag_of_tokens_score(vec![100, 200, 300, 400], 200),
+            2
         );
     }
 }
