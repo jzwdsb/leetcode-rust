@@ -1026,6 +1026,32 @@ impl StringSolution {
         res.push('1');
         res
     }
+
+    pub fn minimum_length(s: String) -> i32 {
+        // let s = s.chars().collect::<Vec<char>>(); this line is needed for leetcode, older version of rust
+        let mut left = 0;
+        let mut right = s.len() - 1;
+        let s = s.chars().collect::<Vec<char>>();
+        while left < right {
+            if s[left] != s[right] {
+                return (right - left + 1) as i32;
+            }
+            let mut i = left + 1;
+            let mut j = right - 1;
+            while i < right && s[i] == s[left] {
+                i += 1;
+            }
+            while j > left && s[j] == s[right] {
+                j -= 1;
+            }
+            if i > j {
+                return 0;
+            }
+            left = i;
+            right = j;
+        }
+        1
+    }
 } // impl StringSolution
 
 #[cfg(test)]
@@ -1598,5 +1624,12 @@ mod tests {
             StringSolution::maximum_odd_binary_number("0101".to_string()),
             "1001".to_string()
         );
+    }
+
+    #[test]
+    fn test_minimum_length() {
+        assert_eq!(StringSolution::minimum_length("ca".to_string()), 2);
+        assert_eq!(StringSolution::minimum_length("cabaabac".to_string()), 0);
+        assert_eq!(StringSolution::minimum_length("aabccabba".to_string()), 3);
     }
 }
