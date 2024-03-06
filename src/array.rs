@@ -1652,6 +1652,22 @@ impl ArraySolution {
 
         score
     }
+
+    /*
+    https://leetcode.com/problems/minimum-number-of-operations-to-make-array-continuous/
+    
+    
+     */
+
+    pub fn min_operations(mut nums: Vec<i32>) -> i32 {
+        let n = nums.len() as i32;
+        nums.sort_unstable();
+        nums.dedup(); // remove the duplicate elements
+
+        nums.iter().enumerate().fold(n, |ops, (i, l)| {
+            ops.min(n - (nums.partition_point(|&m| m < l + n) - i) as i32)
+        })
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2444,5 +2460,12 @@ mod tests {
             ArraySolution::bag_of_tokens_score(vec![100, 200, 300, 400], 200),
             2
         );
+    }
+
+    #[test]
+    fn test_min_operations() {
+        assert_eq!(ArraySolution::min_operations(vec![4, 2, 5, 3]), 0);
+        assert_eq!(ArraySolution::min_operations(vec![1, 2, 3, 5, 6]), 1);
+        assert_eq!(ArraySolution::min_operations(vec![1, 10, 100, 1000]), 3);
     }
 }
