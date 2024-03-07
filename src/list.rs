@@ -395,6 +395,26 @@ impl ListSolution {
         }
         head
     }
+    /*
+    https://leetcode.com/problems/middle-of-the-linked-list/
+
+    slow and fast pointer can solve this problem in one pass
+     */
+
+    pub fn middle_node(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+        let mut slow = head.as_ref();
+        let mut fast = head.as_ref();
+        while let Some(f) = fast {
+            fast = f.next.as_ref();
+            if let Some(f) = fast {
+                fast = f.next.as_ref();
+            } else {
+                return slow.cloned();
+            }
+            slow = slow.unwrap().next.as_ref();
+        }
+        slow.cloned()
+    }
 }
 
 pub fn main() {}
@@ -643,5 +663,21 @@ mod tests {
         let head = ListNode::from_vec(vec![1]);
         let ans = ListNode::from_vec(vec![1]);
         assert_eq!(ListSolution::sort_list(head), ans);
+    }
+
+    #[test]
+    fn test_middle_node() {
+        let head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        let ans = ListNode::from_vec(vec![3, 4, 5]);
+        assert_eq!(ListSolution::middle_node(head), ans);
+        let head = ListNode::from_vec(vec![1, 2, 3, 4, 5, 6]);
+        let ans = ListNode::from_vec(vec![4, 5, 6]);
+        assert_eq!(ListSolution::middle_node(head), ans);
+        let head = ListNode::from_vec(vec![1]);
+        let ans = ListNode::from_vec(vec![1]);
+        assert_eq!(ListSolution::middle_node(head), ans);
+        let head = ListNode::from_vec(vec![]);
+        let ans = ListNode::from_vec(vec![]);
+        assert_eq!(ListSolution::middle_node(head), ans);
     }
 }
