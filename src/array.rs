@@ -3,7 +3,7 @@
 
 use std::{
     cmp::{Ordering, Reverse},
-    collections::{BTreeMap, BinaryHeap, HashMap},
+    collections::{BinaryHeap, BTreeMap, HashMap},
     ops::Div,
 };
 
@@ -1520,8 +1520,8 @@ impl ArraySolution {
         let mut freqs = vec![0; n as usize];
 
         for (start, end) in meetings {
-            while !rooms.is_empty() && rooms.peek().unwrap().0 .0 <= start {
-                ready.push(Reverse(rooms.pop().unwrap().0 .1));
+            while !rooms.is_empty() && rooms.peek().unwrap().0.0 <= start {
+                ready.push(Reverse(rooms.pop().unwrap().0.1));
             }
             if let Some(Reverse(room_id)) = ready.pop() {
                 rooms.push(Reverse((end, room_id)));
@@ -1655,8 +1655,8 @@ impl ArraySolution {
 
     /*
     https://leetcode.com/problems/minimum-number-of-operations-to-make-array-continuous/
-    
-    
+
+
      */
 
     pub fn min_operations(mut nums: Vec<i32>) -> i32 {
@@ -1667,6 +1667,15 @@ impl ArraySolution {
         nums.iter().enumerate().fold(n, |ops, (i, l)| {
             ops.min(n - (nums.partition_point(|&m| m < l + n) - i) as i32)
         })
+    }
+
+    pub fn max_frequency_elements(nums: Vec<i32>) -> i32 {
+        let mut map: BTreeMap<i32, i32> = BTreeMap::new();
+        for n in nums {
+            *map.entry(n).or_default() += 1;
+        }
+        let max = map.values().max().unwrap().clone();
+        map.values().filter(|&&v| v == max).sum()
     }
 } // impl ArraySolution
 
@@ -2139,12 +2148,12 @@ mod tests {
     fn test_set_zero() {
         let mut input = vec![vec![1, 1, 1], vec![1, 0, 1], vec![1, 1, 1]];
         ArraySolution::set_zero(&mut input);
-        assert_eq!(input, vec![vec![1, 0, 1], vec![0, 0, 0], vec![1, 0, 1],]);
+        assert_eq!(input, vec![vec![1, 0, 1], vec![0, 0, 0], vec![1, 0, 1]]);
         let mut input = vec![vec![0, 1, 2, 0], vec![3, 4, 5, 2], vec![1, 3, 1, 5]];
         ArraySolution::set_zero(&mut input);
         assert_eq!(
             input,
-            vec![vec![0, 0, 0, 0], vec![0, 4, 5, 0], vec![0, 3, 1, 0],]
+            vec![vec![0, 0, 0, 0], vec![0, 4, 5, 0], vec![0, 3, 1, 0]]
         );
     }
 
@@ -2260,7 +2269,7 @@ mod tests {
                 vec!['O', 'X', 'O', 'X', 'O', 'O'],
                 vec!['O', 'X', 'O', 'O', 'X', 'O'],
                 vec!['O', 'X', 'O', 'X', 'O', 'O'],
-                vec!['O', 'X', 'O', 'O', 'O', 'O']
+                vec!['O', 'X', 'O', 'O', 'O', 'O'],
             ]
         );
     }
@@ -2467,5 +2476,17 @@ mod tests {
         assert_eq!(ArraySolution::min_operations(vec![4, 2, 5, 3]), 0);
         assert_eq!(ArraySolution::min_operations(vec![1, 2, 3, 5, 6]), 1);
         assert_eq!(ArraySolution::min_operations(vec![1, 10, 100, 1000]), 3);
+    }
+
+    #[test]
+    fn test_max_frequency_elements() {
+        assert_eq!(
+            ArraySolution::max_frequency_elements(vec![1, 2, 2, 3, 1, 4]),
+            4
+        );
+        assert_eq!(
+            ArraySolution::max_frequency_elements(vec![1, 2, 3, 4, 5]),
+            5
+        );
     }
 }
