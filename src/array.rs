@@ -44,7 +44,7 @@ impl ArraySolution {
         while k > 0 && nums[k] >= nums[k + 1] {
             k -= 1;
         }
-        // no such index exists, the permutation is the last permutation
+        // no such index exists, the permutation is the last permutation,
         // so we can reverse the array
         if k == 0 && nums[k] >= nums[k + 1] {
             nums.reverse();
@@ -132,7 +132,7 @@ impl ArraySolution {
 
     /*
     link: https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-cooldown/
-    we can not buy on the day and the day after we sell
+    we can not buy on the day and the day after we sell,
     so we can use two variables to represent the max profit at day[i]
     1. hold[i]: the max profit at day[i] we can make if we hold the stock
     2. sold[i]: the max profit at day[i] we can make if we sold the stock
@@ -212,7 +212,7 @@ impl ArraySolution {
 
     /*
     https://leetcode.com/problems/best-time-to-buy-and-sell-stock-with-transaction-fee/
-    we can buy and sell the stock at the same day
+    we can buy and sell the stock at the same day,
     so we can use two variables to represent the max profit at day[i]
     1. cash[i]: the max profit at day[i] we can make if we do not hold the stock
     2. hold[i]: the max profit at day[i] we can make if we hold the stock
@@ -666,7 +666,7 @@ impl ArraySolution {
     for left side, res[i], we can get the product of the left
     for right side, res[nums.len()-i-1], we can get the product of the right
     update the result in two directions, we can solve it in one pass
-    when it reach to the end, we can get the result
+    when it reaches to the end, we can get the result
      */
 
     pub fn product_except_self(nums: Vec<i32>) -> Vec<i32> {
@@ -696,14 +696,14 @@ impl ArraySolution {
                     match stack.last() {
                         Some(&last) if last.is_positive() != asteroid.is_positive() => {
                             match last.abs().cmp(&asteroid.abs()) {
-                                std::cmp::Ordering::Less => {
+                                Ordering::Less => {
                                     stack.pop();
                                 }
-                                std::cmp::Ordering::Equal => {
+                                Ordering::Equal => {
                                     stack.pop();
                                     break false;
                                 }
-                                std::cmp::Ordering::Greater => {
+                                Ordering::Greater => {
                                     break false;
                                 }
                             }
@@ -728,9 +728,9 @@ impl ArraySolution {
         while front < back {
             let sum = numbers[front] + numbers[back];
             match target.cmp(&sum) {
-                std::cmp::Ordering::Less => back -= 1,
-                std::cmp::Ordering::Equal => break,
-                std::cmp::Ordering::Greater => front += 1,
+                Ordering::Less => back -= 1,
+                Ordering::Equal => break,
+                Ordering::Greater => front += 1,
             }
         }
 
@@ -844,7 +844,7 @@ impl ArraySolution {
     link: https://leetcode.com/problems/maximum-sum-of-an-hourglass/
     the brut force solution is pretty straightforward
     the size and the shape of the hourglass is fixed with 3x3
-    but the input is not
+    but the input is not,
     so we can use two for loops to traverse the input
     and calculate the sum of the hourglass
      */
@@ -1024,10 +1024,10 @@ impl ArraySolution {
     this number should fall into the range [1, nums.len()]
     for all the number that negative and greater than nums.len()
     we can simply set them to nums.len() + 1 for they left some solt in the array.
-    for the rest of the positive number, use them as index and set corresponding positive as negative
+    for the rest of the positive number, use them as index and set corresponding positive as negative,
     then we can traverse the array and found the first positive number, the index of that position is
     the first missing positive number.
-    f we couldn't found such a number, the means the numbers in the input array all falls into the
+    f we couldn't find such a number, the means the numbers in the input array all falls into the
     range [1,nums.len()], return nums.len() + 1 as result
 
 
@@ -1054,8 +1054,8 @@ impl ArraySolution {
         }
         // find the first num that is greater than 0
         // if we can't find it, that means all the nums in the array exists
-        // if we found a num that is > 0, that means there is a empty slot in the array
-        // i is the index of the empty slot
+        // if we found a num that is > 0, that means there is an empty slot in the array,
+        // i represents the index of the empty slot
         for (i, &num) in nums.iter().enumerate() {
             if num > 0 {
                 return i as i32 + 1;
@@ -1083,7 +1083,7 @@ impl ArraySolution {
 
     fn number_of_good_pairs(numbers: Vec<i32>) -> i32 {
         let mut res = 0;
-        let mut map = std::collections::HashMap::new();
+        let mut map = HashMap::new();
         for num in numbers {
             *map.entry(num).or_insert(0) += 1;
         }
@@ -1202,7 +1202,7 @@ impl ArraySolution {
     https://leetcode.com/problems/surrounded-regions/description/
      */
 
-    pub fn surrond_regions(board: &mut [Vec<char>]) {
+    pub fn surround_regions(board: &mut [Vec<char>]) {
         let mut visited = vec![vec![false; board[0].len()]; board.len()];
         for i in 1..board.len() - 1 {
             for j in 1..board[i].len() - 1 {
@@ -1343,7 +1343,7 @@ impl ArraySolution {
 
     pub fn group_the_people(group_sizes: Vec<i32>) -> Vec<Vec<i32>> {
         let mut res = Vec::new();
-        let mut size2people = std::collections::HashMap::new();
+        let mut size2people = HashMap::new();
         for (i, &size) in group_sizes.iter().enumerate() {
             size2people.entry(size).or_insert(Vec::new()).push(i as i32);
             if size2people[&size].len() == size as usize {
@@ -1440,9 +1440,9 @@ impl ArraySolution {
     }
 
     /*
-    remove the k number of elements to make least number of unique elements
+    remove the k number of elements to make at least number of unique elements
 
-    a pretty stright forward solution is to remove the element that has the least repetitions
+    a pretty straight forward solution is to remove the element that has the least repetitions
     after k iterations, the remaining elements are the least number of unique elements
 
     we can use a hashmap to store the repetitions of each element
@@ -2219,14 +2219,14 @@ mod tests {
     }
 
     #[test]
-    fn test_surrond_regions() {
+    fn test_surround_regions() {
         let mut input = vec![
             vec!['X', 'X', 'X', 'X'],
             vec!['X', 'O', 'O', 'X'],
             vec!['X', 'X', 'O', 'X'],
             vec!['X', 'O', 'X', 'X'],
         ];
-        ArraySolution::surrond_regions(&mut input);
+        ArraySolution::surround_regions(&mut input);
         assert_eq!(
             input,
             vec![
@@ -2242,7 +2242,7 @@ mod tests {
             vec!['X', 'O', 'X', 'O', 'X', 'O'],
             vec!['O', 'X', 'O', 'X', 'O', 'X'],
         ];
-        ArraySolution::surrond_regions(&mut input);
+        ArraySolution::surround_regions(&mut input);
         assert_eq!(
             input,
             vec![
@@ -2260,7 +2260,7 @@ mod tests {
             vec!['O', 'X', 'O', 'X', 'O', 'O'],
             vec!['O', 'X', 'O', 'O', 'O', 'O'],
         ];
-        ArraySolution::surrond_regions(&mut input);
+        ArraySolution::surround_regions(&mut input);
         assert_eq!(
             input,
             vec![
