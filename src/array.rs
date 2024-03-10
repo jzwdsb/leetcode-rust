@@ -3,7 +3,7 @@
 
 use std::{
     cmp::{Ordering, Reverse},
-    collections::{BinaryHeap, BTreeMap, HashMap},
+    collections::{BTreeMap, BinaryHeap, HashMap, HashSet},
     ops::Div,
 };
 
@@ -606,7 +606,6 @@ impl ArraySolution {
      */
 
     pub fn longest_consecutive(nums: Vec<i32>) -> i32 {
-        use std::collections::HashSet;
         let mut set = HashSet::new();
         for num in nums.iter() {
             set.insert(num);
@@ -1520,8 +1519,8 @@ impl ArraySolution {
         let mut freqs = vec![0; n as usize];
 
         for (start, end) in meetings {
-            while !rooms.is_empty() && rooms.peek().unwrap().0.0 <= start {
-                ready.push(Reverse(rooms.pop().unwrap().0.1));
+            while !rooms.is_empty() && rooms.peek().unwrap().0 .0 <= start {
+                ready.push(Reverse(rooms.pop().unwrap().0 .1));
             }
             if let Some(Reverse(room_id)) = ready.pop() {
                 rooms.push(Reverse((end, room_id)));
@@ -1674,8 +1673,24 @@ impl ArraySolution {
         for n in nums {
             *map.entry(n).or_default() += 1;
         }
-        let max = map.values().max().unwrap().clone();
+        let max = *map.values().max().unwrap();
         map.values().filter(|&&v| v == max).sum()
+    }
+
+    pub fn intersection(nums1: Vec<i32>, nums2: Vec<i32>) -> Vec<i32> {
+        let mut set1: HashMap<i32, i32> = nums1.into_iter().fold(HashMap::new(), |mut map, n| {
+            *map.entry(n).or_default() += 1;
+            map
+        });
+        let mut res = Vec::new();
+        for num in nums2 {
+            if set1.entry(num).or_default() > &mut 0 {
+                res.push(num);
+                *set1.get_mut(&num).unwrap() -= 1;
+            }
+        }
+
+        res
     }
 } // impl ArraySolution
 
@@ -2488,5 +2503,15 @@ mod tests {
             ArraySolution::max_frequency_elements(vec![1, 2, 3, 4, 5]),
             5
         );
+    }
+
+    #[test]
+    fn test_array_intersections() {
+        let mut res = ArraySolution::intersection(vec![1, 2, 2, 1], vec![2, 2]);
+        res.sort();
+        assert_eq!(res, vec![2, 2]);
+        let mut res = ArraySolution::intersection(vec![4, 9, 5], vec![9, 4, 9, 8, 4]);
+        res.sort();
+        assert_eq!(res, vec![4, 9]);
     }
 }
