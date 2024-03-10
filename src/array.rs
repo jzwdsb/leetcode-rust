@@ -1678,19 +1678,10 @@ impl ArraySolution {
     }
 
     pub fn intersection(nums1: Vec<i32>, nums2: Vec<i32>) -> Vec<i32> {
-        let mut set1: HashMap<i32, i32> = nums1.into_iter().fold(HashMap::new(), |mut map, n| {
-            *map.entry(n).or_default() += 1;
-            map
-        });
-        let mut res = Vec::new();
-        for num in nums2 {
-            if set1.entry(num).or_default() > &mut 0 {
-                res.push(num);
-                *set1.get_mut(&num).unwrap() -= 1;
-            }
-        }
-
-        res
+        let mut set1: HashSet<i32> = nums1.into_iter().collect();
+        let set2: HashSet<i32> = nums2.into_iter().collect();
+        set1.retain(|n| set2.contains(n));
+        set1.into_iter().collect()
     }
 } // impl ArraySolution
 
@@ -2509,7 +2500,7 @@ mod tests {
     fn test_array_intersections() {
         let mut res = ArraySolution::intersection(vec![1, 2, 2, 1], vec![2, 2]);
         res.sort();
-        assert_eq!(res, vec![2, 2]);
+        assert_eq!(res, vec![2]);
         let mut res = ArraySolution::intersection(vec![4, 9, 5], vec![9, 4, 9, 8, 4]);
         res.sort();
         assert_eq!(res, vec![4, 9]);
