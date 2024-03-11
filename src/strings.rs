@@ -7,14 +7,21 @@ pub struct StringSolution {}
 // Solution from https://leetcode.com/problems/valid-number/solutions/3461898/finite-state-machine/
 // use state machine to solve check is number problem
 enum CheckState {
-    FloatSign, // ACCEPTS: '+' | '-' | '.' | '0'..='9'
-    FloatInit, // ACCEPTS: '.' | '0'..='9'
-    FloatNum,  // ACCEPTS: '.' | 'e' | 'E' | '0'..='9'
-    IntInit,   // ACCEPTS: '0'..='9'
-    IntNum,    // ACCEPTS: 'e' | 'E' | '0'..='9'
-    ExpSign,   // ACCEPTS: '+' | '-' | '0'..='9'
-    ExpInit,   // ACCEPTS: '0'..='9'
-    ExpNum,    // ACCEPTS: '0'..='9'
+    FloatSign,
+    // ACCEPTS: '+' | '-' | '.' | '0'..='9'
+    FloatInit,
+    // ACCEPTS: '.' | '0'..='9'
+    FloatNum,
+    // ACCEPTS: '.' | 'e' | 'E' | '0'..='9'
+    IntInit,
+    // ACCEPTS: '0'..='9'
+    IntNum,
+    // ACCEPTS: 'e' | 'E' | '0'..='9'
+    ExpSign,
+    // ACCEPTS: '+' | '-' | '0'..='9'
+    ExpInit,
+    // ACCEPTS: '0'..='9'
+    ExpNum, // ACCEPTS: '0'..='9'
 }
 
 // use state machine to solve check is number problem
@@ -1052,6 +1059,22 @@ impl StringSolution {
         }
         1
     }
+
+    pub fn custom_sort_string(order: String, s: String) -> String {
+        let mut count = [0; 26];
+        for c in s.chars() {
+            count[c as usize - 'a' as usize] += 1;
+        }
+        let mut res = String::new();
+        for c in order.chars() {
+            res.push_str(&c.to_string().repeat(count[c as usize - 'a' as usize]));
+            count[c as usize - 'a' as usize] = 0;
+        }
+        for (i, &c) in count.iter().enumerate() {
+            res.push_str(&((i as u8 + b'a') as char).to_string().repeat(c));
+        }
+        res
+    }
 } // impl StringSolution
 
 #[cfg(test)]
@@ -1313,14 +1336,14 @@ mod tests {
         assert_eq!(
             StringSolution::word_break(
                 "leetcode".to_string(),
-                vec!["leet".to_string(), "code".to_string(),]
+                vec!["leet".to_string(), "code".to_string()],
             ),
             true
         );
         assert_eq!(
             StringSolution::word_break(
                 "applepenapple".to_string(),
-                vec!["apple".to_string(), "pen".to_string()]
+                vec!["apple".to_string(), "pen".to_string()],
             ),
             true
         );
@@ -1332,8 +1355,8 @@ mod tests {
                     "dog".to_string(),
                     "sand".to_string(),
                     "and".to_string(),
-                    "cat".to_string()
-                ]
+                    "cat".to_string(),
+                ],
             ),
             false
         );
@@ -1345,7 +1368,7 @@ mod tests {
             StringSolution::is_interleave(
                 "aabcc".to_string(),
                 "dbbca".to_string(),
-                "aadbbcbcac".to_string()
+                "aadbbcbcac".to_string(),
             ),
             true
         );
@@ -1353,7 +1376,7 @@ mod tests {
             StringSolution::is_interleave(
                 "aabcc".to_string(),
                 "dbbca".to_string(),
-                "aadbbbaccc".to_string()
+                "aadbbbaccc".to_string(),
             ),
             false
         );
@@ -1575,7 +1598,7 @@ mod tests {
                 "ba".to_string(),
                 "bca".to_string(),
                 "bda".to_string(),
-                "bdca".to_string()
+                "bdca".to_string(),
             ]),
             4
         );
@@ -1585,7 +1608,7 @@ mod tests {
                 "pcxbcf".to_string(),
                 "xb".to_string(),
                 "cxbc".to_string(),
-                "pcxbc".to_string()
+                "pcxbc".to_string(),
             ]),
             5
         );
@@ -1596,7 +1619,7 @@ mod tests {
                 "bda".to_string(),
                 "ca".to_string(),
                 "dca".to_string(),
-                "a".to_string()
+                "a".to_string(),
             ]),
             4
         )
@@ -1631,5 +1654,17 @@ mod tests {
         assert_eq!(StringSolution::minimum_length("ca".to_string()), 2);
         assert_eq!(StringSolution::minimum_length("cabaabac".to_string()), 0);
         assert_eq!(StringSolution::minimum_length("aabccabba".to_string()), 3);
+    }
+
+    #[test]
+    fn test_custom_sort_string() {
+        assert_eq!(
+            StringSolution::custom_sort_string("cba".to_string(), "abcd".to_string()),
+            "cbad".to_string()
+        );
+        assert_eq!(
+            StringSolution::custom_sort_string("kqep".to_string(), "pekeq".to_string()),
+            "kqeep".to_string()
+        );
     }
 }
