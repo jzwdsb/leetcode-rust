@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+use std::collections::HashMap;
+
 // TODO: refactor the list node to use Rc<RefCell<ListNode<T>>> to avoid the ownership problem
 #[derive(PartialEq, Eq, Clone, Debug)]
 pub struct ListNode<T> {
@@ -37,6 +39,8 @@ impl<T> Iterator for ListNode<T> {
     }
 }
 
+type List<T> = Option<Box<ListNode<T>>>;
+
 pub struct ListSolution {}
 
 impl ListSolution {
@@ -44,10 +48,7 @@ impl ListSolution {
     leetcode link: https://leetcode.com/problems/remove-nth-node-from-end-of-list/
     we can use two pointers to solve this problem in one pass
      */
-    pub fn remove_nth_from_end(
-        head: Option<Box<ListNode<i32>>>,
-        n: i32,
-    ) -> Option<Box<ListNode<i32>>> {
+    pub fn remove_nth_from_end(head: List<i32>, n: i32) -> List<i32> {
         // calculate the length of the list by using std::iter::successors, time complexity O(n)
         let cnt = std::iter::successors(head.as_ref(), |last| last.next.as_ref()).count();
         // dummy node to handle the case when we need to remove the first node
@@ -67,10 +68,7 @@ impl ListSolution {
     new node.Next = add_two_numbers(l1.Next, l2.Next) if l1.Val + l2.Val < 10
                     add_two_numbers(add_two_numbers(l1.Next, 1), l2.Next) if l1.Val + l2.Val >= 10
      */
-    pub fn add_two_numbers(
-        l1: Option<Box<ListNode<i32>>>,
-        l2: Option<Box<ListNode<i32>>>,
-    ) -> Option<Box<ListNode<i32>>> {
+    pub fn add_two_numbers(l1: List<i32>, l2: List<i32>) -> List<i32> {
         match (l1, l2) {
             (None, None) => None,
             (Some(l1), None) => Some(l1),
@@ -98,10 +96,7 @@ impl ListSolution {
     and pop the value from the stack to construct the list
      */
 
-    pub fn add_two_numbers_ii(
-        l1: Option<Box<ListNode<i32>>>,
-        l2: Option<Box<ListNode<i32>>>,
-    ) -> Option<Box<ListNode<i32>>> {
+    pub fn add_two_numbers_ii(l1: List<i32>, l2: List<i32>) -> List<i32> {
         let mut stack1 = Vec::new();
         let mut stack2 = Vec::new();
         let mut res = None;
@@ -132,7 +127,7 @@ impl ListSolution {
         res
     }
 
-    pub fn swap_pairs(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+    pub fn swap_pairs(head: List<i32>) -> List<i32> {
         let mut dummy = Some(Box::new(ListNode { val: 0, next: head }));
         let mut prev = dummy.as_mut();
         while prev.as_ref().unwrap().next.is_some()
@@ -148,10 +143,7 @@ impl ListSolution {
         dummy.unwrap().next
     }
 
-    pub fn merge_two_lists(
-        list1: Option<Box<ListNode<i32>>>,
-        list2: Option<Box<ListNode<i32>>>,
-    ) -> Option<Box<ListNode<i32>>> {
+    pub fn merge_two_lists(list1: List<i32>, list2: List<i32>) -> List<i32> {
         match (list1, list2) {
             (None, None) => None,
             (Some(list1), None) => Some(list1),
@@ -171,7 +163,7 @@ impl ListSolution {
     /*
     link: https://leetcode.com/problems/reverse-nodes-in-k-group/
      */
-    pub fn reverse_k_group(head: Option<Box<ListNode<i32>>>, k: i32) -> Option<Box<ListNode<i32>>> {
+    pub fn reverse_k_group(head: List<i32>, k: i32) -> List<i32> {
         if k == 0 {
             return head;
         }
@@ -200,7 +192,7 @@ impl ListSolution {
         ret
     }
 
-    pub fn rotate_right(head: Option<Box<ListNode<i32>>>, k: i32) -> Option<Box<ListNode<i32>>> {
+    pub fn rotate_right(head: List<i32>, k: i32) -> List<i32> {
         if k == 0 {
             return head;
         }
@@ -247,7 +239,7 @@ impl ListSolution {
         Some(new_head)
     }
 
-    pub fn reverse_list(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+    pub fn reverse_list(head: List<i32>) -> List<i32> {
         let mut prev = None;
         let mut node = head;
         while let Some(mut n) = node {
@@ -258,7 +250,7 @@ impl ListSolution {
         prev
     }
 
-    pub fn has_cycle(l1: Option<Box<ListNode<i32>>>) -> bool {
+    pub fn has_cycle(l1: List<i32>) -> bool {
         let mut slow = l1.as_ref();
         let mut fast = l1.as_ref();
         while let Some(f) = fast {
@@ -275,7 +267,7 @@ impl ListSolution {
         }
         false
     }
-    pub fn delete_duplicates(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+    pub fn delete_duplicates(head: List<i32>) -> List<i32> {
         let mut dummy = Some(Box::new(ListNode { val: 0, next: head }));
         let mut prev = dummy.as_mut();
         while prev.as_ref().unwrap().next.is_some() {
@@ -291,7 +283,7 @@ impl ListSolution {
         dummy.unwrap().next
     }
 
-    pub fn delete_duplicates_ii(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+    pub fn delete_duplicates_ii(head: List<i32>) -> List<i32> {
         let mut dummy = Some(Box::new(ListNode { val: 0, next: head }));
         let mut prev = dummy.as_mut();
 
@@ -322,7 +314,7 @@ impl ListSolution {
     then link the two parts together.
      */
 
-    pub fn partition(head: Option<Box<ListNode<i32>>>, x: i32) -> Option<Box<ListNode<i32>>> {
+    pub fn partition(head: List<i32>, x: i32) -> List<i32> {
         let mut dummy1 = Some(Box::new(ListNode { val: 0, next: None }));
         let mut dummy2 = Some(Box::new(ListNode { val: 0, next: None }));
         let mut prev1 = dummy1.as_mut();
@@ -346,11 +338,7 @@ impl ListSolution {
     https://leetcode.com/problems/reverse-linked-list-ii/
      */
 
-    pub fn reverse_between(
-        head: Option<Box<ListNode<i32>>>,
-        left: i32,
-        right: i32,
-    ) -> Option<Box<ListNode<i32>>> {
+    pub fn reverse_between(head: List<i32>, left: i32, right: i32) -> List<i32> {
         let mut dummy = Some(Box::new(ListNode { val: 0, next: head }));
         let mut before = dummy.as_mut();
         for _ in 0..left - 1 {
@@ -376,7 +364,7 @@ impl ListSolution {
         dummy?.next
     }
 
-    pub fn sort_list(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+    pub fn sort_list(head: List<i32>) -> List<i32> {
         let mut node = head.as_ref();
         // convert the list to vec
         let mut v = Vec::new();
@@ -401,7 +389,7 @@ impl ListSolution {
     slow and fast pointer can solve this problem in one pass
      */
 
-    pub fn middle_node(head: Option<Box<ListNode<i32>>>) -> Option<Box<ListNode<i32>>> {
+    pub fn middle_node(head: List<i32>) -> List<i32> {
         let mut slow = head.as_ref();
         let mut fast = head.as_ref();
         while let Some(f) = fast {
@@ -414,6 +402,42 @@ impl ListSolution {
             slow = slow.unwrap().next.as_ref();
         }
         slow.cloned()
+    }
+
+    pub fn remove_zero_sum_sublists(head: List<i32>) -> List<i32> {
+        let mut map = HashMap::new(); // prefix sum to idx
+        let mut dummy = Box::new(ListNode { val: 0, next: head });
+        let mut cur = &dummy;
+        let mut prefix = 0;
+        let mut idx = 0;
+        loop {
+            prefix += cur.val;
+            map.insert(prefix, idx);
+            if cur.next.is_none() {
+                break;
+            }
+            cur = cur.next.as_ref()?;
+            idx += 1;
+        }
+
+        let mut cur = &mut dummy;
+        prefix = 0;
+        idx = 0;
+        loop {
+            prefix += cur.val;
+            if let Some(&end_idx) = map.get(&prefix) {
+                while idx < end_idx {
+                    cur.next = cur.next.as_mut()?.next.take();
+                    idx += 1;
+                }
+            }
+            if cur.next.is_none() {
+                break;
+            }
+            cur = cur.next.as_mut()?;
+            idx += 1;
+        }
+        dummy.next
     }
 }
 
@@ -679,5 +703,18 @@ mod tests {
         let head = ListNode::from_vec(vec![]);
         let ans = ListNode::from_vec(vec![]);
         assert_eq!(ListSolution::middle_node(head), ans);
+    }
+
+    #[test]
+    fn test_remove_zero_sum_sublists() {
+        let head = ListNode::from_vec(vec![1, 2, -3, 3, 1]);
+        let ans = ListNode::from_vec(vec![3, 1]);
+        assert_eq!(ListSolution::remove_zero_sum_sublists(head), ans);
+        let head = ListNode::from_vec(vec![1, 2, 3, -3, 4]);
+        let ans = ListNode::from_vec(vec![1, 2, 4]);
+        assert_eq!(ListSolution::remove_zero_sum_sublists(head), ans);
+        let head = ListNode::from_vec(vec![1, 2, 3, -3, -2]);
+        let ans = ListNode::from_vec(vec![1]);
+        assert_eq!(ListSolution::remove_zero_sum_sublists(head), ans);
     }
 }
