@@ -1683,6 +1683,28 @@ impl ArraySolution {
         set1.retain(|n| set2.contains(n));
         set1.into_iter().collect()
     }
+
+    pub fn num_subarray_with_sum(nums: Vec<i32>, goal: i32) -> i32 {
+        // sum -> count, the occurrences of the prefix sum.
+        // use sum - goal to get the number of subarray that has the sum equal to goal.
+        let mut map: HashMap<i32, i32> = HashMap::new();
+        let mut sum = 0; // sum of the prefix
+        let mut res = 0; // the number of subarray that has the sum equal to goal
+        for n in nums {
+            sum += n;
+            if sum == goal {
+                res += 1;
+            }
+            // when sum >= goal, for current index I, what we are looking for is the number
+            // of subarray that has the sum equal to goal, not to sum.
+            // but the number of subarray that sums to goal equals to hte number of subarray that
+            // sums to sum - goal
+            res += *map.get(&(sum - goal)).unwrap_or(&0);
+            // increase the occurrences of the prefix sum
+            *map.entry(sum).or_default() += 1;
+        }
+        res
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2504,5 +2526,14 @@ mod tests {
         let mut res = ArraySolution::intersection(vec![4, 9, 5], vec![9, 4, 9, 8, 4]);
         res.sort();
         assert_eq!(res, vec![4, 9]);
+    }
+
+    #[test]
+    fn test_num_subarray_with_sum() {
+        assert_eq!(
+            ArraySolution::num_subarray_with_sum(vec![1, 0, 1, 0, 1], 2),
+            4
+        );
+        assert_eq!(ArraySolution::num_subarray_with_sum(vec![1, 1, 1], 2), 2);
     }
 }
