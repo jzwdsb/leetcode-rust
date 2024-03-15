@@ -1075,6 +1075,24 @@ impl StringSolution {
         }
         res
     }
+
+    pub fn backspace_compare(s: String, t: String) -> bool {
+        let s = Self::backspace(s);
+        let t = Self::backspace(t);
+        s == t
+    }
+
+    fn backspace(s: String) -> String {
+        let mut stack = Vec::new();
+        for c in s.chars() {
+            if c == '#' {
+                stack.pop();
+            } else {
+                stack.push(c);
+            }
+        }
+        stack.iter().collect()
+    }
 } // impl StringSolution
 
 #[cfg(test)]
@@ -1665,6 +1683,26 @@ mod tests {
         assert_eq!(
             StringSolution::custom_sort_string("kqep".to_string(), "pekeq".to_string()),
             "kqeep".to_string()
+        );
+    }
+
+    #[test]
+    fn test_backspace_compare() {
+        assert_eq!(
+            StringSolution::backspace_compare("ab#c".to_string(), "ad#c".to_string()),
+            true
+        );
+        assert_eq!(
+            StringSolution::backspace_compare("ab##".to_string(), "c#d#".to_string()),
+            true
+        );
+        assert_eq!(
+            StringSolution::backspace_compare("a##c".to_string(), "#a#c".to_string()),
+            true
+        );
+        assert_eq!(
+            StringSolution::backspace_compare("a#c".to_string(), "b".to_string()),
+            false
         );
     }
 }
