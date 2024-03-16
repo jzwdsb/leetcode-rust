@@ -1705,6 +1705,28 @@ impl ArraySolution {
         }
         res
     }
+
+    pub fn find_max_length(nums: Vec<i32>) -> i32 {
+        let mut count = 0; // the number of 1s minus the number of 0s
+        let mut map = HashMap::new(); // count -> index
+        let mut max = 0;
+        for i in 0..nums.len() {
+            count += if nums[i] == 1 { 1 } else { -1 };
+
+            if count == 0 {
+                // if count == 0, that means the subarray from 0 to i is a valid subarray
+                max = max.max(i + 1);
+            } else if let Some(&j) = map.get(&count) {
+                // if we found a subarray that has the same count,
+                // that means the subarray from j+1 to i is a valid subarray
+                max = max.max(i - j);
+            } else {
+                map.insert(count, i);
+            }
+        }
+
+        max as i32
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2535,5 +2557,11 @@ mod tests {
             4
         );
         assert_eq!(ArraySolution::num_subarray_with_sum(vec![1, 1, 1], 2), 2);
+    }
+
+    #[test]
+    fn test_find_max_length() {
+        assert_eq!(ArraySolution::find_max_length(vec![0, 1]), 2);
+        assert_eq!(ArraySolution::find_max_length(vec![0, 1, 0]), 2);
     }
 }
