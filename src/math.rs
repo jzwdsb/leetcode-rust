@@ -391,6 +391,14 @@ impl MathSolution {
         // left
         (((8.0 * n as f64 + 1.0).sqrt() - 1.0) / 2.0) as i32
     }
+
+    pub fn is_power_of_four(n: i32) -> bool {
+        n > 0
+            // only one bit is 1
+            && (n & (n - 1)) == 0
+            // the bit 1 is in the odd position
+            && (n & 0x55555555) != 0
+    }
 } // impl MathSolution
 
 #[cfg(test)]
@@ -461,7 +469,7 @@ mod tests {
                 vec![1, 1],
                 vec![1, 2, 1],
                 vec![1, 3, 3, 1],
-                vec![1, 4, 6, 4, 1]
+                vec![1, 4, 6, 4, 1],
             ]
         );
     }
@@ -549,5 +557,12 @@ mod tests {
     fn test_arrange_coins() {
         assert_eq!(MathSolution::arrange_coins(5), 2);
         assert_eq!(MathSolution::arrange_coins(8), 3);
+    }
+
+    #[test]
+    fn test_is_power_of_four() {
+        assert!(MathSolution::is_power_of_four(16));
+        assert!(!MathSolution::is_power_of_four(5));
+        assert!(MathSolution::is_power_of_four(1));
     }
 }
