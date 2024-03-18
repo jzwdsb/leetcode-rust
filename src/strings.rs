@@ -1093,6 +1093,104 @@ impl StringSolution {
         }
         stack.iter().collect()
     }
+
+    // support +, -, *, /, (, )
+    // example: "3+2*2" = 7, " 3/2 " = 1, " 3+5 / 2 " = 5, " (3+5) / 2 " = 4
+    // the expression will always be valid
+    // 1. tokenize the expression
+    // 2. convert it to postfix notation
+    // 3. evaluate the postfix notation
+    // 4. return the result
+    pub fn calculator(expr: String) -> i32 {
+        let tokens = Self::tokenize(expr);
+        let postfix = Self::infix_to_postfix(tokens);
+
+        Self::evaluate_postfix(postfix)
+    }
+
+    fn evaluate_postfix(postfix: Vec<String>) -> i32 {
+        let mut stack = Vec::new();
+        for token in postfix {
+            if token.chars().all(char::is_numeric) {
+                stack.push(token.parse::<i32>().unwrap());
+            } else {
+                let b = stack.pop().unwrap();
+                let a = stack.pop().unwrap();
+                match token.as_str() {
+                    "+" => stack.push(a + b),
+                    "-" => stack.push(a - b),
+                    "*" => stack.push(a * b),
+                    "/" => stack.push(a / b),
+                    _ => unreachable!(),
+                }
+            }
+        }
+        stack.pop().unwrap()
+    }
+
+    fn infix_to_postfix(tokens: Vec<String>) -> Vec<String> {
+        let mut stack = Vec::new();
+        let mut res = Vec::new();
+        for token in tokens {
+            if token.chars().all(char::is_numeric) {
+                res.push(token);
+            } else if token == "(" {
+                stack.push(token);
+            } else if token == ")" {
+                while let Some(top) = stack.pop() {
+                    if top == "(" {
+                        break;
+                    }
+                    res.push(top);
+                }
+            } else {
+                while let Some(top) = stack.last() {
+                    if Self::precedence(top) >= Self::precedence(&token) {
+                        res.push(stack.pop().unwrap());
+                    } else {
+                        break;
+                    }
+                }
+                stack.push(token);
+            }
+        }
+        while let Some(top) = stack.pop() {
+            res.push(top);
+        }
+        res
+    }
+
+    fn precedence(op: &str) -> i32 {
+        match op {
+            "+" | "-" => 1,
+            "*" | "/" => 2,
+            _ => 0,
+        }
+    }
+
+    fn tokenize(expr: String) -> Vec<String> {
+        let mut tokens = Vec::new();
+        let mut i = 0;
+        let expr = expr.chars().collect::<Vec<char>>();
+        while i < expr.len() {
+            if expr[i].is_whitespace() {
+                i += 1;
+                continue;
+            }
+            if expr[i].is_ascii_digit() {
+                let mut num = String::new();
+                while i < expr.len() && expr[i].is_ascii_digit() {
+                    num.push(expr[i]);
+                    i += 1;
+                }
+                tokens.push(num);
+            } else {
+                tokens.push(expr[i].to_string());
+                i += 1;
+            }
+        }
+        tokens
+    }
 } // impl StringSolution
 
 #[cfg(test)]
@@ -1704,5 +1802,13 @@ mod tests {
             StringSolution::backspace_compare("a#c".to_string(), "b".to_string()),
             false
         );
+    }
+
+    #[test]
+    fn test_calculator() {
+        assert_eq!(StringSolution::calculator("3+2*2".to_string()), 7);
+        assert_eq!(StringSolution::calculator(" 3/2 ".to_string()), 1);
+        assert_eq!(StringSolution::calculator(" 3+5 / 2 ".to_string()), 5);
+        assert_eq!(StringSolution::calculator(" (3+5) / 2 ".to_string()), 4);
     }
 }
