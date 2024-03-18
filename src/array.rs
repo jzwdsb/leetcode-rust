@@ -1727,6 +1727,22 @@ impl ArraySolution {
 
         max as i32
     }
+
+    pub fn find_min_arrow_shots(mut points: Vec<Vec<i32>>) -> i32 {
+        if points.is_empty() {
+            return 0;
+        }
+        points.sort_unstable_by_key(|v| v[1]);
+        let mut arrow_pos = points[0][1];
+        let mut res = 1;
+        for balloon in points.iter().skip(1) {
+            if balloon[0] > arrow_pos {
+                arrow_pos = balloon[1];
+                res += 1;
+            }
+        }
+        res
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2563,5 +2579,36 @@ mod tests {
     fn test_find_max_length() {
         assert_eq!(ArraySolution::find_max_length(vec![0, 1]), 2);
         assert_eq!(ArraySolution::find_max_length(vec![0, 1, 0]), 2);
+    }
+
+    #[test]
+    fn test_find_min_arrow_shots() {
+        assert_eq!(
+            ArraySolution::find_min_arrow_shots(vec![
+                vec![10, 16],
+                vec![2, 8],
+                vec![1, 6],
+                vec![7, 12]
+            ]),
+            2
+        );
+        assert_eq!(
+            ArraySolution::find_min_arrow_shots(vec![
+                vec![1, 2],
+                vec![3, 4],
+                vec![5, 6],
+                vec![7, 8]
+            ]),
+            4
+        );
+        assert_eq!(
+            ArraySolution::find_min_arrow_shots(vec![
+                vec![1, 2],
+                vec![2, 3],
+                vec![3, 4],
+                vec![4, 5]
+            ]),
+            2
+        );
     }
 }
