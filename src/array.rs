@@ -1743,6 +1743,37 @@ impl ArraySolution {
         }
         res
     }
+
+    /*
+    https://leetcode.com/problems/task-scheduler/
+    arrange the task in such a way that the same task is at least n intervals apart
+    how many intervals we need to schedule all the tasks.
+
+    we don't actually need to arrange the task, we just need to calculate the number of intervals
+    the result should be the least number of idle slots + the number of tasks
+
+    we can initialize the idle slots to be the maximum number of idle slots
+    the maximum number of idle slots is (max - 1) * n, max is the maximum number of the same task
+    then we can update the idle slots by subtracting the number of the same task
+    these tasks use the idle slots
+     */
+
+    pub fn least_interval(tasks: Vec<char>, n: i32) -> i32 {
+        let mut map = [0; 26];
+        for &task in &tasks {
+            map[(task as u8 - b'A') as usize] += 1;
+        }
+        map.sort_unstable();
+        let max = map.last().unwrap() - 1;
+        let mut idle_slots = max * n;
+        // skip last one
+        for i in 0..25 {
+            // update idle slots
+            // subtract the number of the same task
+            idle_slots -= map[i].min(max);
+        }
+        idle_slots.max(0) + tasks.len() as i32
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2609,6 +2640,25 @@ mod tests {
                 vec![4, 5]
             ]),
             2
+        );
+    }
+
+    #[test]
+    fn test_least_interval() {
+        assert_eq!(
+            ArraySolution::least_interval(vec!['A', 'A', 'A', 'B', 'B', 'B'], 2),
+            8
+        );
+        assert_eq!(
+            ArraySolution::least_interval(vec!['A', 'A', 'A', 'B', 'B', 'B'], 0),
+            6
+        );
+        assert_eq!(
+            ArraySolution::least_interval(
+                vec!['A', 'A', 'A', 'A', 'A', 'A', 'B', 'C', 'D', 'E', 'F', 'G'],
+                2
+            ),
+            16
         );
     }
 }
