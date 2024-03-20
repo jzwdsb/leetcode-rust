@@ -439,6 +439,31 @@ impl ListSolution {
         }
         dummy.next
     }
+
+    pub fn merge_in_between(list1: List<i32>, a: i32, b: i32, mut list2: List<i32>) -> List<i32> {
+        let mut head = list1.unwrap();
+        let mut current = head.as_mut();
+        for _ in 0..a - 1 {
+            current = current.next.as_mut().unwrap();
+        }
+
+        std::mem::swap(&mut current.next, &mut list2);
+
+        // reach the end of list2
+        while current.next.is_some() {
+            current = current.next.as_mut().unwrap();
+        }
+
+        // reach original bth node  in list1
+        for _ in 0..b - a + 1 {
+            list2 = list2.unwrap().next;
+        }
+
+        // link the rest of list1 to list2
+        current.next = list2;
+
+        Some(head)
+    }
 }
 
 pub fn main() {}
@@ -716,5 +741,15 @@ mod tests {
         let head = ListNode::from_vec(vec![1, 2, 3, -3, -2]);
         let ans = ListNode::from_vec(vec![1]);
         assert_eq!(ListSolution::remove_zero_sum_sublists(head), ans);
+    }
+
+    #[test]
+    fn test_merge_in_between() {
+        let list1 = ListNode::from_vec(vec![0, 1, 2, 3, 4, 5]);
+        let list2 = ListNode::from_vec(vec![1000000, 1000001, 1000002]);
+        let a = 3;
+        let b = 4;
+        let ans = ListNode::from_vec(vec![0, 1, 2, 1000000, 1000001, 1000002, 5]);
+        assert_eq!(ListSolution::merge_in_between(list1, a, b, list2), ans);
     }
 }
