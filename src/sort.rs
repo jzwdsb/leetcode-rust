@@ -3,7 +3,7 @@
 pub struct SortSolution {}
 
 impl SortSolution {
-    pub fn top_k_fequent(nums: Vec<i32>, k: i32) -> Vec<i32> {
+    pub fn top_k_frequent(nums: Vec<i32>, k: i32) -> Vec<i32> {
         let mut map = std::collections::HashMap::new();
         for num in nums {
             *map.entry(num).or_insert(0) += 1;
@@ -176,6 +176,11 @@ impl SortSolution {
 
         nums
     }
+
+    pub fn sort_by_bits(mut arr: Vec<i32>) -> Vec<i32> {
+        arr.sort_by_key(|&x| (x.count_ones(), x));
+        arr
+    }
 } // impl SortSolution
 
 #[cfg(test)]
@@ -185,7 +190,7 @@ mod test {
     #[test]
     fn test_top_k_fequent() {
         assert_eq!(
-            SortSolution::top_k_fequent(vec![1, 1, 1, 2, 2, 3], 2),
+            SortSolution::top_k_frequent(vec![1, 1, 1, 2, 2, 3], 2),
             vec![1, 2]
         );
     }
@@ -237,6 +242,14 @@ mod test {
         assert_eq!(
             SortSolution::sort_array_by_parity(vec![3, 1, 2, 4]),
             vec![4, 2, 1, 3]
+        );
+    }
+
+    #[test]
+    fn test_sort_by_bits() {
+        assert_eq!(
+            SortSolution::sort_by_bits(vec![0, 1, 2, 3, 4, 5, 6, 7, 8]),
+            vec![0, 1, 2, 4, 8, 3, 5, 6, 7]
         );
     }
 }
