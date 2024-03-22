@@ -464,6 +464,29 @@ impl ListSolution {
 
         Some(head)
     }
+
+    pub fn is_palindrome(head: List<i32>) -> bool {
+        let mut slow = head.as_ref();
+        let mut fast = head.as_ref();
+        let mut stack = Vec::new();
+        while let Some(f) = fast {
+            stack.push(slow.as_ref().unwrap().val);
+            fast = f.next.as_ref();
+            if let Some(f) = fast {
+                fast = f.next.as_ref();
+            } else {
+                break;
+            }
+            slow = slow.unwrap().next.as_ref();
+        }
+        while let Some(s) = slow {
+            if s.val != stack.pop().unwrap() {
+                return false;
+            }
+            slow = s.next.as_ref();
+        }
+        true
+    }
 }
 
 pub fn main() {}
@@ -751,5 +774,17 @@ mod tests {
         let b = 4;
         let ans = ListNode::from_vec(vec![0, 1, 2, 1000000, 1000001, 1000002, 5]);
         assert_eq!(ListSolution::merge_in_between(list1, a, b, list2), ans);
+    }
+
+    #[test]
+    fn test_is_palindrome() {
+        let head = ListNode::from_vec(vec![1, 2, 2, 1]);
+        assert_eq!(ListSolution::is_palindrome(head), true);
+        let head = ListNode::from_vec(vec![1, 2]);
+        assert_eq!(ListSolution::is_palindrome(head), false);
+        let head = ListNode::from_vec(vec![1, 2, 3, 2, 1]);
+        assert_eq!(ListSolution::is_palindrome(head), true);
+        let head = ListNode::from_vec(vec![1, 2, 3, 3, 2, 1]);
+        assert_eq!(ListSolution::is_palindrome(head), true);
     }
 }
