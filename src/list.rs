@@ -487,9 +487,59 @@ impl ListSolution {
         }
         true
     }
-}
 
-pub fn main() {}
+    pub fn reorder_list(head: &mut List<i32>) {
+        let count = Self::list_len(head);
+        if count <= 2 {
+            return;
+        }
+        let mid = Self::list_advance_mut(head, count / 2);
+
+        // reverse the second half of the list
+        let mut mid = mid.unwrap().next.take();
+        let mut reversed = ListNode::new(0);
+        while let Some(mut node) = mid.take() {
+            mid = node.next.take();
+            node.next = reversed.next.take();
+            reversed.next = Some(node);
+        }
+
+        // merge the two lists
+        let mut tail = match head.as_mut() {
+            None => unreachable!(),
+            Some(node) => &mut node.next,
+        };
+        
+        while tail.is_some() && reversed.next.is_some() {
+            let mut rev = reversed.next.take().unwrap();
+            reversed.next = rev.next.take();
+
+            rev.next = tail.take();
+            *tail = Some(rev);
+            tail = &mut tail.as_mut().unwrap().next;
+            if let Some(node) = tail {
+                tail = &mut node.next;
+            }
+        }
+    }
+    fn list_len<T>(head: &Option<Box<ListNode<T>>>) -> usize {
+        let mut len = 0;
+        let mut node = head.as_ref();
+        while let Some(n) = node {
+            len += 1;
+            node = n.next.as_ref();
+        }
+        len
+    }
+
+    fn list_advance_mut(head: &mut List<i32>, step: usize) -> Option<&mut Box<ListNode<i32>>> {
+        let mut node = head.as_mut();
+        for _ in 0..step {
+            node = node?.next.as_mut();
+        }
+        node
+    }
+}
 
 #[cfg(test)]
 mod tests {
@@ -786,5 +836,17 @@ mod tests {
         assert_eq!(ListSolution::is_palindrome(head), true);
         let head = ListNode::from_vec(vec![1, 2, 3, 3, 2, 1]);
         assert_eq!(ListSolution::is_palindrome(head), true);
+    }
+
+    #[test]
+    fn test_reorder_list() {
+        let mut head = ListNode::from_vec(vec![1, 2, 3, 4]);
+        let ans = ListNode::from_vec(vec![1, 4, 2, 3]);
+        ListSolution::reorder_list(&mut head);
+        assert_eq!(head, ans);
+        let mut head = ListNode::from_vec(vec![1, 2, 3, 4, 5]);
+        let ans = ListNode::from_vec(vec![1, 5, 2, 4, 3]);
+        ListSolution::reorder_list(&mut head);
+        assert_eq!(head, ans);
     }
 }
