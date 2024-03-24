@@ -509,7 +509,7 @@ impl ListSolution {
             None => unreachable!(),
             Some(node) => &mut node.next,
         };
-        
+
         while tail.is_some() && reversed.next.is_some() {
             let mut rev = reversed.next.take().unwrap();
             reversed.next = rev.next.take();

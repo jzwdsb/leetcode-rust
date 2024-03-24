@@ -399,6 +399,10 @@ impl MathSolution {
             // the bit 1 is in the odd position
             && (n & 0x55555555) != 0
     }
+
+    pub fn hamming_weight(n: i32) -> i32 {
+        (n as u32).count_ones() as i32
+    }
 } // impl MathSolution
 
 #[cfg(test)]
@@ -564,5 +568,12 @@ mod tests {
         assert!(MathSolution::is_power_of_four(16));
         assert!(!MathSolution::is_power_of_four(5));
         assert!(MathSolution::is_power_of_four(1));
+    }
+
+    #[test]
+    fn test_hamming_weights() {
+        assert_eq!(MathSolution::hamming_weight(11), 3);
+        assert_eq!(MathSolution::hamming_weight(128), 1);
+        assert_eq!(MathSolution::hamming_weight(2147483645), 30);
     }
 }

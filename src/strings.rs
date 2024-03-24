@@ -1191,6 +1191,12 @@ impl StringSolution {
         }
         tokens
     }
+
+    pub fn array_strings_are_equal(word1: Vec<String>, word2: Vec<String>) -> bool {
+        let word1 = word1.concat();
+        let word2 = word2.concat();
+        word1 == word2
+    }
 } // impl StringSolution
 
 #[cfg(test)]
@@ -1810,5 +1816,30 @@ mod tests {
         assert_eq!(StringSolution::calculator(" 3/2 ".to_string()), 1);
         assert_eq!(StringSolution::calculator(" 3+5 / 2 ".to_string()), 5);
         assert_eq!(StringSolution::calculator(" (3+5) / 2 ".to_string()), 4);
+    }
+
+    #[test]
+    fn test_array_strings_are_equal() {
+        assert_eq!(
+            StringSolution::array_strings_are_equal(
+                vec!["ab".to_string(), "c".to_string()],
+                vec!["a".to_string(), "bc".to_string()]
+            ),
+            true
+        );
+        assert_eq!(
+            StringSolution::array_strings_are_equal(
+                vec!["a".to_string(), "cb".to_string()],
+                vec!["ab".to_string(), "c".to_string()]
+            ),
+            false
+        );
+        assert_eq!(
+            StringSolution::array_strings_are_equal(
+                vec!["abc".to_string(), "d".to_string(), "defg".to_string()],
+                vec!["abcd".to_string(), "defg".to_string()]
+            ),
+            true
+        );
     }
 }
