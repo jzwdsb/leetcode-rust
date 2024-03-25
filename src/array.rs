@@ -1774,6 +1774,22 @@ impl ArraySolution {
         }
         idle_slots.max(0) + tasks.len() as i32
     }
+
+    pub fn find_duplicates(nums: Vec<i32>) -> Vec<i32> {
+        let mut res = Vec::new();
+        let mut nums = nums;
+        for i in 0..nums.len() {
+            let index = nums[i].unsigned_abs() as usize - 1;
+            if nums[index] < 0 {
+                // if the number is negative, that means we have seen the number
+                res.push(index as i32 + 1);
+            } else {
+                // mark the number as negative
+                nums[index] = -nums[index];
+            }
+        }
+        res
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2660,5 +2676,15 @@ mod tests {
             ),
             16
         );
+    }
+
+    #[test]
+    fn test_find_duplicates() {
+        assert_eq!(
+            ArraySolution::find_duplicates(vec![4, 3, 2, 7, 8, 2, 3, 1]),
+            vec![2, 3]
+        );
+        assert_eq!(ArraySolution::find_duplicates(vec![1, 1, 2]), vec![1]);
+        assert_eq!(ArraySolution::find_duplicates(vec![1]), Vec::<i32>::new());
     }
 }
