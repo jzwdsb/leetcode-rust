@@ -550,6 +550,46 @@ impl GraphSolution {
             + Self::dfs_max_island(matrix, visited, row, col + 1)
             + Self::dfs_max_island(matrix, visited, row, col - 1)
     }
+
+    pub fn exist(board: Vec<Vec<char>>, word: String) -> bool {
+        let mut visited = vec![vec![false; board[0].len()]; board.len()];
+        for i in 0..board.len() {
+            for j in 0..board[0].len() {
+                if Self::dfs_exist(&board, &mut visited, i as i32, j as i32, &word, 0) {
+                    return true;
+                }
+            }
+        }
+        false
+    }
+    fn dfs_exist(
+        board: &Vec<Vec<char>>,
+        visited: &mut Vec<Vec<bool>>,
+        i: i32,
+        j: i32,
+        word: &str,
+        pos: usize,
+    ) -> bool {
+        if pos == word.len() {
+            return true;
+        }
+        if i < 0
+            || j < 0
+            || i >= board.len() as i32
+            || j >= board[0].len() as i32
+            || visited[i as usize][j as usize]
+            || board[i as usize][j as usize] != word.chars().nth(pos).unwrap()
+        {
+            return false;
+        }
+        visited[i as usize][j as usize] = true;
+        let ans = Self::dfs_exist(board, visited, i + 1, j, word, pos + 1)
+            || Self::dfs_exist(board, visited, i - 1, j, word, pos + 1)
+            || Self::dfs_exist(board, visited, i, j + 1, word, pos + 1)
+            || Self::dfs_exist(board, visited, i, j - 1, word, pos + 1);
+        visited[i as usize][j as usize] = false;
+        ans
+    }
 }
 
 #[cfg(test)]
@@ -882,6 +922,43 @@ mod tests {
                 vec![0, 0, 0, 1, 1]
             ]),
             4
+        );
+    }
+
+    #[test]
+    fn test_exist() {
+        assert_eq!(
+            GraphSolution::exist(
+                vec![
+                    vec!['A', 'B', 'C', 'E'],
+                    vec!['S', 'F', 'C', 'S'],
+                    vec!['A', 'D', 'E', 'E']
+                ],
+                "ABCCED".to_string()
+            ),
+            true
+        );
+        assert_eq!(
+            GraphSolution::exist(
+                vec![
+                    vec!['A', 'B', 'C', 'E'],
+                    vec!['S', 'F', 'C', 'S'],
+                    vec!['A', 'D', 'E', 'E']
+                ],
+                "SEE".to_string()
+            ),
+            true
+        );
+        assert_eq!(
+            GraphSolution::exist(
+                vec![
+                    vec!['A', 'B', 'C', 'E'],
+                    vec!['S', 'F', 'C', 'S'],
+                    vec!['A', 'D', 'E', 'E']
+                ],
+                "ABCB".to_string()
+            ),
+            false
         );
     }
 }
