@@ -1197,6 +1197,24 @@ impl StringSolution {
         let word2 = word2.concat();
         word1 == word2
     }
+
+    pub fn max_depth(s: String) -> i32 {
+        let mut max = 0;
+        let mut depth = 0;
+        for c in s.chars() {
+            match c {
+                '(' => {
+                    depth += 1;
+                    max = max.max(depth);
+                }
+                ')' => {
+                    depth -= 1;
+                }
+                _ => {}
+            }
+        }
+        max
+    }
 } // impl StringSolution
 
 #[cfg(test)]
@@ -1841,5 +1859,19 @@ mod tests {
             ),
             true
         );
+    }
+
+    #[test]
+    fn test_max_depth() {
+        assert_eq!(
+            StringSolution::max_depth("(1+(2*3)+((8)/4))+1".to_string()),
+            3
+        );
+        assert_eq!(
+            StringSolution::max_depth("(1)+((2))+(((3)))".to_string()),
+            3
+        );
+        assert_eq!(StringSolution::max_depth("1+(2*3)/(2-1)".to_string()), 1);
+        assert_eq!(StringSolution::max_depth("1".to_string()), 0);
     }
 }
