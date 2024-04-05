@@ -1215,6 +1215,26 @@ impl StringSolution {
         }
         max
     }
+
+    pub fn make_good(s: String) -> String {
+        let mut res = String::new();
+        for c in s.chars() {
+            if res.is_empty() {
+                res.push(c);
+                continue;
+            }
+
+            let prev = res.pop().unwrap();
+            if prev.is_ascii_uppercase() != c.is_ascii_uppercase()
+                && prev.to_ascii_lowercase() == c.to_ascii_lowercase()
+            {
+                continue;
+            }
+            res.push(prev);
+            res.push(c);
+        }
+        res
+    }
 } // impl StringSolution
 
 #[cfg(test)]
@@ -1873,5 +1893,18 @@ mod tests {
         );
         assert_eq!(StringSolution::max_depth("1+(2*3)/(2-1)".to_string()), 1);
         assert_eq!(StringSolution::max_depth("1".to_string()), 0);
+    }
+
+    #[test]
+    fn test_make_good() {
+        assert_eq!(
+            StringSolution::make_good("leEeetcode".to_string()),
+            "leetcode".to_string()
+        );
+        assert_eq!(
+            StringSolution::make_good("abBAcC".to_string()),
+            "".to_string()
+        );
+        assert_eq!(StringSolution::make_good("s".to_string()), "s".to_string());
     }
 }
