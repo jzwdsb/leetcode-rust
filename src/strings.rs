@@ -1235,6 +1235,28 @@ impl StringSolution {
         }
         res
     }
+
+    pub fn min_remove_to_make_valid(s: String) -> String {
+        let mut stack = Vec::new();
+        let mut s = s.chars().collect::<Vec<char>>();
+        for (i, c) in s.iter_mut().enumerate() {
+            match *c {
+                '(' => stack.push(i),
+                ')' => {
+                    if stack.is_empty() {
+                        *c = ' ';
+                    } else {
+                        stack.pop();
+                    }
+                }
+                _ => {}
+            }
+        }
+        for &i in &stack {
+            s[i] = ' ';
+        }
+        s.iter().filter(|&&c| c != ' ').collect()
+    }
 } // impl StringSolution
 
 #[cfg(test)]
@@ -1906,5 +1928,25 @@ mod tests {
             "".to_string()
         );
         assert_eq!(StringSolution::make_good("s".to_string()), "s".to_string());
+    }
+
+    #[test]
+    fn test_test_min_remove_to_make_valid() {
+        assert_eq!(
+            StringSolution::min_remove_to_make_valid("lee(t(c)o)de)".to_string()),
+            "lee(t(c)o)de".to_string()
+        );
+        assert_eq!(
+            StringSolution::min_remove_to_make_valid("a)b(c)d".to_string()),
+            "ab(c)d".to_string()
+        );
+        assert_eq!(
+            StringSolution::min_remove_to_make_valid("))((".to_string()),
+            "".to_string()
+        );
+        assert_eq!(
+            StringSolution::min_remove_to_make_valid("(a(b(c)d)".to_string()),
+            "a(b(c)d)".to_string()
+        );
     }
 }
