@@ -1257,6 +1257,34 @@ impl StringSolution {
         }
         s.iter().filter(|&&c| c != ' ').collect()
     }
+
+    pub fn check_valid_string(s: String) -> bool {
+        let mut parentheses = Vec::new();
+        let mut asterisks = Vec::new();
+        for (i, c) in s.chars().enumerate() {
+            match c {
+                '(' => parentheses.push(i),
+                '*' => asterisks.push(i),
+                ')' => {
+                    if !parentheses.is_empty() {
+                        parentheses.pop();
+                    } else if !asterisks.is_empty() {
+                        asterisks.pop();
+                    } else {
+                        return false;
+                    }
+                }
+                _ => unreachable!(),
+            }
+        }
+        while !parentheses.is_empty() && !asterisks.is_empty() {
+            // if the last '(' appears after the last '*', it is invalid
+            if parentheses.pop().unwrap() > asterisks.pop().unwrap() {
+                return false;
+            }
+        }
+        parentheses.is_empty()
+    }
 } // impl StringSolution
 
 #[cfg(test)]
@@ -1947,6 +1975,18 @@ mod tests {
         assert_eq!(
             StringSolution::min_remove_to_make_valid("(a(b(c)d)".to_string()),
             "a(b(c)d)".to_string()
+        );
+    }
+
+    #[test]
+    fn test_check_valid_string() {
+        assert_eq!(StringSolution::check_valid_string("()".to_string()), true);
+        assert_eq!(StringSolution::check_valid_string("(*)".to_string()), true);
+        assert_eq!(StringSolution::check_valid_string("(*))".to_string()), true);
+        assert_eq!(StringSolution::check_valid_string("((*)".to_string()), true);
+        assert_eq!(
+            StringSolution::check_valid_string("((())".to_string()),
+            false
         );
     }
 }
