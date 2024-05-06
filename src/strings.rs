@@ -1285,6 +1285,28 @@ impl StringSolution {
         }
         parentheses.is_empty()
     }
+
+    pub fn find_repeated_dna_sequences(s: String) -> Vec<String> {
+        if s.len() < 10 {
+            return vec![];
+        }
+        let mut map = HashMap::new();
+        let mut res = HashSet::new();
+        let s = s.chars().collect::<Vec<char>>();
+        for i in 0..s.len() - 9 {
+            let seq = &s[i..i + 10];
+            let seq = seq.iter().collect::<String>();
+            if let Some(&count) = map.get(&seq) {
+                if count == 1 {
+                    res.insert(seq.clone());
+                }
+                map.insert(seq, count + 1);
+            } else {
+                map.insert(seq, 1);
+            }
+        }
+        res.into_iter().collect()
+    }
 } // impl StringSolution
 
 #[cfg(test)]
@@ -1988,5 +2010,20 @@ mod tests {
             StringSolution::check_valid_string("((())".to_string()),
             false
         );
+    }
+
+    #[test]
+    fn test_find_repeated_dna_sequences() {
+        let mut result = StringSolution::find_repeated_dna_sequences(
+            "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT".to_string(),
+        );
+        result.sort();
+        let expect = vec!["AAAAACCCCC".to_string(), "CCCCCAAAAA".to_string()];
+        assert_eq!(result, expect);
+
+        let mut result = StringSolution::find_repeated_dna_sequences("A".to_string());
+        result.sort();
+        let expect: Vec<String> = vec![];
+        assert_eq!(result, expect);
     }
 }
