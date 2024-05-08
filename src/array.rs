@@ -1790,6 +1790,26 @@ impl ArraySolution {
         }
         res
     }
+
+    pub fn number_of_boomerangs(points: Vec<Vec<i32>>) -> i32 {
+        let mut res = 0;
+        for p in &points {
+            let mut map = HashMap::new(); // distance -> count
+
+            // calculate the distance between each pair of points
+            for q in &points {
+                let d = (p[0] - q[0]).pow(2) + (p[1] - q[1]).pow(2);
+                *map.entry(d).or_insert(0) += 1;
+            }
+            // for each pair of points, we can form a boomerang
+            // the number of boomerangs that can be formed is the number of pairs
+            // that has the same distance
+            for &v in map.values() {
+                res += v * (v - 1);
+            }
+        }
+        res
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2686,5 +2706,18 @@ mod tests {
         );
         assert_eq!(ArraySolution::find_duplicates(vec![1, 1, 2]), vec![1]);
         assert_eq!(ArraySolution::find_duplicates(vec![1]), Vec::<i32>::new());
+    }
+
+    #[test]
+    fn test_number_of_boomerangs() {
+        assert_eq!(
+            ArraySolution::number_of_boomerangs(vec![vec![0, 0], vec![1, 0], vec![2, 0]]),
+            2
+        );
+        assert_eq!(
+            ArraySolution::number_of_boomerangs(vec![vec![1, 1], vec![2, 2], vec![3, 3]]),
+            2
+        );
+        assert_eq!(ArraySolution::number_of_boomerangs(vec![vec![1, 1]]), 0);
     }
 }
