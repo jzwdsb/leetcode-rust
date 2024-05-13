@@ -1810,6 +1810,34 @@ impl ArraySolution {
         }
         res
     }
+
+    pub fn matrix_score(mut grid: Vec<Vec<i32>>) -> i32 {
+        let (m, n) = (grid.len(), grid[0].len());
+        for i in 0..m {
+            // if the first element of the row is 0, we can flip the row
+            if grid[i][0] == 0 {
+                for j in 0..n {
+                    grid[i][j] ^= 1;
+                }
+            }
+        }
+        // if the number of 1s in the column is less than the number of 0s
+        // we can flip the column
+        for j in 1..n {
+            let mut cnt = 0;
+            for i in 0..m {
+                cnt += grid[i][j];
+            }
+            if cnt * 2 < m as i32 {
+                for i in 0..m {
+                    grid[i][j] ^= 1;
+                }
+            }
+        }
+        grid.iter().fold(0, |acc, row| {
+            acc + row.iter().fold(0, |acc, &v| acc * 2 + v)
+        })
+    }
 } // impl ArraySolution
 
 #[cfg(test)]
@@ -2719,5 +2747,14 @@ mod tests {
             2
         );
         assert_eq!(ArraySolution::number_of_boomerangs(vec![vec![1, 1]]), 0);
+    }
+
+    #[test]
+    fn test_matrix_score() {
+        assert_eq!(
+            ArraySolution::matrix_score(vec![vec![0, 0, 1, 1], vec![1, 0, 1, 0], vec![1, 1, 0, 0]]),
+            39
+        );
+        assert_eq!(ArraySolution::matrix_score(vec![vec![0]]), 1);
     }
 }
