@@ -326,6 +326,40 @@ impl BackStrackSolution {
             path.pop();
         }
     }
+
+    fn get_maximum_gold(grid: Vec<Vec<i32>>) -> i32 {
+        let mut max = 0;
+        let mut grid = grid;
+        for i in 0..grid.len() {
+            for j in 0..grid[0].len() {
+                if grid[i][j] != 0 {
+                    max = max.max(Self::gold_dfs(&mut grid, i as i32, j as i32));
+                }
+            }
+        }
+        max
+    }
+
+    fn gold_dfs(grid: &mut Vec<Vec<i32>>, i: i32, j: i32) -> i32 {
+        if i < 0
+            || j < 0
+            || grid.len() as i32 <= i
+            || grid[0].len() as i32 <= j
+            || grid[i as usize][j as usize] == 0
+        {
+            return 0;
+        }
+
+        let val = grid[i as usize][j as usize];
+        grid[i as usize][j as usize] = 0;
+        let mut max = 0;
+        max = max.max(Self::gold_dfs(grid, i + 1, j));
+        max = max.max(Self::gold_dfs(grid, i, j + 1));
+        max = max.max(Self::gold_dfs(grid, i - 1, j));
+        max = max.max(Self::gold_dfs(grid, i, j - 1));
+        grid[i as usize][j as usize] = val;
+        max + val
+    }
 }
 
 #[cfg(test)]
@@ -461,5 +495,11 @@ mod tests {
                 vec![2, 2]
             ]
         );
+    }
+
+    #[test]
+    fn test_get_maximum_gold() {
+        let grid = vec![vec![0, 6, 0], vec![5, 8, 7], vec![0, 9, 0]];
+        assert_eq!(BackStrackSolution::get_maximum_gold(grid), 24);
     }
 }
