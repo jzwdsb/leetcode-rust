@@ -1,8 +1,6 @@
 #![allow(dead_code)]
 
-pub struct BackStrackSolution {}
-
-impl BackStrackSolution {
+pub mod back_strack_solution {
     /*
     link: https://leetcode.com/problems/combination-sum/description/
     solve this problem by backtracking
@@ -14,7 +12,7 @@ impl BackStrackSolution {
     pub fn combination_sum(candidates: Vec<i32>, target: i32) -> Vec<Vec<i32>> {
         let mut result = vec![];
         let mut path = vec![];
-        Self::backtrack(&mut result, &mut path, &candidates, target, 0);
+        backtrack(&mut result, &mut path, &candidates, target, 0);
         result
     }
     fn backtrack(
@@ -32,7 +30,7 @@ impl BackStrackSolution {
         }
         for i in start..candidates.len() {
             path.push(candidates[i]);
-            Self::backtrack(result, path, candidates, target - candidates[i], i);
+            backtrack(result, path, candidates, target - candidates[i], i);
             path.pop();
         }
     }
@@ -48,7 +46,7 @@ impl BackStrackSolution {
         let mut path = vec![];
         let mut candidates = candidates;
         candidates.sort();
-        Self::backtrack2(&mut result, &mut path, &candidates, target, 0);
+        backtrack2(&mut result, &mut path, &candidates, target, 0);
         result
     }
 
@@ -74,7 +72,7 @@ impl BackStrackSolution {
                 break;
             }
             path.push(candidates[i]);
-            Self::backtrack2(result, path, candidates, target - candidates[i], i + 1);
+            backtrack2(result, path, candidates, target - candidates[i], i + 1);
             path.pop();
         }
     }
@@ -86,7 +84,7 @@ impl BackStrackSolution {
 
     pub fn combine(n: i32, k: i32) -> Vec<Vec<i32>> {
         let mut res = vec![];
-        Self::backtrack3(&mut res, &mut vec![], n, k);
+        backtrack3(&mut res, &mut vec![], n, k);
         res
     }
 
@@ -97,7 +95,7 @@ impl BackStrackSolution {
         }
         for i in curr.last().unwrap_or(&0) + 1..=(n - k + 1) {
             curr.push(i);
-            Self::backtrack3(res, curr, n, k - 1);
+            backtrack3(res, curr, n, k - 1);
             curr.pop();
         }
     }
@@ -116,7 +114,7 @@ impl BackStrackSolution {
     pub fn solve_n_queens(n: i32) -> Vec<Vec<String>> {
         let mut res = vec![];
         let mut curr = vec![];
-        Self::queen_backtrack(&mut res, &mut curr, n);
+        queen_backtrack(&mut res, &mut curr, n);
         res
     }
 
@@ -128,11 +126,11 @@ impl BackStrackSolution {
 
         // try to place a queen on each column
         for i in 0..n {
-            if Self::is_valid_queen(curr, i, n) {
+            if is_valid_queen(curr, i, n) {
                 let mut s = vec!['.'; n as usize].iter().collect::<String>();
                 s.replace_range(i as usize..i as usize + 1, "Q");
                 curr.push(s);
-                Self::queen_backtrack(res, curr, n);
+                queen_backtrack(res, curr, n);
                 curr.pop();
             }
         }
@@ -175,7 +173,7 @@ impl BackStrackSolution {
     pub fn total_n_queens(n: i32) -> i32 {
         let mut res = 0;
         let mut curr = vec![];
-        Self::queen_backtrack2(&mut res, &mut curr, n);
+        queen_backtrack2(&mut res, &mut curr, n);
         res
     }
 
@@ -187,11 +185,11 @@ impl BackStrackSolution {
 
         // try to place a queen on each column
         for i in 0..n {
-            if Self::is_valid_queen(curr, i, n) {
+            if is_valid_queen(curr, i, n) {
                 let mut s = vec!['.'; n as usize].iter().collect::<String>();
                 s.replace_range(i as usize..i as usize + 1, "Q");
                 curr.push(s);
-                Self::queen_backtrack2(res, curr, n);
+                queen_backtrack2(res, curr, n);
                 curr.pop();
             }
         }
@@ -200,7 +198,7 @@ impl BackStrackSolution {
     pub fn subsets(num: Vec<i32>) -> Vec<Vec<i32>> {
         let mut res = vec![];
         let mut curr = vec![];
-        Self::subset_backtrack(&mut res, &mut curr, &num, 0);
+        subset_backtrack(&mut res, &mut curr, &num, 0);
         res
     }
 
@@ -211,7 +209,7 @@ impl BackStrackSolution {
         }
         for i in pos..num.len() {
             curr.push(num[i]);
-            Self::subset_backtrack(res, curr, num, i + 1);
+            subset_backtrack(res, curr, num, i + 1);
             curr.pop();
         }
     }
@@ -221,7 +219,7 @@ impl BackStrackSolution {
         let mut path = Vec::new();
         let mut nums = nums;
         nums.sort_unstable();
-        Self::backtrack_ii(&nums, 0, &mut path, &mut res);
+        backtrack_ii(&nums, 0, &mut path, &mut res);
         res
     }
 
@@ -233,13 +231,13 @@ impl BackStrackSolution {
                 continue;
             }
             path.push(nums[i]);
-            Self::backtrack_ii(nums, i + 1, path, res);
+            backtrack_ii(nums, i + 1, path, res);
             path.pop();
         }
     }
 
     pub fn solve_sudoko(board: &mut Vec<Vec<char>>) {
-        Self::sudoko_backtrack(board, 0, 0);
+        sudoko_backtrack(board, 0, 0);
     }
 
     fn sudoko_backtrack(board: &mut Vec<Vec<char>>, row: usize, col: usize) -> bool {
@@ -249,18 +247,18 @@ impl BackStrackSolution {
         }
         // if the current row is filled, go to the next position
         if col == 9 {
-            return Self::sudoko_backtrack(board, row + 1, 0);
+            return sudoko_backtrack(board, row + 1, 0);
         }
         // if the current position is not empty, go to the next position
         if board[row][col] != '.' {
-            return Self::sudoko_backtrack(board, row, col + 1);
+            return sudoko_backtrack(board, row, col + 1);
         }
         // try to fill the current position with 1 to 9
         for i in 1..=9 {
-            if Self::is_valid_sudoko(board, row, col, i) {
+            if is_valid_sudoko(board, row, col, i) {
                 board[row][col] = i.to_string().chars().next().unwrap();
                 // if the next position is filled, return true
-                if Self::sudoko_backtrack(board, row, col + 1) {
+                if sudoko_backtrack(board, row, col + 1) {
                     return true;
                 } else {
                     // else rollback the current position
@@ -294,7 +292,7 @@ impl BackStrackSolution {
     pub fn restore_ip_addresses(s: String) -> Vec<String> {
         let mut res = Vec::new();
         let mut path = Vec::new();
-        Self::ip_backtrack(&s, 0, &mut path, &mut res);
+        ip_backtrack(&s, 0, &mut path, &mut res);
         res
     }
 
@@ -322,18 +320,18 @@ impl BackStrackSolution {
                 break;
             }
             path.push(num.to_string());
-            Self::ip_backtrack(s, i + 1, path, res);
+            ip_backtrack(s, i + 1, path, res);
             path.pop();
         }
     }
 
-    fn get_maximum_gold(grid: Vec<Vec<i32>>) -> i32 {
+    pub fn get_maximum_gold(grid: Vec<Vec<i32>>) -> i32 {
         let mut max = 0;
         let mut grid = grid;
         for i in 0..grid.len() {
             for j in 0..grid[0].len() {
                 if grid[i][j] != 0 {
-                    max = max.max(Self::gold_dfs(&mut grid, i as i32, j as i32));
+                    max = max.max(gold_dfs(&mut grid, i as i32, j as i32));
                 }
             }
         }
@@ -353,45 +351,39 @@ impl BackStrackSolution {
         let val = grid[i as usize][j as usize];
         grid[i as usize][j as usize] = 0;
         let mut max = 0;
-        max = max.max(Self::gold_dfs(grid, i + 1, j));
-        max = max.max(Self::gold_dfs(grid, i, j + 1));
-        max = max.max(Self::gold_dfs(grid, i - 1, j));
-        max = max.max(Self::gold_dfs(grid, i, j - 1));
+        max = max.max(gold_dfs(grid, i + 1, j));
+        max = max.max(gold_dfs(grid, i, j + 1));
+        max = max.max(gold_dfs(grid, i - 1, j));
+        max = max.max(gold_dfs(grid, i, j - 1));
         grid[i as usize][j as usize] = val;
         max + val
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
-
     #[test]
     fn test_combination_sum() {
-        let mut result = BackStrackSolution::combination_sum(vec![2, 3, 6, 7], 7);
+        let mut result = combination_sum(vec![2, 3, 6, 7], 7);
         result.sort();
         assert_eq!(result, vec![vec![2, 2, 3], vec![7]]);
-        let mut result = BackStrackSolution::combination_sum(vec![2, 3, 5], 8);
+        let mut result = combination_sum(vec![2, 3, 5], 8);
         result.sort();
         assert_eq!(result, vec![vec![2, 2, 2, 2], vec![2, 3, 3], vec![3, 5]]);
     }
 
     #[test]
     fn test_combination_sum2() {
-        let mut result = BackStrackSolution::combination_sum2(vec![10, 1, 2, 7, 6, 1, 5], 8);
+        let mut result = combination_sum2(vec![10, 1, 2, 7, 6, 1, 5], 8);
         result.sort();
         assert_eq!(
             result,
             vec![vec![1, 1, 6], vec![1, 2, 5], vec![1, 7], vec![2, 6]]
         );
-        let mut result = BackStrackSolution::combination_sum2(vec![2, 5, 2, 1, 2], 5);
+        let mut result = combination_sum2(vec![2, 5, 2, 1, 2], 5);
         result.sort();
         assert_eq!(result, vec![vec![1, 2, 2], vec![5]]);
     }
 
     #[test]
     fn test_combination() {
-        let mut result = BackStrackSolution::combine(4, 2);
+        let mut result = combine(4, 2);
         result.sort();
         assert_eq!(
             result,
@@ -409,7 +401,7 @@ mod tests {
     #[test]
     fn test_solve_n_queens() {
         assert_eq!(
-            BackStrackSolution::solve_n_queens(4),
+            solve_n_queens(4),
             vec![
                 vec![".Q..", "...Q", "Q...", "..Q."],
                 vec!["..Q.", "Q...", "...Q", ".Q.."]
@@ -419,12 +411,12 @@ mod tests {
 
     #[test]
     fn test_solve_n_queen_ii() {
-        assert_eq!(BackStrackSolution::total_n_queens(4), 2);
+        assert_eq!(total_n_queens(4), 2);
     }
 
     #[test]
     fn test_subset() {
-        let mut result = BackStrackSolution::subsets(vec![1, 2, 3]);
+        let mut result = subsets(vec![1, 2, 3]);
         result.sort();
         assert_eq!(
             result,
@@ -454,7 +446,7 @@ mod tests {
             vec!['.', '.', '.', '4', '1', '9', '.', '.', '5'],
             vec!['.', '.', '.', '.', '8', '.', '.', '7', '9'],
         ];
-        BackStrackSolution::solve_sudoko(&mut board);
+        solve_sudoko(&mut board);
         assert_eq!(
             board,
             vec![
@@ -473,7 +465,7 @@ mod tests {
 
     #[test]
     fn test_restore_ip_addresses() {
-        let mut result = BackStrackSolution::restore_ip_addresses("25525511135".to_string());
+        let mut result = restore_ip_addresses("25525511135".to_string());
         result.sort();
         let mut expect = vec!["255.255.111.35", "255.255.11.135"];
         expect.sort();
@@ -482,7 +474,7 @@ mod tests {
 
     #[test]
     fn test_subsets_with_dup_ii() {
-        let mut result = BackStrackSolution::subsets_with_dup_ii(vec![1, 2, 2]);
+        let mut result = subsets_with_dup_ii(vec![1, 2, 2]);
         result.sort();
         assert_eq!(
             result,
@@ -500,6 +492,6 @@ mod tests {
     #[test]
     fn test_get_maximum_gold() {
         let grid = vec![vec![0, 6, 0], vec![5, 8, 7], vec![0, 9, 0]];
-        assert_eq!(BackStrackSolution::get_maximum_gold(grid), 24);
+        assert_eq!(get_maximum_gold(grid), 24);
     }
-}
+} // mod back_strack_solution

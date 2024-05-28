@@ -1,18 +1,15 @@
 #![allow(dead_code)]
 
-use std::cell::RefCell;
-use std::cmp::Reverse;
-use std::collections::{BinaryHeap, HashMap, VecDeque};
-use std::rc::Rc;
+pub mod graph_solution {
+    use std::cell::RefCell;
+    use std::cmp::Reverse;
+    use std::collections::{BinaryHeap, HashMap, VecDeque};
+    use std::rc::Rc;
 
-struct Node {
-    val: i32,
-    nodes: Vec<Rc<RefCell<Node>>>,
-}
-
-pub struct GraphSolution {}
-
-impl GraphSolution {
+    struct Node {
+        val: i32,
+        nodes: Vec<Rc<RefCell<Node>>>,
+    }
     /*
     link: https://leetcode.com/problems/course-schedule/
     check whether it is possible to finish all courses.
@@ -28,7 +25,7 @@ impl GraphSolution {
         }
 
         for i in 0..num_courses {
-            if !Self::dfs(&graph, &mut visited, i as usize) {
+            if !dfs(&graph, &mut visited, i as usize) {
                 return false;
             }
         }
@@ -44,7 +41,7 @@ impl GraphSolution {
         }
         visited[i] = 1;
         for &j in &graph[i] {
-            if !Self::dfs(graph, visited, j) {
+            if !dfs(graph, visited, j) {
                 return false;
             }
         }
@@ -175,7 +172,7 @@ impl GraphSolution {
                 if i == j {
                     continue;
                 }
-                let distance = Self::distance(&bombs[i], &bombs[j]);
+                let distance = distance(&bombs[i], &bombs[j]);
                 if distance <= bombs[i].2 as f64 {
                     graph[i][j] = 1;
                 }
@@ -187,7 +184,7 @@ impl GraphSolution {
 
         for i in 0..bombs.len() {
             let mut path = vec![];
-            ans = ans.max(Self::walk_bomb_graph(&graph, &mut path, i));
+            ans = ans.max(walk_bomb_graph(&graph, &mut path, i));
         }
 
         ans as i32
@@ -211,7 +208,7 @@ impl GraphSolution {
             if graph[pos][next] == 0 {
                 continue;
             }
-            depth = depth.max(Self::walk_bomb_graph(graph, path, next));
+            depth = depth.max(walk_bomb_graph(graph, path, next));
         }
 
         depth
@@ -223,15 +220,8 @@ impl GraphSolution {
         for i in 0..board.len() {
             for j in 0..board[0].len() {
                 if board[i][j] == word.chars().next_back().unwrap() {
-                    ans = ans
-                        || Self::dfs_word_search(
-                            &board,
-                            &mut visited,
-                            i as i32,
-                            j as i32,
-                            &word,
-                            0,
-                        );
+                    ans =
+                        ans || dfs_word_search(&board, &mut visited, i as i32, j as i32, &word, 0);
                     if ans {
                         return ans;
                     }
@@ -264,10 +254,10 @@ impl GraphSolution {
             return false;
         }
         visited[i as usize][j as usize] = true;
-        let ans = Self::dfs_word_search(board, visited, i + 1, j, word, pos + 1)
-            || Self::dfs_word_search(board, visited, i, j + 1, word, pos + 1)
-            || Self::dfs_word_search(board, visited, i - 1, j, word, pos + 1)
-            || Self::dfs_word_search(board, visited, i, j - 1, word, pos + 1);
+        let ans = dfs_word_search(board, visited, i + 1, j, word, pos + 1)
+            || dfs_word_search(board, visited, i, j + 1, word, pos + 1)
+            || dfs_word_search(board, visited, i - 1, j, word, pos + 1)
+            || dfs_word_search(board, visited, i, j - 1, word, pos + 1);
         visited[i as usize][j as usize] = false;
         ans
     }
@@ -334,7 +324,7 @@ impl GraphSolution {
                 if visited[i] {
                     continue;
                 }
-                if Self::is_one_char_diff(&word, &word_list[i]) {
+                if is_one_char_diff(&word, &word_list[i]) {
                     deque.push_back((word_list[i].clone(), step + 1));
                     visited[i] = true;
                 }
@@ -436,8 +426,8 @@ impl GraphSolution {
             let mut j = i;
             // merge people who are in the same group
             while j < meetings.len() && meetings[j].2 == meetings[i].2 {
-                let mut a = Self::find_root(&mut parent, meetings[j].0 as usize);
-                let mut b = Self::find_root(&mut parent, meetings[j].1 as usize);
+                let mut a = find_root(&mut parent, meetings[j].0 as usize);
+                let mut b = find_root(&mut parent, meetings[j].1 as usize);
 
                 if a > b {
                     std::mem::swap(&mut a, &mut b);
@@ -448,10 +438,10 @@ impl GraphSolution {
             j = i;
             // reset each person who is not in the same group as the first person
             while j < meetings.len() && meetings[j].2 == meetings[i].2 {
-                if Self::find_root(&mut parent, meetings[j].0 as usize) != 0 {
+                if find_root(&mut parent, meetings[j].0 as usize) != 0 {
                     parent[meetings[j].0 as usize] = meetings[j].0 as usize;
                 }
-                if Self::find_root(&mut parent, meetings[j].1 as usize) != 0 {
+                if find_root(&mut parent, meetings[j].1 as usize) != 0 {
                     parent[meetings[j].1 as usize] = meetings[j].1 as usize;
                 }
                 j += 1;
@@ -463,7 +453,7 @@ impl GraphSolution {
         for i in 0..parent.len() {
             // if the root of the disjoint set is 0
             // then the person is in the same group as the first person
-            if Self::find_root(&mut parent, i) == 0 {
+            if find_root(&mut parent, i) == 0 {
                 ans.push(i as i32);
             }
         }
@@ -474,7 +464,7 @@ impl GraphSolution {
     // find the root of the disjoint set for given i
     fn find_root(parent: &mut Vec<usize>, i: usize) -> usize {
         if parent[i] != i {
-            parent[i] = Self::find_root(parent, parent[i]);
+            parent[i] = find_root(parent, parent[i]);
         }
         parent[i]
     }
@@ -485,7 +475,7 @@ impl GraphSolution {
         for i in 0..matrix.len() {
             for j in 0..matrix[0].len() {
                 if matrix[i][j] == 1 && !visited[i][j] {
-                    Self::dfs_count_island(&matrix, &mut visited, i as i32, j as i32);
+                    dfs_count_island(&matrix, &mut visited, i as i32, j as i32);
                     count += 1;
                 }
             }
@@ -504,10 +494,10 @@ impl GraphSolution {
             return;
         }
         visited[i as usize][j as usize] = true;
-        Self::dfs_count_island(matrix, visited, i + 1, j);
-        Self::dfs_count_island(matrix, visited, i - 1, j);
-        Self::dfs_count_island(matrix, visited, i, j + 1);
-        Self::dfs_count_island(matrix, visited, i, j - 1);
+        dfs_count_island(matrix, visited, i + 1, j);
+        dfs_count_island(matrix, visited, i - 1, j);
+        dfs_count_island(matrix, visited, i, j + 1);
+        dfs_count_island(matrix, visited, i, j - 1);
     }
 
     pub fn max_island(matrix: Vec<Vec<i32>>) -> i32 {
@@ -516,12 +506,7 @@ impl GraphSolution {
         for i in 0..matrix.len() {
             for j in 0..matrix[0].len() {
                 if matrix[i][j] == 1 && !visited[i][j] {
-                    max = max.max(Self::dfs_max_island(
-                        &matrix,
-                        &mut visited,
-                        i as i32,
-                        j as i32,
-                    ));
+                    max = max.max(dfs_max_island(&matrix, &mut visited, i as i32, j as i32));
                 }
             }
         }
@@ -545,17 +530,17 @@ impl GraphSolution {
         }
         visited[row as usize][col as usize] = true;
 
-        1 + Self::dfs_max_island(matrix, visited, row + 1, col)
-            + Self::dfs_max_island(matrix, visited, row - 1, col)
-            + Self::dfs_max_island(matrix, visited, row, col + 1)
-            + Self::dfs_max_island(matrix, visited, row, col - 1)
+        1 + dfs_max_island(matrix, visited, row + 1, col)
+            + dfs_max_island(matrix, visited, row - 1, col)
+            + dfs_max_island(matrix, visited, row, col + 1)
+            + dfs_max_island(matrix, visited, row, col - 1)
     }
 
     pub fn exist(board: Vec<Vec<char>>, word: String) -> bool {
         let mut visited = vec![vec![false; board[0].len()]; board.len()];
         for i in 0..board.len() {
             for j in 0..board[0].len() {
-                if Self::dfs_exist(&board, &mut visited, i as i32, j as i32, &word, 0) {
+                if dfs_exist(&board, &mut visited, i as i32, j as i32, &word, 0) {
                     return true;
                 }
             }
@@ -583,39 +568,28 @@ impl GraphSolution {
             return false;
         }
         visited[i as usize][j as usize] = true;
-        let ans = Self::dfs_exist(board, visited, i + 1, j, word, pos + 1)
-            || Self::dfs_exist(board, visited, i - 1, j, word, pos + 1)
-            || Self::dfs_exist(board, visited, i, j + 1, word, pos + 1)
-            || Self::dfs_exist(board, visited, i, j - 1, word, pos + 1);
+        let ans = dfs_exist(board, visited, i + 1, j, word, pos + 1)
+            || dfs_exist(board, visited, i - 1, j, word, pos + 1)
+            || dfs_exist(board, visited, i, j + 1, word, pos + 1)
+            || dfs_exist(board, visited, i, j - 1, word, pos + 1);
         visited[i as usize][j as usize] = false;
         ans
     }
-}
-
-#[cfg(test)]
-mod tests {
-    use super::*;
 
     #[test]
     fn test_can_finish() {
-        assert_eq!(GraphSolution::can_finish(2, vec![vec![1, 0]]), true);
-        assert_eq!(
-            GraphSolution::can_finish(2, vec![vec![1, 0], vec![0, 1]]),
-            false
-        );
+        assert_eq!(can_finish(2, vec![vec![1, 0]]), true);
+        assert_eq!(can_finish(2, vec![vec![1, 0], vec![0, 1]]), false);
     }
 
     #[test]
     fn test_maximal_network_rank() {
         assert_eq!(
-            GraphSolution::maximal_network_rank(
-                4,
-                vec![vec![0, 1], vec![0, 3], vec![1, 2], vec![1, 3]]
-            ),
+            maximal_network_rank(4, vec![vec![0, 1], vec![0, 3], vec![1, 2], vec![1, 3]]),
             4
         );
         assert_eq!(
-            GraphSolution::maximal_network_rank(
+            maximal_network_rank(
                 5,
                 vec![
                     vec![0, 1],
@@ -633,15 +607,15 @@ mod tests {
     #[test]
     fn test_minimum_effort_path() {
         assert_eq!(
-            GraphSolution::minimum_effort_path(vec![vec![1, 2, 2], vec![3, 8, 2], vec![5, 3, 5]]),
+            minimum_effort_path(vec![vec![1, 2, 2], vec![3, 8, 2], vec![5, 3, 5]]),
             2
         );
         assert_eq!(
-            GraphSolution::minimum_effort_path(vec![vec![1, 2, 3], vec![3, 8, 4], vec![5, 3, 5]]),
+            minimum_effort_path(vec![vec![1, 2, 3], vec![3, 8, 4], vec![5, 3, 5]]),
             1
         );
         assert_eq!(
-            GraphSolution::minimum_effort_path(vec![
+            minimum_effort_path(vec![
                 vec![1, 2, 1, 1, 1],
                 vec![1, 2, 1, 2, 1],
                 vec![1, 2, 1, 2, 1],
@@ -650,10 +624,7 @@ mod tests {
             ]),
             0
         );
-        assert_eq!(
-            GraphSolution::minimum_effort_path(vec![vec![1, 10, 6, 7, 9, 10, 4, 9]]),
-            9
-        );
+        assert_eq!(minimum_effort_path(vec![vec![1, 10, 6, 7, 9, 10, 4, 9]]), 9);
     }
 
     #[test]
@@ -663,30 +634,15 @@ mod tests {
 
     #[test]
     fn test_maximum_detonation() {
+        assert_eq!(maximum_detonation(vec![(2, 1, 3), (6, 1, 4)]), 2);
+        assert_eq!(maximum_detonation(vec![(1, 1, 5), (10, 10, 5)]), 1);
         assert_eq!(
-            GraphSolution::maximum_detonation(vec![(2, 1, 3), (6, 1, 4)]),
-            2
-        );
-        assert_eq!(
-            GraphSolution::maximum_detonation(vec![(1, 1, 5), (10, 10, 5)]),
-            1
-        );
-        assert_eq!(
-            GraphSolution::maximum_detonation(vec![
-                (1, 2, 3),
-                (2, 3, 1),
-                (3, 4, 2),
-                (4, 5, 3),
-                (5, 6, 4)
-            ]),
+            maximum_detonation(vec![(1, 2, 3), (2, 3, 1), (3, 4, 2), (4, 5, 3), (5, 6, 4)]),
             5
         );
+        assert_eq!(maximum_detonation(vec![(2, 1, 3), (6, 1, 4)]), 2);
         assert_eq!(
-            GraphSolution::maximum_detonation(vec![(2, 1, 3), (6, 1, 4)]),
-            2
-        );
-        assert_eq!(
-            GraphSolution::maximum_detonation(vec![
+            maximum_detonation(vec![
                 (54, 95, 4),
                 (99, 46, 3),
                 (29, 21, 3),
@@ -708,7 +664,7 @@ mod tests {
             1
         );
         assert_eq!(
-            GraphSolution::maximum_detonation(vec![
+            maximum_detonation(vec![
                 (85024, 58997, 3532),
                 (65196, 42043, 9739),
                 (85872, 75029, 3117),
@@ -747,7 +703,7 @@ mod tests {
     #[test]
     fn test_word_search() {
         assert_eq!(
-            GraphSolution::shortest_path_with_max_coin(vec![
+            shortest_path_with_max_coin(vec![
                 vec!["S", "3", "2", "4"],
                 vec!["1", "2", "G", "1"],
                 vec!["2", "4", "2", "5"],
@@ -756,7 +712,7 @@ mod tests {
             5
         );
         assert_eq!(
-            GraphSolution::shortest_path_with_max_coin(vec![
+            shortest_path_with_max_coin(vec![
                 vec!["6", "3", "2", "G"],
                 vec!["3", "2", "3", "1"],
                 vec!["2", "3", "8", "5"],
@@ -769,7 +725,7 @@ mod tests {
     #[test]
     fn test_word_ladder() {
         assert_eq!(
-            GraphSolution::word_ladder(
+            word_ladder(
                 "hit".to_string(),
                 "cog".to_string(),
                 vec![
@@ -784,7 +740,7 @@ mod tests {
             5
         );
         assert_eq!(
-            GraphSolution::word_ladder(
+            word_ladder(
                 "hit".to_string(),
                 "cog".to_string(),
                 vec![
@@ -802,27 +758,15 @@ mod tests {
     #[test]
     fn test_find_cheapest_price() {
         assert_eq!(
-            GraphSolution::find_cheapest_price(
-                3,
-                vec![(0, 1, 100), (1, 2, 100), (0, 2, 500)],
-                0,
-                2,
-                1
-            ),
+            find_cheapest_price(3, vec![(0, 1, 100), (1, 2, 100), (0, 2, 500)], 0, 2, 1),
             200
         );
         assert_eq!(
-            GraphSolution::find_cheapest_price(
-                3,
-                vec![(0, 1, 100), (1, 2, 100), (0, 2, 500)],
-                0,
-                2,
-                0
-            ),
+            find_cheapest_price(3, vec![(0, 1, 100), (1, 2, 100), (0, 2, 500)], 0, 2, 0),
             500
         );
         assert_eq!(
-            GraphSolution::find_cheapest_price(
+            find_cheapest_price(
                 4,
                 vec![
                     (0, 1, 100),
@@ -838,7 +782,7 @@ mod tests {
             700
         );
         assert_eq!(
-            GraphSolution::find_cheapest_price(
+            find_cheapest_price(
                 10,
                 vec![
                     (3, 4, 4),
@@ -877,15 +821,15 @@ mod tests {
     #[test]
     fn test_find_all_people() {
         assert_eq!(
-            GraphSolution::find_all_people(6, vec![(1, 2, 5), (2, 3, 8), (1, 5, 10)], 1),
+            find_all_people(6, vec![(1, 2, 5), (2, 3, 8), (1, 5, 10)], 1),
             vec![0, 1, 2, 3, 5]
         );
         assert_eq!(
-            GraphSolution::find_all_people(4, vec![(3, 1, 3), (1, 2, 2), (0, 3, 3)], 3),
+            find_all_people(4, vec![(3, 1, 3), (1, 2, 2), (0, 3, 3)], 3),
             vec![0, 1, 3]
         );
         assert_eq!(
-            GraphSolution::find_all_people(6, vec![(0, 2, 1), (1, 3, 1), (4, 5, 1)], 1),
+            find_all_people(6, vec![(0, 2, 1), (1, 3, 1), (4, 5, 1)], 1),
             vec![0, 1, 2, 3]
         )
     }
@@ -893,7 +837,7 @@ mod tests {
     #[test]
     fn test_count_island() {
         assert_eq!(
-            GraphSolution::count_island(vec![
+            count_island(vec![
                 vec![1, 1, 1, 1, 0],
                 vec![1, 1, 0, 1, 0],
                 vec![1, 1, 0, 0, 0],
@@ -902,7 +846,7 @@ mod tests {
             1
         );
         assert_eq!(
-            GraphSolution::count_island(vec![
+            count_island(vec![
                 vec![1, 1, 0, 0, 0],
                 vec![1, 1, 0, 0, 0],
                 vec![0, 0, 1, 0, 0],
@@ -913,9 +857,9 @@ mod tests {
     }
 
     #[test]
-    fn max_island() {
+    fn test_max_island() {
         assert_eq!(
-            GraphSolution::max_island(vec![
+            max_island(vec![
                 vec![1, 1, 0, 0, 0],
                 vec![1, 1, 0, 0, 0],
                 vec![0, 0, 1, 0, 0],
@@ -928,7 +872,7 @@ mod tests {
     #[test]
     fn test_exist() {
         assert_eq!(
-            GraphSolution::exist(
+            exist(
                 vec![
                     vec!['A', 'B', 'C', 'E'],
                     vec!['S', 'F', 'C', 'S'],
@@ -939,7 +883,7 @@ mod tests {
             true
         );
         assert_eq!(
-            GraphSolution::exist(
+            exist(
                 vec![
                     vec!['A', 'B', 'C', 'E'],
                     vec!['S', 'F', 'C', 'S'],
@@ -950,7 +894,7 @@ mod tests {
             true
         );
         assert_eq!(
-            GraphSolution::exist(
+            exist(
                 vec![
                     vec!['A', 'B', 'C', 'E'],
                     vec!['S', 'F', 'C', 'S'],
@@ -961,4 +905,4 @@ mod tests {
             false
         );
     }
-}
+} // mod graph

@@ -1,7 +1,6 @@
 #![allow(dead_code)]
-pub struct DPSolution {}
 
-impl DPSolution {
+pub mod dpsolution {
     /*
     link: https://leetcode.com/problems/maximum-absolute-sum-of-any-subarray/
     the basic idea of how to solve this is using dyamic programming
@@ -62,7 +61,7 @@ impl DPSolution {
 
     pub fn new21_game(n: i32, k: i32, max_pts: i32) -> f64 {
         let mut cases = Vec::new();
-        Self::calculate_prob(&mut cases, 0, k, max_pts);
+        calculate_prob(&mut cases, 0, k, max_pts);
         let len = cases.len() as f64;
         let mut count = 0;
         for i in cases.into_iter() {
@@ -78,7 +77,7 @@ impl DPSolution {
             return;
         }
         for i in 1..max_pts + 1 {
-            Self::calculate_prob(set, sum + i, k, max_pts);
+            calculate_prob(set, sum + i, k, max_pts);
         }
     }
     /*
@@ -119,7 +118,7 @@ impl DPSolution {
 
     pub fn unique_paths(m: i32, n: i32) -> i32 {
         let mut steps = vec![vec![0; n as usize]; m as usize];
-        Self::solve_unique_path(0, 0, &m, &n, &mut steps)
+        solve_unique_path(0, 0, &m, &n, &mut steps)
     }
     /*
     link: https://leetcode.com/problems/unique-paths/
@@ -138,8 +137,8 @@ impl DPSolution {
         if steps[i as usize][j as usize] != 0 {
             return steps[i as usize][j as usize];
         }
-        let right = Self::solve_unique_path(i, j + 1, m, n, steps);
-        let down = Self::solve_unique_path(i + 1, j, m, n, steps);
+        let right = solve_unique_path(i, j + 1, m, n, steps);
+        let down = solve_unique_path(i + 1, j, m, n, steps);
 
         steps[i as usize][j as usize] = right + down;
 
@@ -148,7 +147,7 @@ impl DPSolution {
 
     pub fn unique_path_with_obstacle(grids: Vec<Vec<i32>>) -> i32 {
         let mut steps = vec![vec![0; grids[0].len()]; grids.len()];
-        Self::solve_unique_path_with_obstacle(0, 0, &grids, &mut steps)
+        solve_unique_path_with_obstacle(0, 0, &grids, &mut steps)
     }
     fn solve_unique_path_with_obstacle(
         i: i32,
@@ -169,8 +168,8 @@ impl DPSolution {
         if steps[i as usize][j as usize] != 0 {
             return steps[i as usize][j as usize];
         }
-        let right = Self::solve_unique_path_with_obstacle(i, j + 1, grids, steps);
-        let down = Self::solve_unique_path_with_obstacle(i + 1, j, grids, steps);
+        let right = solve_unique_path_with_obstacle(i, j + 1, grids, steps);
+        let down = solve_unique_path_with_obstacle(i + 1, j, grids, steps);
         steps[i as usize][j as usize] = right + down;
         steps[i as usize][j as usize]
     }
@@ -185,7 +184,7 @@ impl DPSolution {
 
     pub fn minimum_path_sum(grid: Vec<Vec<i32>>) -> i32 {
         let mut steps = vec![vec![0; grid[0].len()]; grid.len()];
-        Self::solve_minimum_path_sum(0, 0, &grid, &mut steps)
+        solve_minimum_path_sum(0, 0, &grid, &mut steps)
     }
 
     fn solve_minimum_path_sum(
@@ -203,8 +202,8 @@ impl DPSolution {
         if steps[i][j] != 0 {
             return steps[i][j];
         }
-        let right = Self::solve_minimum_path_sum(i, j + 1, grid, steps);
-        let down = Self::solve_minimum_path_sum(i + 1, j, grid, steps);
+        let right = solve_minimum_path_sum(i, j + 1, grid, steps);
+        let down = solve_minimum_path_sum(i + 1, j, grid, steps);
         steps[i][j] = grid[i][j] + right.min(down);
         steps[i][j]
     }
@@ -276,11 +275,8 @@ impl DPSolution {
         if memo[i as usize] > 0 {
             return memo[i as usize];
         }
-        let val = (nums[i as usize] + Self::rob_helper(nums, memo, i - 2)).max(Self::rob_helper(
-            nums,
-            memo,
-            i - 1,
-        ));
+        let val =
+            (nums[i as usize] + rob_helper(nums, memo, i - 2)).max(rob_helper(nums, memo, i - 1));
         memo[i as usize] = val;
         val
     }
@@ -521,7 +517,7 @@ impl DPSolution {
 
     pub fn cherry_pickup_ii(grid: Vec<Vec<i32>>) -> i32 {
         let mut dp = vec![vec![vec![-1; grid[0].len()]; grid[0].len()]; grid.len()];
-        Self::solve_cherry_pickup_ii(&grid, &mut dp, 0, 0, grid[0].len() as i32 - 1)
+        solve_cherry_pickup_ii(&grid, &mut dp, 0, 0, grid[0].len() as i32 - 1)
     }
 
     pub fn solve_cherry_pickup_ii(
@@ -550,13 +546,7 @@ impl DPSolution {
             let mut max = 0;
             for i in -1..=1 {
                 for j in -1..=1 {
-                    max = max.max(Self::solve_cherry_pickup_ii(
-                        grid,
-                        dp,
-                        r + 1,
-                        c1 + i,
-                        c2 + j,
-                    ));
+                    max = max.max(solve_cherry_pickup_ii(grid, dp, r + 1, c1 + i, c2 + j));
                 }
             }
             max + cherries
@@ -589,158 +579,114 @@ impl DPSolution {
 
         dp[cost.len() - 1].min(dp[cost.len() - 2])
     }
-}
-
-#[cfg(test)]
-mod test {
-    use super::*;
 
     #[test]
     fn test_max_absolute_sum() {
-        assert_eq!(DPSolution::max_absolute_sum(vec![1, -3, 2, 3, -4]), 5);
-        assert_eq!(DPSolution::max_absolute_sum(vec![2, -5, 1, -4, 3, -2]), 8);
+        assert_eq!(max_absolute_sum(vec![1, -3, 2, 3, -4]), 5);
+        assert_eq!(max_absolute_sum(vec![2, -5, 1, -4, 3, -2]), 8);
 
-        assert_eq!(
-            DPSolution::max_absolute_sum_optimized(vec![1, -3, 2, 3, -4]),
-            5
-        );
-        assert_eq!(
-            DPSolution::max_absolute_sum_optimized(vec![2, -5, 1, -4, 3, -2]),
-            8
-        );
+        assert_eq!(max_absolute_sum_optimized(vec![1, -3, 2, 3, -4]), 5);
+        assert_eq!(max_absolute_sum_optimized(vec![2, -5, 1, -4, 3, -2]), 8);
     }
 
     #[test]
     fn test_new21_game() {
-        assert_eq!(DPSolution::new21_game(10, 1, 10), 1.0);
-        assert_eq!(DPSolution::new21_game(6, 1, 10), 0.6);
-        // assert_eq!(DPSolution::new21_game(21, 17, 10), 0.73278); test failed
+        assert_eq!(new21_game(10, 1, 10), 1.0);
+        assert_eq!(new21_game(6, 1, 10), 0.6);
+        // assert_eq!(new21_game(21, 17, 10), 0.73278); test failed
     }
 
     #[test]
     fn test_jump() {
-        assert_eq!(DPSolution::jump(vec![2, 3, 1, 1, 4]), 2);
-        assert_eq!(DPSolution::jump(vec![2, 3, 0, 1, 4]), 2);
-        assert_eq!(
-            DPSolution::jump(vec![5, 9, 3, 2, 1, 0, 2, 3, 3, 1, 0, 0]),
-            3
-        );
+        assert_eq!(jump(vec![2, 3, 1, 1, 4]), 2);
+        assert_eq!(jump(vec![2, 3, 0, 1, 4]), 2);
+        assert_eq!(jump(vec![5, 9, 3, 2, 1, 0, 2, 3, 3, 1, 0, 0]), 3);
     }
 
     #[test]
     fn test_unique_paths() {
-        assert_eq!(DPSolution::unique_paths(3, 2), 3);
-        assert_eq!(DPSolution::unique_paths(7, 3), 28);
+        assert_eq!(unique_paths(3, 2), 3);
+        assert_eq!(unique_paths(7, 3), 28);
     }
 
     #[test]
     fn test_unique_path_with_obstacle() {
         assert_eq!(
-            DPSolution::unique_path_with_obstacle(vec![
-                vec![0, 0, 0],
-                vec![0, 1, 0],
-                vec![0, 0, 0]
-            ]),
+            unique_path_with_obstacle(vec![vec![0, 0, 0], vec![0, 1, 0], vec![0, 0, 0]]),
             2
         );
-        assert_eq!(
-            DPSolution::unique_path_with_obstacle(vec![vec![0, 1], vec![0, 0]]),
-            1
-        );
+        assert_eq!(unique_path_with_obstacle(vec![vec![0, 1], vec![0, 0]]), 1);
     }
 
     #[test]
     fn test_minimum_path_sum() {
         assert_eq!(
-            DPSolution::minimum_path_sum(vec![vec![1, 3, 1], vec![1, 5, 1], vec![4, 2, 1]]),
+            minimum_path_sum(vec![vec![1, 3, 1], vec![1, 5, 1], vec![4, 2, 1]]),
             7
         );
-        assert_eq!(
-            DPSolution::minimum_path_sum(vec![vec![1, 2, 3], vec![4, 5, 6]]),
-            12
-        );
+        assert_eq!(minimum_path_sum(vec![vec![1, 2, 3], vec![4, 5, 6]]), 12);
     }
 
     #[test]
     fn test_climb_stairs() {
-        assert_eq!(DPSolution::climb_stairs(2), 2);
-        assert_eq!(DPSolution::climb_stairs(3), 3);
-        assert_eq!(DPSolution::climb_stairs(4), 5);
+        assert_eq!(climb_stairs(2), 2);
+        assert_eq!(climb_stairs(3), 3);
+        assert_eq!(climb_stairs(4), 5);
     }
 
     #[test]
     fn test_longest_arith_seq_length() {
-        assert_eq!(DPSolution::longest_arith_seq_length(vec![3, 6, 9, 12]), 4);
-        assert_eq!(
-            DPSolution::longest_arith_seq_length(vec![9, 4, 7, 2, 10]),
-            3
-        );
-        assert_eq!(
-            DPSolution::longest_arith_seq_length(vec![20, 1, 15, 3, 10, 5, 8]),
-            4
-        );
+        assert_eq!(longest_arith_seq_length(vec![3, 6, 9, 12]), 4);
+        assert_eq!(longest_arith_seq_length(vec![9, 4, 7, 2, 10]), 3);
+        assert_eq!(longest_arith_seq_length(vec![20, 1, 15, 3, 10, 5, 8]), 4);
     }
 
     #[test]
     fn test_rob() {
-        assert_eq!(DPSolution::rob(vec![1, 2, 3, 1]), 4);
-        assert_eq!(DPSolution::rob(vec![2, 7, 9, 3, 1]), 12);
+        assert_eq!(rob(vec![1, 2, 3, 1]), 4);
+        assert_eq!(rob(vec![2, 7, 9, 3, 1]), 12);
     }
 
     #[test]
     fn test_change() {
-        assert_eq!(DPSolution::coin_change_ii(5, vec![1, 2, 5]), 4);
-        assert_eq!(DPSolution::coin_change_ii(3, vec![2]), 0);
-        assert_eq!(DPSolution::coin_change_ii(10, vec![10]), 1);
+        assert_eq!(coin_change_ii(5, vec![1, 2, 5]), 4);
+        assert_eq!(coin_change_ii(3, vec![2]), 0);
+        assert_eq!(coin_change_ii(10, vec![10]), 1);
     }
 
     #[test]
     fn test_coin_change() {
-        assert_eq!(DPSolution::coin_change(vec![1, 2, 5], 11), 3);
-        assert_eq!(DPSolution::coin_change(vec![2], 3), -1);
+        assert_eq!(coin_change(vec![1, 2, 5], 11), 3);
+        assert_eq!(coin_change(vec![2], 3), -1);
     }
 
     #[test]
     fn test_min_distance() {
+        assert_eq!(min_distance("horse".to_string(), "ros".to_string()), 3);
         assert_eq!(
-            DPSolution::min_distance("horse".to_string(), "ros".to_string()),
-            3
-        );
-        assert_eq!(
-            DPSolution::min_distance("intention".to_string(), "execution".to_string()),
+            min_distance("intention".to_string(), "execution".to_string()),
             5
         );
     }
 
     #[test]
     fn test_num_distinct() {
-        assert_eq!(
-            DPSolution::num_distinct("rabbbit".to_string(), "rabbit".to_string()),
-            3
-        );
-        assert_eq!(
-            DPSolution::num_distinct("babgbag".to_string(), "bag".to_string()),
-            5
-        );
+        assert_eq!(num_distinct("rabbbit".to_string(), "rabbit".to_string()), 3);
+        assert_eq!(num_distinct("babgbag".to_string(), "bag".to_string()), 5);
     }
 
     #[test]
     fn test_minimum_triangle() {
         assert_eq!(
-            DPSolution::minimum_triangle(vec![
-                vec![2],
-                vec![3, 4],
-                vec![6, 5, 7],
-                vec![4, 1, 8, 3]
-            ]),
+            minimum_triangle(vec![vec![2], vec![3, 4], vec![6, 5, 7], vec![4, 1, 8, 3]]),
             11
         );
         assert_eq!(
-            DPSolution::minimum_triangle(vec![vec![-1], vec![2, 3], vec![1, -1, -3]],),
+            minimum_triangle(vec![vec![-1], vec![2, 3], vec![1, -1, -3]],),
             -1
         );
         assert_eq!(
-            DPSolution::minimum_triangle(vec![
+            minimum_triangle(vec![
                 vec![1],
                 vec![-2, -5],
                 vec![3, 6, 9],
@@ -752,45 +698,30 @@ mod test {
 
     #[test]
     fn test_is_match() {
-        assert_eq!(
-            DPSolution::is_match("aa".to_string(), "a".to_string()),
-            false
-        );
-        assert_eq!(
-            DPSolution::is_match("aa".to_string(), "*".to_string()),
-            true
-        );
-        assert_eq!(
-            DPSolution::is_match("cb".to_string(), "?a".to_string()),
-            false
-        );
-        assert_eq!(
-            DPSolution::is_match("adceb".to_string(), "*a*b".to_string()),
-            true
-        );
-        assert_eq!(
-            DPSolution::is_match("acdcb".to_string(), "a*c?b".to_string()),
-            false
-        );
+        assert_eq!(is_match("aa".to_string(), "a".to_string()), false);
+        assert_eq!(is_match("aa".to_string(), "*".to_string()), true);
+        assert_eq!(is_match("cb".to_string(), "?a".to_string()), false);
+        assert_eq!(is_match("adceb".to_string(), "*a*b".to_string()), true);
+        assert_eq!(is_match("acdcb".to_string(), "a*c?b".to_string()), false);
     }
 
     #[test]
     fn test_max_profit_iii() {
-        assert_eq!(DPSolution::max_profit_iii(vec![3, 3, 5, 0, 0, 3, 1, 4]), 6);
-        assert_eq!(DPSolution::max_profit_iii(vec![1, 2, 3, 4, 5]), 4);
-        assert_eq!(DPSolution::max_profit_iii(vec![7, 6, 4, 3, 1]), 0);
+        assert_eq!(max_profit_iii(vec![3, 3, 5, 0, 0, 3, 1, 4]), 6);
+        assert_eq!(max_profit_iii(vec![1, 2, 3, 4, 5]), 4);
+        assert_eq!(max_profit_iii(vec![7, 6, 4, 3, 1]), 0);
     }
 
     #[test]
     fn test_combination_sum4() {
-        assert_eq!(DPSolution::combination_sum4(vec![1, 2, 3], 4), 7);
-        assert_eq!(DPSolution::combination_sum4(vec![9], 3), 0);
+        assert_eq!(combination_sum4(vec![1, 2, 3], 4), 7);
+        assert_eq!(combination_sum4(vec![9], 3), 0);
     }
 
     #[test]
     fn test_cherry_pickup_ii() {
         assert_eq!(
-            DPSolution::cherry_pickup_ii(vec![
+            cherry_pickup_ii(vec![
                 vec![3, 1, 1],
                 vec![2, 5, 1],
                 vec![1, 5, 5],
@@ -799,7 +730,7 @@ mod test {
             24
         );
         assert_eq!(
-            DPSolution::cherry_pickup_ii(vec![
+            cherry_pickup_ii(vec![
                 vec![1, 0, 0, 0, 0, 0, 1],
                 vec![2, 0, 0, 0, 0, 3, 0],
                 vec![2, 0, 9, 0, 0, 0, 0],
@@ -812,10 +743,10 @@ mod test {
 
     #[test]
     fn test_min_cost_climbing_stairs() {
-        assert_eq!(DPSolution::min_cost_climbing_stairs(vec![10, 15, 20]), 15);
+        assert_eq!(min_cost_climbing_stairs(vec![10, 15, 20]), 15);
         assert_eq!(
-            DPSolution::min_cost_climbing_stairs(vec![1, 100, 1, 1, 1, 100, 1, 1, 100, 1]),
+            min_cost_climbing_stairs(vec![1, 100, 1, 1, 1, 100, 1, 1, 100, 1]),
             6
         );
     }
-}
+} // mod dpsolution

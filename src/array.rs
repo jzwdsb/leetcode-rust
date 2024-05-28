@@ -125,10 +125,7 @@ pub mod array_solution {
         assert_eq!(array_sign(vec![-1, -2, -3, -4, 3, 2, 1]), 1);
         assert_eq!(array_sign(vec![1, 5, 0, 2, -3]), 0);
         assert_eq!(array_sign(vec![-1, 1, -1, 1, -1]), -1);
-        assert_eq!(
-            array_sign(vec![i32::MAX / 2, i32::MAX / 2, i32::MIN]),
-            -1
-        );
+        assert_eq!(array_sign(vec![i32::MAX / 2, i32::MAX / 2, i32::MIN]), -1);
     }
 
     /*
@@ -332,7 +329,6 @@ pub mod array_solution {
         assert_eq!(remove_element(&mut input, 2), 5);
         assert_eq!(input[0..5], vec![0, 1, 3, 0, 4]);
     }
-
 
     /*
     link: https://leetcode.com/problems/rotate-image/description/
@@ -1954,9 +1950,8 @@ pub mod array_solution {
             maximum_safeness_factor(vec![vec![0, 0, 1], vec![0, 0, 0], vec![0, 0, 0],]),
             2
         );
-    }    
+    }
 
-    
     #[test]
     fn test_rotate() {
         let mut input = vec![vec![1, 2, 3], vec![4, 5, 6], vec![7, 8, 9]];
@@ -1982,10 +1977,7 @@ pub mod array_solution {
 
     #[test]
     fn test_max_sub_array() {
-        assert_eq!(
-            max_sub_array(vec![-2, 1, -3, 4, -1, 2, 1, -5, 4]),
-            6
-        );
+        assert_eq!(max_sub_array(vec![-2, 1, -3, 4, -1, 2, 1, -5, 4]), 6);
         assert_eq!(max_sub_array(vec![1]), 1);
         assert_eq!(max_sub_array(vec![0]), 0);
         assert_eq!(max_sub_array(vec![-1]), -1);
@@ -2028,10 +2020,7 @@ pub mod array_solution {
 
     #[test]
     fn test_length_of_last_word() {
-        assert_eq!(
-            length_of_last_word("Hello World".to_string()),
-            5
-        );
+        assert_eq!(length_of_last_word("Hello World".to_string()), 5);
         assert_eq!(length_of_last_word(" ".to_string()), 0);
         assert_eq!(length_of_last_word("a ".to_string()), 1);
     }
@@ -2093,46 +2082,22 @@ pub mod array_solution {
     #[test]
     fn test_majority_element() {
         assert_eq!(majority_element(vec![3, 2, 3]), 3);
-        assert_eq!(
-            majority_element(vec![2, 2, 1, 1, 1, 2, 2]),
-            2
-        );
+        assert_eq!(majority_element(vec![2, 2, 1, 1, 1, 2, 2]), 2);
     }
 
     #[test]
     fn test_longest_consecutive_sequence() {
-        assert_eq!(
-            longest_consecutive(vec![100, 4, 200, 1, 3, 2]),
-            4
-        );
-        assert_eq!(
-            longest_consecutive(vec![0, 3, 7, 2, 5, 8, 4, 6, 0, 1]),
-            9
-        );
+        assert_eq!(longest_consecutive(vec![100, 4, 200, 1, 3, 2]), 4);
+        assert_eq!(longest_consecutive(vec![0, 3, 7, 2, 5, 8, 4, 6, 0, 1]), 9);
     }
 
     #[test]
     fn test_can_place_flowers() {
-        assert_eq!(
-            can_place_flowers(vec![1, 0, 0, 0, 1], 1),
-            true
-        );
-        assert_eq!(
-            can_place_flowers(vec![1, 0, 0, 0, 1], 2),
-            false
-        );
-        assert_eq!(
-            can_place_flowers(vec![1, 0, 0, 0, 0, 1], 2),
-            false
-        );
-        assert_eq!(
-            can_place_flowers(vec![0, 0, 1, 0, 1], 1),
-            true
-        );
-        assert_eq!(
-            can_place_flowers(vec![0, 0, 1, 0, 1], 2),
-            false
-        );
+        assert_eq!(can_place_flowers(vec![1, 0, 0, 0, 1], 1), true);
+        assert_eq!(can_place_flowers(vec![1, 0, 0, 0, 1], 2), false);
+        assert_eq!(can_place_flowers(vec![1, 0, 0, 0, 0, 1], 2), false);
+        assert_eq!(can_place_flowers(vec![0, 0, 1, 0, 1], 1), true);
+        assert_eq!(can_place_flowers(vec![0, 0, 1, 0, 1], 2), false);
     }
 
     #[test]
@@ -2145,47 +2110,24 @@ pub mod array_solution {
             erase_overlap_intervals(vec![vec![1, 2], vec![1, 2], vec![1, 2]]),
             2
         );
+        assert_eq!(erase_overlap_intervals(vec![vec![1, 2], vec![2, 3]]), 0);
         assert_eq!(
-            erase_overlap_intervals(vec![vec![1, 2], vec![2, 3]]),
-            0
-        );
-        assert_eq!(
-            erase_overlap_intervals(vec![
-                vec![1, 100],
-                vec![11, 22],
-                vec![1, 11],
-                vec![2, 12],
-            ]),
+            erase_overlap_intervals(vec![vec![1, 100], vec![11, 22], vec![1, 11], vec![2, 12],]),
             2
         );
     }
 
     #[test]
     fn test_product_except_self() {
-        assert_eq!(
-            product_except_self(vec![1, 2, 3, 4]),
-            vec![24, 12, 8, 6]
-        );
+        assert_eq!(product_except_self(vec![1, 2, 3, 4]), vec![24, 12, 8, 6]);
     }
 
     #[test]
     fn test_asteroid_collision() {
-        assert_eq!(
-            asteroid_collision(vec![5, 10, -5]),
-            vec![5, 10]
-        );
-        assert_eq!(
-            asteroid_collision(vec![8, -8]),
-            Vec::<i32>::new()
-        );
-        assert_eq!(
-            asteroid_collision(vec![10, 2, -5]),
-            vec![10]
-        );
-        assert_eq!(
-            asteroid_collision(vec![-2, -1, 1, 2]),
-            vec![]
-        );
+        assert_eq!(asteroid_collision(vec![5, 10, -5]), vec![5, 10]);
+        assert_eq!(asteroid_collision(vec![8, -8]), Vec::<i32>::new());
+        assert_eq!(asteroid_collision(vec![10, 2, -5]), vec![10]);
+        assert_eq!(asteroid_collision(vec![-2, -1, 1, 2]), vec![]);
     }
 
     #[test]
@@ -2211,29 +2153,20 @@ pub mod array_solution {
     #[test]
     pub fn test_single_number_ii() {
         assert_eq!(single_number_ii(vec![2, 2, 3, 2]), 3);
-        assert_eq!(
-            single_number_ii(vec![0, 1, 0, 1, 0, 1, 99]),
-            99
-        );
+        assert_eq!(single_number_ii(vec![0, 1, 0, 1, 0, 1, 99]), 99);
     }
 
     #[test]
     fn test_missing_number() {
         assert_eq!(missing_number(vec![3, 0, 1]), 2);
         assert_eq!(missing_number(vec![0, 1]), 2);
-        assert_eq!(
-            missing_number(vec![9, 6, 4, 2, 3, 5, 7, 0, 1]),
-            8
-        );
+        assert_eq!(missing_number(vec![9, 6, 4, 2, 3, 5, 7, 0, 1]), 8);
         assert_eq!(missing_number(vec![0]), 1);
     }
 
     #[test]
     fn test_trap_rain() {
-        assert_eq!(
-            trap_rain(vec![0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2]),
-            6
-        );
+        assert_eq!(trap_rain(vec![0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2]), 6);
         assert_eq!(trap_rain(vec![4, 2, 0, 3, 2, 5]), 9);
     }
 
@@ -2278,20 +2211,14 @@ pub mod array_solution {
 
     #[test]
     fn test_max_profit_iii() {
-        assert_eq!(
-            max_profit_iii(vec![3, 3, 5, 0, 0, 3, 1, 4]),
-            6
-        );
+        assert_eq!(max_profit_iii(vec![3, 3, 5, 0, 0, 3, 1, 4]), 6);
         assert_eq!(max_profit_iii(vec![1, 2, 3, 4, 5]), 4);
         assert_eq!(max_profit_iii(vec![7, 6, 4, 3, 1]), 0);
     }
 
     #[test]
     fn test_max_profit_with_cool_down() {
-        assert_eq!(
-            max_profit_with_cool_down(vec![1, 2, 3, 0, 2]),
-            3
-        );
+        assert_eq!(max_profit_with_cool_down(vec![1, 2, 3, 0, 2]), 3);
     }
 
     #[test]
@@ -2303,10 +2230,7 @@ pub mod array_solution {
     #[test]
     fn test_stone_game_ii() {
         assert_eq!(stone_game_vii(vec![5, 3, 1, 4, 2]), 6);
-        assert_eq!(
-            stone_game_vii(vec![7, 90, 5, 1, 100, 10, 10, 2]),
-            122
-        );
+        assert_eq!(stone_game_vii(vec![7, 90, 5, 1, 100, 10, 10, 2]), 122);
     }
 
     #[test]
@@ -2377,19 +2301,13 @@ pub mod array_solution {
     fn test_missing_positive() {
         assert_eq!(first_missing_positive(vec![1, 2, 0]), 3);
         assert_eq!(first_missing_positive(vec![3, 4, -1, 1]), 2);
-        assert_eq!(
-            first_missing_positive(vec![7, 8, 9, 11, 12]),
-            1
-        );
+        assert_eq!(first_missing_positive(vec![7, 8, 9, 11, 12]), 1);
         assert_eq!(first_missing_positive(vec![1]), 2);
     }
 
     #[test]
     fn test_number_of_good_pairs() {
-        assert_eq!(
-            number_of_good_pairs(vec![1, 2, 3, 1, 1, 3]),
-            4
-        );
+        assert_eq!(number_of_good_pairs(vec![1, 2, 3, 1, 1, 3]), 4);
         assert_eq!(number_of_good_pairs(vec![1, 1, 1, 1]), 6);
         assert_eq!(number_of_good_pairs(vec![1, 2, 3]), 0);
     }
@@ -2496,10 +2414,7 @@ pub mod array_solution {
             can_complete_circuit(vec![1, 2, 3, 4, 5], vec![3, 4, 5, 1, 2]),
             3
         );
-        assert_eq!(
-            can_complete_circuit(vec![2, 3, 4], vec![3, 4, 3]),
-            -1
-        );
+        assert_eq!(can_complete_circuit(vec![2, 3, 4], vec![3, 4, 3]), -1);
         assert_eq!(
             can_complete_circuit(vec![5, 1, 2, 3, 4], vec![4, 4, 1, 5, 1]),
             4
@@ -2517,10 +2432,7 @@ pub mod array_solution {
     #[test]
     fn test_largest_number() {
         assert_eq!(largest_number(vec![10, 2]), "210");
-        assert_eq!(
-            largest_number(vec![3, 30, 34, 5, 9]),
-            "9534330"
-        );
+        assert_eq!(largest_number(vec![3, 30, 34, 5, 9]), "9534330");
         assert_eq!(largest_number(vec![1]), "1");
         assert_eq!(largest_number(vec![10]), "10");
         assert_eq!(largest_number(vec![0, 0]), "0");
@@ -2590,10 +2502,7 @@ pub mod array_solution {
     fn test_largest_perimeter() {
         assert_eq!(largest_perimeter(vec![2, 1, 2]), 5);
         assert_eq!(largest_perimeter(vec![5, 5, 5]), 15);
-        assert_eq!(
-            largest_perimeter(vec![1, 12, 1, 2, 5, 50, 3]),
-            12
-        );
+        assert_eq!(largest_perimeter(vec![1, 12, 1, 2, 5, 50, 3]), 12);
 
         assert_eq!(largest_perimeter(vec![5, 5, 50]), -1);
     }
@@ -2604,39 +2513,24 @@ pub mod array_solution {
             find_least_num_of_unique_ints(vec![4, 3, 1, 1, 3, 3, 2], 3),
             2
         );
-        assert_eq!(
-            find_least_num_of_unique_ints(vec![5, 5, 4], 1),
-            1
-        );
-        assert_eq!(
-            find_least_num_of_unique_ints(vec![2, 1, 1, 3, 3, 3], 3),
-            1
-        );
+        assert_eq!(find_least_num_of_unique_ints(vec![5, 5, 4], 1), 1);
+        assert_eq!(find_least_num_of_unique_ints(vec![2, 1, 1, 3, 3, 3], 3), 1);
         assert_eq!(find_least_num_of_unique_ints(vec![1], 1), 0,)
     }
 
     #[test]
     fn test_furthest_building() {
-        assert_eq!(
-            furthest_building(vec![4, 2, 7, 6, 9, 14, 12], 5, 1),
-            4
-        );
+        assert_eq!(furthest_building(vec![4, 2, 7, 6, 9, 14, 12], 5, 1), 4);
         assert_eq!(
             furthest_building(vec![4, 12, 2, 7, 3, 18, 20, 3, 19], 10, 2),
             7
         );
-        assert_eq!(
-            furthest_building(vec![14, 3, 19, 3], 17, 0),
-            3
-        );
+        assert_eq!(furthest_building(vec![14, 3, 19, 3], 17, 0), 3);
     }
 
     #[test]
     fn test_most_booked_iii() {
-        assert_eq!(
-            most_booked_iii(2, vec![(0, 10), (1, 5), (2, 7), (3, 4)]),
-            0
-        );
+        assert_eq!(most_booked_iii(2, vec![(0, 10), (1, 5), (2, 7), (3, 4)]), 0);
         assert_eq!(
             most_booked_iii(3, vec![(1, 20), (2, 10), (3, 5), (4, 9), (6, 8)]),
             1
@@ -2646,14 +2540,8 @@ pub mod array_solution {
     #[test]
     fn test_find_judge() {
         assert_eq!(find_judge(2, vec![vec![1, 2]]), 2);
-        assert_eq!(
-            find_judge(3, vec![vec![1, 3], vec![2, 3]]),
-            3
-        );
-        assert_eq!(
-            find_judge(3, vec![vec![1, 3], vec![2, 3], vec![3, 1]]),
-            -1
-        );
+        assert_eq!(find_judge(3, vec![vec![1, 3], vec![2, 3]]), 3);
+        assert_eq!(find_judge(3, vec![vec![1, 3], vec![2, 3], vec![3, 1]]), -1);
     }
 
     #[test]
@@ -2681,10 +2569,7 @@ pub mod array_solution {
     fn test_bag_of_tokens_score() {
         assert_eq!(bag_of_tokens_score(vec![100], 50), 0);
         assert_eq!(bag_of_tokens_score(vec![100, 200], 150), 1);
-        assert_eq!(
-            bag_of_tokens_score(vec![100, 200, 300, 400], 200),
-            2
-        );
+        assert_eq!(bag_of_tokens_score(vec![100, 200, 300, 400], 200), 2);
     }
 
     #[test]
@@ -2696,14 +2581,8 @@ pub mod array_solution {
 
     #[test]
     fn test_max_frequency_elements() {
-        assert_eq!(
-            max_frequency_elements(vec![1, 2, 2, 3, 1, 4]),
-            4
-        );
-        assert_eq!(
-            max_frequency_elements(vec![1, 2, 3, 4, 5]),
-            5
-        );
+        assert_eq!(max_frequency_elements(vec![1, 2, 2, 3, 1, 4]), 4);
+        assert_eq!(max_frequency_elements(vec![1, 2, 3, 4, 5]), 5);
     }
 
     #[test]
@@ -2718,10 +2597,7 @@ pub mod array_solution {
 
     #[test]
     fn test_num_subarray_with_sum() {
-        assert_eq!(
-            num_subarray_with_sum(vec![1, 0, 1, 0, 1], 2),
-            4
-        );
+        assert_eq!(num_subarray_with_sum(vec![1, 0, 1, 0, 1], 2), 4);
         assert_eq!(num_subarray_with_sum(vec![1, 1, 1], 2), 2);
     }
 
@@ -2734,44 +2610,23 @@ pub mod array_solution {
     #[test]
     fn test_find_min_arrow_shots() {
         assert_eq!(
-            find_min_arrow_shots(vec![
-                vec![10, 16],
-                vec![2, 8],
-                vec![1, 6],
-                vec![7, 12]
-            ]),
+            find_min_arrow_shots(vec![vec![10, 16], vec![2, 8], vec![1, 6], vec![7, 12]]),
             2
         );
         assert_eq!(
-            find_min_arrow_shots(vec![
-                vec![1, 2],
-                vec![3, 4],
-                vec![5, 6],
-                vec![7, 8]
-            ]),
+            find_min_arrow_shots(vec![vec![1, 2], vec![3, 4], vec![5, 6], vec![7, 8]]),
             4
         );
         assert_eq!(
-            find_min_arrow_shots(vec![
-                vec![1, 2],
-                vec![2, 3],
-                vec![3, 4],
-                vec![4, 5]
-            ]),
+            find_min_arrow_shots(vec![vec![1, 2], vec![2, 3], vec![3, 4], vec![4, 5]]),
             2
         );
     }
 
     #[test]
     fn test_least_interval() {
-        assert_eq!(
-            least_interval(vec!['A', 'A', 'A', 'B', 'B', 'B'], 2),
-            8
-        );
-        assert_eq!(
-            least_interval(vec!['A', 'A', 'A', 'B', 'B', 'B'], 0),
-            6
-        );
+        assert_eq!(least_interval(vec!['A', 'A', 'A', 'B', 'B', 'B'], 2), 8);
+        assert_eq!(least_interval(vec!['A', 'A', 'A', 'B', 'B', 'B'], 0), 6);
         assert_eq!(
             least_interval(
                 vec!['A', 'A', 'A', 'A', 'A', 'A', 'B', 'C', 'D', 'E', 'F', 'G'],
@@ -2783,10 +2638,7 @@ pub mod array_solution {
 
     #[test]
     fn test_find_duplicates() {
-        assert_eq!(
-            find_duplicates(vec![4, 3, 2, 7, 8, 2, 3, 1]),
-            vec![2, 3]
-        );
+        assert_eq!(find_duplicates(vec![4, 3, 2, 7, 8, 2, 3, 1]), vec![2, 3]);
         assert_eq!(find_duplicates(vec![1, 1, 2]), vec![1]);
         assert_eq!(find_duplicates(vec![1]), Vec::<i32>::new());
     }
@@ -2807,11 +2659,7 @@ pub mod array_solution {
     #[test]
     fn test_matrix_score() {
         assert_eq!(
-            matrix_score(vec![
-                vec![0, 0, 1, 1],
-                vec![1, 0, 1, 0],
-                vec![1, 1, 0, 0]
-            ]),
+            matrix_score(vec![vec![0, 0, 1, 1], vec![1, 0, 1, 0], vec![1, 1, 0, 0]]),
             39
         );
         assert_eq!(matrix_score(vec![vec![0]]), 1);
