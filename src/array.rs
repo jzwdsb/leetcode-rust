@@ -1940,6 +1940,34 @@ pub mod array_solution {
         min_safety
     }
 
+    // brute force
+    pub fn count_triplets(arr: Vec<i32>) -> i32 {
+        let mut count = 0;
+        for i in 0..arr.len() {
+            let mut a = 0;
+            for j in i + 1..arr.len() {
+                let mut b = 0;
+                a ^= arr[j - 1];
+                for k in j..arr.len() {
+                    b ^= arr[k];
+                    if a == b {
+                        count += 1;
+                    }
+                }
+            }
+        }
+        count
+    }
+
+    #[test]
+    fn test_count_triplets() {
+        assert_eq!(count_triplets(vec![2, 3, 1, 6, 7]), 4);
+        assert_eq!(count_triplets(vec![1, 1, 1, 1, 1]), 10);
+        assert_eq!(count_triplets(vec![2, 3]), 0);
+        assert_eq!(count_triplets(vec![1, 3, 5, 7, 9]), 3);
+        assert_eq!(count_triplets(vec![7, 11, 12, 9, 5, 2, 7, 17, 22]), 8);
+    }
+
     #[test]
     fn test_maximum_safeness_factor() {
         assert_eq!(
