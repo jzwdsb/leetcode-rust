@@ -2,8 +2,6 @@
 
 use std::collections::{HashMap, HashSet};
 
-pub struct StringSolution {}
-
 // Solution from https://leetcode.com/problems/valid-number/solutions/3461898/finite-state-machine/
 // use state machine to solve check is number problem
 enum CheckState {
@@ -45,7 +43,8 @@ impl CheckState {
     }
 }
 
-impl StringSolution {
+pub mod string_solution {
+    use super::*;
     /*
     leetcode link: https://leetcode.com/problems/count-ways-to-build-good-strings/
 
@@ -96,7 +95,7 @@ impl StringSolution {
             return "1".to_string();
         }
         let mut ans = String::new();
-        let prev = Self::count_and_say(n - 1);
+        let prev = count_and_say(n - 1);
         let mut count = 1;
         let mut i = 0;
         while i < prev.len() {
@@ -241,7 +240,7 @@ impl StringSolution {
         if s.is_empty() {
             return false;
         }
-        Self::check_exp(&s) || Self::check_decimal(&s) || Self::check_integer(&s, false)
+        check_exp(&s) || check_decimal(&s) || check_integer(&s, false)
     }
 
     fn check_exp(s: &str) -> bool {
@@ -259,8 +258,7 @@ impl StringSolution {
         if strs[0].is_empty() || strs[1].is_empty() {
             return false;
         }
-        (Self::check_decimal(strs[0]) || Self::check_integer(strs[0], false))
-            && Self::check_integer(strs[1], true)
+        (check_decimal(strs[0]) || check_integer(strs[0], false)) && check_integer(strs[1], true)
     }
 
     fn check_decimal(s: &str) -> bool {
@@ -272,10 +270,10 @@ impl StringSolution {
         }
         let strs: Vec<&str> = s.split('.').collect();
         if strs.len() == 1 {
-            return Self::check_integer(strs[0], true);
+            return check_integer(strs[0], true);
         }
         if strs.len() == 2 {
-            return Self::check_integer(strs[0], false) && Self::check_integer(strs[1], true);
+            return check_integer(strs[0], false) && check_integer(strs[1], true);
         }
         false
     }
@@ -396,11 +394,11 @@ impl StringSolution {
         let mut i = 0;
         let mut j = s.len() - 1;
         while i < j {
-            if !Self::is_vowel(s[i]) {
+            if !is_vowel(s[i]) {
                 i += 1;
                 continue;
             }
-            if !Self::is_vowel(s[j]) {
+            if !is_vowel(s[j]) {
                 j -= 1;
                 continue;
             }
@@ -716,7 +714,7 @@ impl StringSolution {
     pub fn partition_palindrome(s: String) -> Vec<Vec<String>> {
         let mut res = Vec::new();
         let mut path = Vec::new();
-        Self::dfs(&s, 0, &mut path, &mut res);
+        dfs(&s, 0, &mut path, &mut res);
         res
     }
 
@@ -726,9 +724,9 @@ impl StringSolution {
             return;
         }
         for i in start..s.len() {
-            if Self::is_palindrome(s[start..=i].to_string()) {
+            if is_palindrome(s[start..=i].to_string()) {
                 path.push(s[start..=i].to_string());
-                Self::dfs(s, i + 1, path, res);
+                dfs(s, i + 1, path, res);
                 path.pop();
             }
         }
@@ -1077,8 +1075,8 @@ impl StringSolution {
     }
 
     pub fn backspace_compare(s: String, t: String) -> bool {
-        let s = Self::backspace(s);
-        let t = Self::backspace(t);
+        let s = backspace(s);
+        let t = backspace(t);
         s == t
     }
 
@@ -1102,10 +1100,10 @@ impl StringSolution {
     // 3. evaluate the postfix notation
     // 4. return the result
     pub fn calculator(expr: String) -> i32 {
-        let tokens = Self::tokenize(expr);
-        let postfix = Self::infix_to_postfix(tokens);
+        let tokens = tokenize(expr);
+        let postfix = infix_to_postfix(tokens);
 
-        Self::evaluate_postfix(postfix)
+        evaluate_postfix(postfix)
     }
 
     fn evaluate_postfix(postfix: Vec<String>) -> i32 {
@@ -1145,7 +1143,7 @@ impl StringSolution {
                 }
             } else {
                 while let Some(top) = stack.last() {
-                    if Self::precedence(top) >= Self::precedence(&token) {
+                    if precedence(top) >= precedence(&token) {
                         res.push(stack.pop().unwrap());
                     } else {
                         break;
@@ -1307,67 +1305,65 @@ impl StringSolution {
         }
         res.into_iter().collect()
     }
-} // impl StringSolution
 
-#[cfg(test)]
-mod tests {
-    use super::*;
+    pub fn append_characters(s: String, t: String) -> i32 {
+        // peakable returns an iterator that supports peeking
+        let mut t = t.bytes().peekable();
+        s.bytes().for_each(|n| {
+            // skip characters in t that are equal to n
+            t.next_if_eq(&n);
+        });
+        t.len() as _
+    }
+
+    #[test]
+    fn test_append_characters() {
+        assert_eq!(
+            append_characters("coaching".to_string(), "coding".to_string()),
+            4
+        );
+    }
 
     #[test]
     fn test_count_good_string() {
-        assert_eq!(StringSolution::count_good_string(3, 3, 1, 1), 8);
-        assert_eq!(StringSolution::count_good_string(2, 3, 1, 2), 5);
-        assert_eq!(StringSolution::count_good_string(10, 10, 2, 1), 89);
+        assert_eq!(count_good_string(3, 3, 1, 1), 8);
+        assert_eq!(count_good_string(2, 3, 1, 2), 5);
+        assert_eq!(count_good_string(10, 10, 2, 1), 89);
     }
 
     #[test]
     fn test_count_and_say() {
-        assert_eq!(StringSolution::count_and_say(1), "1");
-        assert_eq!(StringSolution::count_and_say(2), "11");
-        assert_eq!(StringSolution::count_and_say(3), "21");
-        assert_eq!(StringSolution::count_and_say(4), "1211");
-        assert_eq!(StringSolution::count_and_say(5), "111221");
-        assert_eq!(StringSolution::count_and_say(6), "312211");
+        assert_eq!(count_and_say(1), "1");
+        assert_eq!(count_and_say(2), "11");
+        assert_eq!(count_and_say(3), "21");
+        assert_eq!(count_and_say(4), "1211");
+        assert_eq!(count_and_say(5), "111221");
+        assert_eq!(count_and_say(6), "312211");
     }
 
     #[test]
     fn test_multiply() {
+        assert_eq!(multiply("2".to_string(), "3".to_string()), "6");
+        assert_eq!(multiply("123".to_string(), "456".to_string()), "56088");
         assert_eq!(
-            StringSolution::multiply("2".to_string(), "3".to_string()),
-            "6"
-        );
-        assert_eq!(
-            StringSolution::multiply("123".to_string(), "456".to_string()),
-            "56088"
-        );
-        assert_eq!(
-            StringSolution::multiply("123456789".to_string(), "987654321".to_string()),
+            multiply("123456789".to_string(), "987654321".to_string()),
             "121932631112635269"
         );
     }
 
     #[test]
     fn test_str_str() {
-        assert_eq!(
-            StringSolution::str_str("hello".to_string(), "ll".to_string()),
-            2
-        );
-        assert_eq!(
-            StringSolution::str_str("aaaaa".to_string(), "bba".to_string()),
-            -1
-        );
-        assert_eq!(StringSolution::str_str("".to_string(), "".to_string()), 0);
-        assert_eq!(StringSolution::str_str("".to_string(), "a".to_string()), -1);
-        assert_eq!(StringSolution::str_str("a".to_string(), "".to_string()), 0);
-        assert_eq!(
-            StringSolution::str_str("mississippi".to_string(), "issip".to_string()),
-            4
-        );
+        assert_eq!(str_str("hello".to_string(), "ll".to_string()), 2);
+        assert_eq!(str_str("aaaaa".to_string(), "bba".to_string()), -1);
+        assert_eq!(str_str("".to_string(), "".to_string()), 0);
+        assert_eq!(str_str("".to_string(), "a".to_string()), -1);
+        assert_eq!(str_str("a".to_string(), "".to_string()), 0);
+        assert_eq!(str_str("mississippi".to_string(), "issip".to_string()), 4);
     }
 
     #[test]
     fn test_group_anagrams() {
-        let mut result = StringSolution::group_anagrams(vec![
+        let mut result = group_anagrams(vec![
             "eat".to_string(),
             "tea".to_string(),
             "tan".to_string(),
@@ -1393,194 +1389,134 @@ mod tests {
 
     #[test]
     fn test_is_number() {
-        assert_eq!(StringSolution::is_number_brute("0".to_string()), true);
-        assert_eq!(StringSolution::is_number_brute(" 0.1 ".to_string()), true);
-        assert_eq!(StringSolution::is_number_brute("abc".to_string()), false);
-        assert_eq!(StringSolution::is_number_brute("1 a".to_string()), false);
-        assert_eq!(StringSolution::is_number_brute("2e10".to_string()), true);
-        assert_eq!(
-            StringSolution::is_number_brute(" -90e3   ".to_string()),
-            true
-        );
-        assert_eq!(StringSolution::is_number_brute(" 1e".to_string()), false);
-        assert_eq!(StringSolution::is_number_brute("1.+1".to_string()), false);
+        assert_eq!(is_number_brute("0".to_string()), true);
+        assert_eq!(is_number_brute(" 0.1 ".to_string()), true);
+        assert_eq!(is_number_brute("abc".to_string()), false);
+        assert_eq!(is_number_brute("1 a".to_string()), false);
+        assert_eq!(is_number_brute("2e10".to_string()), true);
+        assert_eq!(is_number_brute(" -90e3   ".to_string()), true);
+        assert_eq!(is_number_brute(" 1e".to_string()), false);
+        assert_eq!(is_number_brute("1.+1".to_string()), false);
 
-        assert_eq!(StringSolution::is_number("0".to_string()), true);
-        assert_eq!(StringSolution::is_number(" 0.1 ".to_string()), true);
-        assert_eq!(StringSolution::is_number("abc".to_string()), false);
-        assert_eq!(StringSolution::is_number("1 a".to_string()), false);
-        assert_eq!(StringSolution::is_number("2e10".to_string()), true);
-        assert_eq!(StringSolution::is_number(" -90e3   ".to_string()), true);
-        assert_eq!(StringSolution::is_number(" 1e".to_string()), false);
-        assert_eq!(StringSolution::is_number("1.+1".to_string()), false);
+        assert_eq!(is_number("0".to_string()), true);
+        assert_eq!(is_number(" 0.1 ".to_string()), true);
+        assert_eq!(is_number("abc".to_string()), false);
+        assert_eq!(is_number("1 a".to_string()), false);
+        assert_eq!(is_number("2e10".to_string()), true);
+        assert_eq!(is_number(" -90e3   ".to_string()), true);
+        assert_eq!(is_number(" 1e".to_string()), false);
+        assert_eq!(is_number("1.+1".to_string()), false);
     }
 
     #[test]
     fn test_add_binary() {
-        assert_eq!(
-            StringSolution::add_binary("11".to_string(), "1".to_string()),
-            "100"
-        );
-        assert_eq!(
-            StringSolution::add_binary("1010".to_string(), "1011".to_string()),
-            "10101"
-        );
+        assert_eq!(add_binary("11".to_string(), "1".to_string()), "100");
+        assert_eq!(add_binary("1010".to_string(), "1011".to_string()), "10101");
     }
 
     #[test]
     fn test_is_subsequence() {
         assert_eq!(
-            StringSolution::is_subsequence("abc".to_string(), "ahbgdc".to_string()),
+            is_subsequence("abc".to_string(), "ahbgdc".to_string()),
             true
         );
         assert_eq!(
-            StringSolution::is_subsequence("axc".to_string(), "ahbgdc".to_string()),
+            is_subsequence("axc".to_string(), "ahbgdc".to_string()),
             false
         );
     }
 
     #[test]
     fn test_buddy_string() {
+        assert_eq!(buddy_strings("ab".to_string(), "ba".to_string()), true);
+        assert_eq!(buddy_strings("ab".to_string(), "ab".to_string()), false);
+        assert_eq!(buddy_strings("aa".to_string(), "aa".to_string()), true);
         assert_eq!(
-            StringSolution::buddy_strings("ab".to_string(), "ba".to_string()),
+            buddy_strings("aaaaaaabc".to_string(), "aaaaaaacb".to_string()),
             true
         );
-        assert_eq!(
-            StringSolution::buddy_strings("ab".to_string(), "ab".to_string()),
-            false
-        );
-        assert_eq!(
-            StringSolution::buddy_strings("aa".to_string(), "aa".to_string()),
-            true
-        );
-        assert_eq!(
-            StringSolution::buddy_strings("aaaaaaabc".to_string(), "aaaaaaacb".to_string()),
-            true
-        );
-        assert_eq!(
-            StringSolution::buddy_strings("".to_string(), "aa".to_string()),
-            false
-        );
+        assert_eq!(buddy_strings("".to_string(), "aa".to_string()), false);
     }
 
     #[test]
     fn test_is_palindrome() {
         assert_eq!(
-            StringSolution::is_palindrome("A man, a plan, a canal: Panama".to_string()),
+            is_palindrome("A man, a plan, a canal: Panama".to_string()),
             true
         )
     }
 
     #[test]
     fn test_reverse_vowel() {
+        assert_eq!(reverse_vowels("hello".to_string()), "holle".to_string());
         assert_eq!(
-            StringSolution::reverse_vowels("hello".to_string()),
-            "holle".to_string()
-        );
-        assert_eq!(
-            StringSolution::reverse_vowels("leetcode".to_string()),
+            reverse_vowels("leetcode".to_string()),
             "leotcede".to_string()
         );
     }
 
     #[test]
     fn test_is_isomorphic() {
+        assert_eq!(is_isomorphic("egg".to_string(), "add".to_string()), true);
+        assert_eq!(is_isomorphic("foo".to_string(), "bar".to_string()), false);
         assert_eq!(
-            StringSolution::is_isomorphic("egg".to_string(), "add".to_string()),
+            is_isomorphic("paper".to_string(), "title".to_string()),
             true
         );
-        assert_eq!(
-            StringSolution::is_isomorphic("foo".to_string(), "bar".to_string()),
-            false
-        );
-        assert_eq!(
-            StringSolution::is_isomorphic("paper".to_string(), "title".to_string()),
-            true
-        );
-        assert_eq!(
-            StringSolution::is_isomorphic("ab".to_string(), "aa".to_string()),
-            false
-        );
+        assert_eq!(is_isomorphic("ab".to_string(), "aa".to_string()), false);
     }
 
     #[test]
     fn test_max_palindromic_number() {
         assert_eq!(
-            StringSolution::max_palindromic_number("28398".to_string()),
+            max_palindromic_number("28398".to_string()),
             "898".to_string()
         );
     }
 
     #[test]
     fn test_compare_version() {
-        assert_eq!(
-            StringSolution::compare_version("1.01".to_string(), "1.001".to_string()),
-            0
-        );
-        assert_eq!(
-            StringSolution::compare_version("1.0".to_string(), "1.0.0".to_string()),
-            0
-        );
-        assert_eq!(
-            StringSolution::compare_version("0.1".to_string(), "1.1".to_string()),
-            -1
-        );
-        assert_eq!(
-            StringSolution::compare_version("1.0.1".to_string(), "1".to_string()),
-            1
-        );
+        assert_eq!(compare_version("1.01".to_string(), "1.001".to_string()), 0);
+        assert_eq!(compare_version("1.0".to_string(), "1.0.0".to_string()), 0);
+        assert_eq!(compare_version("0.1".to_string(), "1.1".to_string()), -1);
+        assert_eq!(compare_version("1.0.1".to_string(), "1".to_string()), 1);
     }
 
     #[test]
     fn test_decode_number() {
-        assert_eq!(StringSolution::num_decodings("12".to_string()), 2);
-        assert_eq!(StringSolution::num_decodings("226".to_string()), 3);
-        assert_eq!(StringSolution::num_decodings("0".to_string()), 0);
-        assert_eq!(StringSolution::num_decodings("06".to_string()), 0);
+        assert_eq!(num_decodings("12".to_string()), 2);
+        assert_eq!(num_decodings("226".to_string()), 3);
+        assert_eq!(num_decodings("0".to_string()), 0);
+        assert_eq!(num_decodings("06".to_string()), 0);
     }
 
     #[test]
     fn test_longest_palindrome() {
-        assert_eq!(
-            StringSolution::longest_palindrome("babad".to_string()),
-            "aba".to_string()
-        );
-        assert_eq!(
-            StringSolution::longest_palindrome("cbbd".to_string()),
-            "bb".to_string()
-        );
-        assert_eq!(
-            StringSolution::longest_palindrome("a".to_string()),
-            "a".to_string()
-        );
-        assert_eq!(
-            StringSolution::longest_palindrome("ac".to_string()),
-            "c".to_string()
-        );
-        assert_eq!(
-            StringSolution::longest_palindrome("aaaa".to_string()),
-            "aaaa".to_string()
-        );
+        assert_eq!(longest_palindrome("babad".to_string()), "aba".to_string());
+        assert_eq!(longest_palindrome("cbbd".to_string()), "bb".to_string());
+        assert_eq!(longest_palindrome("a".to_string()), "a".to_string());
+        assert_eq!(longest_palindrome("ac".to_string()), "c".to_string());
+        assert_eq!(longest_palindrome("aaaa".to_string()), "aaaa".to_string());
     }
 
     #[test]
     fn test_word_break() {
         assert_eq!(
-            StringSolution::word_break(
+            word_break(
                 "leetcode".to_string(),
                 vec!["leet".to_string(), "code".to_string()],
             ),
             true
         );
         assert_eq!(
-            StringSolution::word_break(
+            word_break(
                 "applepenapple".to_string(),
                 vec!["apple".to_string(), "pen".to_string()],
             ),
             true
         );
         assert_eq!(
-            StringSolution::word_break(
+            word_break(
                 "catsandog".to_string(),
                 vec![
                     "cats".to_string(),
@@ -1597,7 +1533,7 @@ mod tests {
     #[test]
     fn test_is_interleave() {
         assert_eq!(
-            StringSolution::is_interleave(
+            is_interleave(
                 "aabcc".to_string(),
                 "dbbca".to_string(),
                 "aadbbcbcac".to_string(),
@@ -1605,7 +1541,7 @@ mod tests {
             true
         );
         assert_eq!(
-            StringSolution::is_interleave(
+            is_interleave(
                 "aabcc".to_string(),
                 "dbbca".to_string(),
                 "aadbbbaccc".to_string(),
@@ -1613,11 +1549,11 @@ mod tests {
             false
         );
         assert_eq!(
-            StringSolution::is_interleave("".to_string(), "".to_string(), "".to_string()),
+            is_interleave("".to_string(), "".to_string(), "".to_string()),
             true
         );
         assert_eq!(
-            StringSolution::is_interleave("a".to_string(), "".to_string(), "a".to_string()),
+            is_interleave("a".to_string(), "".to_string(), "a".to_string()),
             true
         )
     }
@@ -1625,41 +1561,38 @@ mod tests {
     #[test]
     fn test_word_pattern() {
         assert_eq!(
-            StringSolution::word_pattern("abba".to_string(), "dog cat cat dog".to_string()),
+            word_pattern("abba".to_string(), "dog cat cat dog".to_string()),
             true
         );
         assert_eq!(
-            StringSolution::word_pattern("abba".to_string(), "dog cat cat fish".to_string()),
+            word_pattern("abba".to_string(), "dog cat cat fish".to_string()),
             false
         );
         assert_eq!(
-            StringSolution::word_pattern("abbc".to_string(), "dog cat cat dog".to_string()),
+            word_pattern("abbc".to_string(), "dog cat cat dog".to_string()),
             false
         );
         assert_eq!(
-            StringSolution::word_pattern("avva".to_string(), "dog dog dog dog".to_string()),
+            word_pattern("avva".to_string(), "dog dog dog dog".to_string()),
             false
         );
     }
 
     #[test]
     fn test_min_partitions() {
-        assert_eq!(StringSolution::min_partitions("32".to_string()), 3);
-        assert_eq!(StringSolution::min_partitions("82734".to_string()), 8);
-        assert_eq!(
-            StringSolution::min_partitions("27346209830709182346".to_string()),
-            9
-        );
+        assert_eq!(min_partitions("32".to_string()), 3);
+        assert_eq!(min_partitions("82734".to_string()), 8);
+        assert_eq!(min_partitions("27346209830709182346".to_string()), 9);
     }
 
     #[test]
     fn test_longest_common_sub_sequence() {
         assert_eq!(
-            StringSolution::longest_common_subsequence("abcde".to_string(), "ace".to_string()),
+            longest_common_subsequence("abcde".to_string(), "ace".to_string()),
             3
         );
         assert_eq!(
-            StringSolution::longest_common_subsequence("abc".to_string(), "def".to_string()),
+            longest_common_subsequence("abc".to_string(), "def".to_string()),
             0
         );
     }
@@ -1667,18 +1600,18 @@ mod tests {
     #[test]
     fn test_longest_common_sub_string() {
         assert_eq!(
-            StringSolution::longest_common_sub_string("abcde".to_string(), "ace".to_string()),
+            longest_common_sub_string("abcde".to_string(), "ace".to_string()),
             1
         );
         assert_eq!(
-            StringSolution::longest_common_sub_string("abc".to_string(), "def".to_string()),
+            longest_common_sub_string("abc".to_string(), "def".to_string()),
             0
         );
     }
 
     #[test]
     fn test_partition_palindrome() {
-        let mut result = StringSolution::partition_palindrome("aab".to_string());
+        let mut result = partition_palindrome("aab".to_string());
         for r in result.iter_mut() {
             r.sort();
         }
@@ -1696,24 +1629,15 @@ mod tests {
 
     #[test]
     fn test_max_number_of_balloons() {
-        assert_eq!(
-            StringSolution::max_number_of_balloons("nlaebolko".to_string()),
-            1
-        );
-        assert_eq!(
-            StringSolution::max_number_of_balloons("loonbalxballpoon".to_string()),
-            2
-        );
-        assert_eq!(
-            StringSolution::max_number_of_balloons("leetcode".to_string()),
-            0
-        );
+        assert_eq!(max_number_of_balloons("nlaebolko".to_string()), 1);
+        assert_eq!(max_number_of_balloons("loonbalxballpoon".to_string()), 2);
+        assert_eq!(max_number_of_balloons("leetcode".to_string()), 0);
     }
 
     #[test]
     fn test_reverse_words() {
         assert_eq!(
-            StringSolution::reverse_words("The sky is blue".to_string()),
+            reverse_words("The sky is blue".to_string()),
             "blue is sky The".to_string()
         );
     }
@@ -1721,110 +1645,86 @@ mod tests {
     #[test]
     fn test_get_hint() {
         assert_eq!(
-            StringSolution::get_hint("1807".to_string(), "7810".to_string()),
+            get_hint("1807".to_string(), "7810".to_string()),
             "1A3B".to_string()
         );
         assert_eq!(
-            StringSolution::get_hint("1123".to_string(), "0111".to_string()),
+            get_hint("1123".to_string(), "0111".to_string()),
             "1A1B".to_string()
         );
         assert_eq!(
-            StringSolution::get_hint("1122".to_string(), "1222".to_string()),
+            get_hint("1122".to_string(), "1222".to_string()),
             "3A0B".to_string()
         );
     }
 
     #[test]
     fn test_halves_are_alike() {
-        assert_eq!(StringSolution::halves_are_alike("book".to_string()), true);
-        assert_eq!(
-            StringSolution::halves_are_alike("textbook".to_string()),
-            false
-        );
-        assert_eq!(
-            StringSolution::halves_are_alike("MerryChristmas".to_string()),
-            false
-        );
-        assert_eq!(
-            StringSolution::halves_are_alike("AbCdEfGh".to_string()),
-            true
-        );
+        assert_eq!(halves_are_alike("book".to_string()), true);
+        assert_eq!(halves_are_alike("textbook".to_string()), false);
+        assert_eq!(halves_are_alike("MerryChristmas".to_string()), false);
+        assert_eq!(halves_are_alike("AbCdEfGh".to_string()), true);
     }
 
     #[test]
     fn test_max_length_between_equal_characters() {
-        assert_eq!(
-            StringSolution::max_length_between_equal_characters("aa".to_string()),
-            0
-        );
-        assert_eq!(
-            StringSolution::max_length_between_equal_characters("abca".to_string()),
-            2
-        );
-        assert_eq!(
-            StringSolution::max_length_between_equal_characters("cbzxy".to_string()),
-            -1
-        );
-        assert_eq!(
-            StringSolution::max_length_between_equal_characters("cabbac".to_string()),
-            4
-        );
+        assert_eq!(max_length_between_equal_characters("aa".to_string()), 0);
+        assert_eq!(max_length_between_equal_characters("abca".to_string()), 2);
+        assert_eq!(max_length_between_equal_characters("cbzxy".to_string()), -1);
+        assert_eq!(max_length_between_equal_characters("cabbac".to_string()), 4);
     }
 
     #[test]
     fn test_min_operations() {
-        assert_eq!(StringSolution::min_operations("0100".to_string()), 1);
-        assert_eq!(StringSolution::min_operations("10".to_string()), 0);
-        assert_eq!(StringSolution::min_operations("1111".to_string()), 2);
+        assert_eq!(min_operations("0100".to_string()), 1);
+        assert_eq!(min_operations("10".to_string()), 0);
+        assert_eq!(min_operations("1111".to_string()), 2);
     }
 
     #[test]
     fn test_path_crossing() {
-        assert_eq!(StringSolution::path_crossing("NES".to_string()), false);
-        assert_eq!(StringSolution::path_crossing("NESWW".to_string()), true);
+        assert_eq!(path_crossing("NES".to_string()), false);
+        assert_eq!(path_crossing("NESWW".to_string()), true);
     }
 
     #[test]
     fn test_max_score() {
-        assert_eq!(StringSolution::max_score("011101".to_string()), 5);
-        assert_eq!(StringSolution::max_score("00111".to_string()), 5);
-        assert_eq!(StringSolution::max_score("1111".to_string()), 3);
+        assert_eq!(max_score("011101".to_string()), 5);
+        assert_eq!(max_score("00111".to_string()), 5);
+        assert_eq!(max_score("1111".to_string()), 3);
     }
 
     #[test]
     fn test_min_deletions() {
-        assert_eq!(StringSolution::min_deletions("aab".to_string()), 0);
-        assert_eq!(StringSolution::min_deletions("aaabbbcc".to_string()), 2);
-        assert_eq!(StringSolution::min_deletions("ceabaacb".to_string()), 2);
+        assert_eq!(min_deletions("aab".to_string()), 0);
+        assert_eq!(min_deletions("aaabbbcc".to_string()), 2);
+        assert_eq!(min_deletions("ceabaacb".to_string()), 2);
     }
 
     #[test]
     fn test_find_anagrams() {
         assert_eq!(
-            StringSolution::find_anagrams("cbaebabacd".to_string(), "abc".to_string()),
+            find_anagrams("cbaebabacd".to_string(), "abc".to_string()),
             vec![0, 6]
         );
         assert_eq!(
-            StringSolution::find_anagrams("abab".to_string(), "ab".to_string()),
+            find_anagrams("abab".to_string(), "ab".to_string()),
             vec![0, 1, 2]
         );
     }
 
     #[test]
     fn test_count_segments() {
-        assert_eq!(
-            StringSolution::count_segments("Hello, my name is John".to_string()),
-            5
-        );
-        assert_eq!(StringSolution::count_segments("Hello".to_string()), 1);
-        assert_eq!(StringSolution::count_segments("".to_string()), 0);
-        assert_eq!(StringSolution::count_segments("    ".to_string()), 0);
+        assert_eq!(count_segments("Hello, my name is John".to_string()), 5);
+        assert_eq!(count_segments("Hello".to_string()), 1);
+        assert_eq!(count_segments("".to_string()), 0);
+        assert_eq!(count_segments("    ".to_string()), 0);
     }
 
     #[test]
     fn test_longest_str_chain() {
         assert_eq!(
-            StringSolution::longest_str_chain(vec![
+            longest_str_chain(vec![
                 "a".to_string(),
                 "b".to_string(),
                 "ba".to_string(),
@@ -1835,7 +1735,7 @@ mod tests {
             4
         );
         assert_eq!(
-            StringSolution::longest_str_chain(vec![
+            longest_str_chain(vec![
                 "xbc".to_string(),
                 "pcxbcf".to_string(),
                 "xb".to_string(),
@@ -1846,7 +1746,7 @@ mod tests {
         );
 
         assert_eq!(
-            StringSolution::longest_str_chain(vec![
+            longest_str_chain(vec![
                 "bdca".to_string(),
                 "bda".to_string(),
                 "ca".to_string(),
@@ -1860,42 +1760,39 @@ mod tests {
     #[test]
     fn test_remove_duplicates_letters() {
         assert_eq!(
-            StringSolution::remove_duplicate_letters("bcabc".to_string()),
+            remove_duplicate_letters("bcabc".to_string()),
             "abc".to_string()
         );
-        assert_eq!(
-            StringSolution::remove_duplicate_letters("cbacdcbc".to_string()),
-            "acdb"
-        )
+        assert_eq!(remove_duplicate_letters("cbacdcbc".to_string()), "acdb")
     }
 
     #[test]
     fn test_maximum_odd_binary_number() {
         assert_eq!(
-            StringSolution::maximum_odd_binary_number("010".to_string()),
+            maximum_odd_binary_number("010".to_string()),
             "001".to_string()
         );
         assert_eq!(
-            StringSolution::maximum_odd_binary_number("0101".to_string()),
+            maximum_odd_binary_number("0101".to_string()),
             "1001".to_string()
         );
     }
 
     #[test]
     fn test_minimum_length() {
-        assert_eq!(StringSolution::minimum_length("ca".to_string()), 2);
-        assert_eq!(StringSolution::minimum_length("cabaabac".to_string()), 0);
-        assert_eq!(StringSolution::minimum_length("aabccabba".to_string()), 3);
+        assert_eq!(minimum_length("ca".to_string()), 2);
+        assert_eq!(minimum_length("cabaabac".to_string()), 0);
+        assert_eq!(minimum_length("aabccabba".to_string()), 3);
     }
 
     #[test]
     fn test_custom_sort_string() {
         assert_eq!(
-            StringSolution::custom_sort_string("cba".to_string(), "abcd".to_string()),
+            custom_sort_string("cba".to_string(), "abcd".to_string()),
             "cbad".to_string()
         );
         assert_eq!(
-            StringSolution::custom_sort_string("kqep".to_string(), "pekeq".to_string()),
+            custom_sort_string("kqep".to_string(), "pekeq".to_string()),
             "kqeep".to_string()
         );
     }
@@ -1903,49 +1800,46 @@ mod tests {
     #[test]
     fn test_backspace_compare() {
         assert_eq!(
-            StringSolution::backspace_compare("ab#c".to_string(), "ad#c".to_string()),
+            backspace_compare("ab#c".to_string(), "ad#c".to_string()),
             true
         );
         assert_eq!(
-            StringSolution::backspace_compare("ab##".to_string(), "c#d#".to_string()),
+            backspace_compare("ab##".to_string(), "c#d#".to_string()),
             true
         );
         assert_eq!(
-            StringSolution::backspace_compare("a##c".to_string(), "#a#c".to_string()),
+            backspace_compare("a##c".to_string(), "#a#c".to_string()),
             true
         );
-        assert_eq!(
-            StringSolution::backspace_compare("a#c".to_string(), "b".to_string()),
-            false
-        );
+        assert_eq!(backspace_compare("a#c".to_string(), "b".to_string()), false);
     }
 
     #[test]
     fn test_calculator() {
-        assert_eq!(StringSolution::calculator("3+2*2".to_string()), 7);
-        assert_eq!(StringSolution::calculator(" 3/2 ".to_string()), 1);
-        assert_eq!(StringSolution::calculator(" 3+5 / 2 ".to_string()), 5);
-        assert_eq!(StringSolution::calculator(" (3+5) / 2 ".to_string()), 4);
+        assert_eq!(calculator("3+2*2".to_string()), 7);
+        assert_eq!(calculator(" 3/2 ".to_string()), 1);
+        assert_eq!(calculator(" 3+5 / 2 ".to_string()), 5);
+        assert_eq!(calculator(" (3+5) / 2 ".to_string()), 4);
     }
 
     #[test]
     fn test_array_strings_are_equal() {
         assert_eq!(
-            StringSolution::array_strings_are_equal(
+            array_strings_are_equal(
                 vec!["ab".to_string(), "c".to_string()],
                 vec!["a".to_string(), "bc".to_string()]
             ),
             true
         );
         assert_eq!(
-            StringSolution::array_strings_are_equal(
+            array_strings_are_equal(
                 vec!["a".to_string(), "cb".to_string()],
                 vec!["ab".to_string(), "c".to_string()]
             ),
             false
         );
         assert_eq!(
-            StringSolution::array_strings_are_equal(
+            array_strings_are_equal(
                 vec!["abc".to_string(), "d".to_string(), "defg".to_string()],
                 vec!["abcd".to_string(), "defg".to_string()]
             ),
@@ -1955,73 +1849,54 @@ mod tests {
 
     #[test]
     fn test_max_depth() {
-        assert_eq!(
-            StringSolution::max_depth("(1+(2*3)+((8)/4))+1".to_string()),
-            3
-        );
-        assert_eq!(
-            StringSolution::max_depth("(1)+((2))+(((3)))".to_string()),
-            3
-        );
-        assert_eq!(StringSolution::max_depth("1+(2*3)/(2-1)".to_string()), 1);
-        assert_eq!(StringSolution::max_depth("1".to_string()), 0);
+        assert_eq!(max_depth("(1+(2*3)+((8)/4))+1".to_string()), 3);
+        assert_eq!(max_depth("(1)+((2))+(((3)))".to_string()), 3);
+        assert_eq!(max_depth("1+(2*3)/(2-1)".to_string()), 1);
+        assert_eq!(max_depth("1".to_string()), 0);
     }
 
     #[test]
     fn test_make_good() {
-        assert_eq!(
-            StringSolution::make_good("leEeetcode".to_string()),
-            "leetcode".to_string()
-        );
-        assert_eq!(
-            StringSolution::make_good("abBAcC".to_string()),
-            "".to_string()
-        );
-        assert_eq!(StringSolution::make_good("s".to_string()), "s".to_string());
+        assert_eq!(make_good("leEeetcode".to_string()), "leetcode".to_string());
+        assert_eq!(make_good("abBAcC".to_string()), "".to_string());
+        assert_eq!(make_good("s".to_string()), "s".to_string());
     }
 
     #[test]
     fn test_test_min_remove_to_make_valid() {
         assert_eq!(
-            StringSolution::min_remove_to_make_valid("lee(t(c)o)de)".to_string()),
+            min_remove_to_make_valid("lee(t(c)o)de)".to_string()),
             "lee(t(c)o)de".to_string()
         );
         assert_eq!(
-            StringSolution::min_remove_to_make_valid("a)b(c)d".to_string()),
+            min_remove_to_make_valid("a)b(c)d".to_string()),
             "ab(c)d".to_string()
         );
+        assert_eq!(min_remove_to_make_valid("))((".to_string()), "".to_string());
         assert_eq!(
-            StringSolution::min_remove_to_make_valid("))((".to_string()),
-            "".to_string()
-        );
-        assert_eq!(
-            StringSolution::min_remove_to_make_valid("(a(b(c)d)".to_string()),
+            min_remove_to_make_valid("(a(b(c)d)".to_string()),
             "a(b(c)d)".to_string()
         );
     }
 
     #[test]
     fn test_check_valid_string() {
-        assert_eq!(StringSolution::check_valid_string("()".to_string()), true);
-        assert_eq!(StringSolution::check_valid_string("(*)".to_string()), true);
-        assert_eq!(StringSolution::check_valid_string("(*))".to_string()), true);
-        assert_eq!(StringSolution::check_valid_string("((*)".to_string()), true);
-        assert_eq!(
-            StringSolution::check_valid_string("((())".to_string()),
-            false
-        );
+        assert_eq!(check_valid_string("()".to_string()), true);
+        assert_eq!(check_valid_string("(*)".to_string()), true);
+        assert_eq!(check_valid_string("(*))".to_string()), true);
+        assert_eq!(check_valid_string("((*)".to_string()), true);
+        assert_eq!(check_valid_string("((())".to_string()), false);
     }
 
     #[test]
     fn test_find_repeated_dna_sequences() {
-        let mut result = StringSolution::find_repeated_dna_sequences(
-            "AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT".to_string(),
-        );
+        let mut result =
+            find_repeated_dna_sequences("AAAAACCCCCAAAAACCCCCCAAAAAGGGTTT".to_string());
         result.sort();
         let expect = vec!["AAAAACCCCC".to_string(), "CCCCCAAAAA".to_string()];
         assert_eq!(result, expect);
 
-        let mut result = StringSolution::find_repeated_dna_sequences("A".to_string());
+        let mut result = find_repeated_dna_sequences("A".to_string());
         result.sort();
         let expect: Vec<String> = vec![];
         assert_eq!(result, expect);
