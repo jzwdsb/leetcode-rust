@@ -2692,4 +2692,28 @@ pub mod array_solution {
         );
         assert_eq!(matrix_score(vec![vec![0]]), 1);
     }
+
+    pub fn subarrays_div_by_k(nums: Vec<i32>, k: i32) -> i32 {
+        let mut count = 0;
+        let mut sum = 0;
+        // key: sum % k, value: count of sum % k
+        let mut map = HashMap::new();
+        map.insert(0, 1);
+        for num in nums {
+            sum = (sum + num) % k;
+            if sum < 0 {
+                sum += k;
+            }
+            // if sum % k == 0, then the subarray from 0 to i is divisible by k
+            count += map.get(&(sum)).unwrap_or(&0);
+            *map.entry(sum).or_insert(0) += 1;
+        }
+        count
+    }
+
+    #[test]
+    fn test_subarrays_div_by_k() {
+        assert_eq!(subarrays_div_by_k(vec![4, 5, 0, -2, -3, 1], 5), 7);
+        assert_eq!(subarrays_div_by_k(vec![5], 9), 0);
+    }
 } // impl array_solutions
