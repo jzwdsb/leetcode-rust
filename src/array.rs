@@ -5,6 +5,7 @@ pub mod array_solution {
         cmp::{Ordering, Reverse},
         collections::{BTreeMap, BinaryHeap, HashMap, HashSet, VecDeque},
         ops::Div,
+        vec,
     };
 
     /*
@@ -2715,5 +2716,39 @@ pub mod array_solution {
     fn test_subarrays_div_by_k() {
         assert_eq!(subarrays_div_by_k(vec![4, 5, 0, -2, -3, 1], 5), 7);
         assert_eq!(subarrays_div_by_k(vec![5], 9), 0);
+    }
+
+    pub fn max_satisfied(customers: Vec<i32>, grumpy: Vec<i32>, minutes: i32) -> i32 {
+        let mut satisfied = 0;
+        let mut max_satisfied = 0;
+        let mut window_satisfied = 0;
+        for i in 0..customers.len() {
+            satisfied += if grumpy[i] == 0 { customers[i] } else { 0 };
+            window_satisfied += if grumpy[i] == 1 { customers[i] } else { 0 };
+            if i as i32 >= minutes {
+                window_satisfied -= if grumpy[i - minutes as usize] == 1 {
+                    customers[i - minutes as usize]
+                } else {
+                    0
+                };
+            }
+            // find the max window_satisfied
+            max_satisfied = i32::max(max_satisfied, window_satisfied);
+        }
+        satisfied + max_satisfied
+    }
+
+    #[test]
+    fn test_max_satisfied() {
+        assert_eq!(
+            max_satisfied(
+                vec![1, 0, 1, 2, 1, 1, 7, 5],
+                vec![0, 1, 0, 1, 0, 1, 0, 1],
+                3
+            ),
+            16
+        );
+        assert_eq!(max_satisfied(vec![4, 10, 10], vec![1, 1, 0], 2), 24);
+        assert_eq!(max_satisfied(vec![9, 10, 4, 5], vec![1, 0, 1, 1], 1), 19)
     }
 } // impl array_solutions
