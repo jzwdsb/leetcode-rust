@@ -585,10 +585,9 @@ pub mod dpsolution {
         for i in 0..rating.len() {
             for j in i + 1..rating.len() {
                 for k in j + 1..rating.len() {
-                    if rating[i] < rating[j] && rating[j] < rating[k] {
-                        count += 1;
-                    }
-                    if rating[i] > rating[j] && rating[j] > rating[k] {
+                    if (rating[i] < rating[j] && rating[j] < rating[k])
+                        || (rating[i] > rating[j] && rating[j] > rating[k])
+                    {
                         count += 1;
                     }
                 }
