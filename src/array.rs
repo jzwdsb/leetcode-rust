@@ -2751,4 +2751,27 @@ pub mod array_solution {
         assert_eq!(max_satisfied(vec![4, 10, 10], vec![1, 1, 0], 2), 24);
         assert_eq!(max_satisfied(vec![9, 10, 4, 5], vec![1, 0, 1, 1], 1), 19)
     }
+
+    pub fn num_teams(rating: Vec<i32>) -> i32 {
+        let mut count = 0;
+        for i in 0..rating.len() {
+            for j in i + 1..rating.len() {
+                for k in j + 1..rating.len() {
+                    if (rating[i] < rating[j] && rating[j] < rating[k])
+                        || (rating[i] > rating[j] && rating[j] > rating[k])
+                    {
+                        count += 1;
+                    }
+                }
+            }
+        }
+        count
+    }
+
+    #[test]
+    fn test_num_teams() {
+        assert_eq!(num_teams(vec![2, 5, 3, 4, 1]), 3);
+        assert_eq!(num_teams(vec![2, 1, 3]), 0);
+        assert_eq!(num_teams(vec![1, 2, 3, 4]), 4);
+    }
 } // impl array_solutions
