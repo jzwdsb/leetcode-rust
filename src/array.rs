@@ -2774,4 +2774,33 @@ pub mod array_solution {
         assert_eq!(num_teams(vec![2, 1, 3]), 0);
         assert_eq!(num_teams(vec![1, 2, 3, 4]), 4);
     }
+
+    /*
+    https://leetcode.com/problems/number-of-senior-citizens/description/
+     */
+
+    pub fn count_seniors(details: Vec<String>) -> i32 {
+        let mut count = 0;
+        for detail in details {
+            let age = detail[detail.len() - 4..detail.len() - 2]
+                .parse::<i32>()
+                .unwrap();
+            if age > 60 {
+                count += 1;
+            }
+        }
+        count
+    }
+
+    #[test]
+    fn test_count_seniors() {
+        assert_eq!(
+            count_seniors(vec![
+                "7868190130M7522".to_string(),
+                "5303914400F9211".to_string(),
+                "9273338290F4010".to_string()
+            ]),
+            2
+        )
+    }
 } // impl array_solutions
