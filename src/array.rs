@@ -2803,4 +2803,21 @@ pub mod array_solution {
             2
         )
     }
+
+    pub fn min_number(nums1: Vec<i32>, nums2: Vec<i32>) -> i32 {
+        let nums1_set = nums1.iter().copied().collect::<HashSet<_>>();
+        let nums2_set = nums2.iter().copied().collect::<HashSet<_>>();
+        if let Some(&minimum_digit) = nums1_set.intersection(&nums2_set).min() {
+            return minimum_digit;
+        }
+        let min1 = *nums1_set.iter().min().unwrap();
+        let min2 = *nums2_set.iter().min().unwrap();
+        min1.min(min2) * 10 + min1.max(min2)
+    }
+
+    #[test]
+    fn test_min_number() {
+        assert_eq!(min_number(vec![4, 1, 3], vec![5, 7]), 15);
+        assert_eq!(min_number(vec![3, 6, 7, 4, 6, 5], vec![3, 6, 7]), 3);
+    }
 } // impl array_solutions
