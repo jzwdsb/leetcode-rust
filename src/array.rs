@@ -2820,4 +2820,44 @@ pub mod array_solution {
         assert_eq!(min_number(vec![4, 1, 3], vec![5, 7]), 15);
         assert_eq!(min_number(vec![3, 6, 7, 4, 6, 5], vec![3, 6, 7]), 3);
     }
+
+    pub fn kth_distinct(arr: Vec<String>, k: i32) -> String {
+        let seen = arr.iter().fold(HashMap::new(), |mut map, s| {
+            map.entry(s).and_modify(|v| *v = false).or_insert(true);
+            map
+        });
+        arr.iter()
+            .filter(|s| *seen.get(s).unwrap())
+            .nth((k - 1) as usize)
+            .unwrap_or(&"".to_string())
+            .to_owned()
+    }
+
+    #[test]
+    fn test_kth_distinct() {
+        assert_eq!(
+            kth_distinct(
+                vec![
+                    "a".to_string(),
+                    "b".to_string(),
+                    "c".to_string(),
+                    "d".to_string(),
+                    "e".to_string()
+                ],
+                3
+            ),
+            "c"
+        );
+        assert_eq!(
+            kth_distinct(
+                vec![
+                    "aaa".to_string(),
+                    "aa".to_string().to_string(),
+                    "a".to_string()
+                ],
+                1
+            ),
+            "aaa"
+        );
+    }
 } // impl array_solutions
