@@ -739,7 +739,7 @@ pub mod string_solution {
         }
         map.entry('l').and_modify(|c| *c /= 2);
         map.entry('o').and_modify(|c| *c /= 2);
-        let mut ans = std::i32::MAX;
+        let mut ans = i32::MAX;
         for c in "balloon".chars() {
             let count = map.entry(c).or_insert(0);
             if *count < ans {
@@ -1314,6 +1314,37 @@ pub mod string_solution {
             t.next_if_eq(&n);
         });
         t.len() as _
+    }
+
+    pub fn add_strings(num1: String, num2: String) -> String {
+        let mut num1 = num1.chars().collect::<Vec<char>>();
+        let mut num2 = num2.chars().collect::<Vec<char>>();
+        let mut res = String::new();
+        let mut carry = 0;
+        while !num1.is_empty() || !num2.is_empty() || carry != 0 {
+            let mut sum = carry;
+            if !num1.is_empty() {
+                sum += num1.pop().unwrap() as i32 - '0' as i32;
+            }
+            if !num2.is_empty() {
+                sum += num2.pop().unwrap() as i32 - '0' as i32;
+            }
+            res.push((sum % 10 + '0' as i32) as u8 as char);
+            carry = sum / 10;
+        }
+        res.chars().rev().collect()
+    }
+
+    #[test]
+    fn test_add_strings() {
+        assert_eq!(
+            add_strings("123".to_string(), "456".to_string()),
+            "579".to_string()
+        );
+        assert_eq!(
+            add_strings("999".to_string(), "1".to_string()),
+            "1000".to_string()
+        );
     }
 
     #[test]

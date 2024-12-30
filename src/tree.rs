@@ -81,7 +81,7 @@ impl TreeSolution {
     }
 
     pub fn is_valid_bst(root: Option<Rc<RefCell<TreeNode>>>) -> bool {
-        Self::is_valid_helper(&root, std::i64::MIN, std::i64::MAX)
+        Self::is_valid_helper(&root, i64::MIN, i64::MAX)
     }
 
     fn is_valid_helper(root: &Option<Rc<RefCell<TreeNode>>>, gt: i64, lt: i64) -> bool {

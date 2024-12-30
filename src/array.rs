@@ -1745,7 +1745,7 @@ pub mod array_solution {
             *trust_by.entry(b).or_default() += 1;
         }
         for i in 1..=n {
-            if trusts.get(&i).is_none() && trust_by.get(&i).unwrap_or(&0) == &(n - 1) {
+            if !trusts.contains_key(&i) && trust_by.get(&i).unwrap_or(&0) == &(n - 1) {
                 return i;
             }
         }

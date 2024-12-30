@@ -1,13 +1,20 @@
+use postgres::Client;
 
 pub struct Postgres {
-    client: postgres::Client,
+    client: Client,
+}
+
+impl Default for Postgres {
+    fn default() -> Self {
+        Self::new()
+    }
 }
 
 impl Postgres {
     pub fn new() -> Postgres {
-        let mut client =
-            postgres::Client::connect("host=localhost user=postgres", postgres::NoTls).unwrap();
-        Postgres { client: client }
+        let client =
+            Client::connect("host=localhost user=postgres", postgres::NoTls).unwrap();
+        Postgres { client }
     }
     pub fn create_table(&mut self) {
         self.client

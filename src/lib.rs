@@ -13,7 +13,7 @@ pub mod search;
 pub mod sliding_window;
 pub mod sort;
 // pub mod http;
-// pub mod postgres;
+pub mod postgres;
 
 pub mod concurrent;
 pub mod design;

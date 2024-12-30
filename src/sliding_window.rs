@@ -187,7 +187,7 @@ impl SlidingWindow {
     update result = min(result, j - i + 1) (current window size)
      */
     pub fn min_sub_array_len(target: i32, nums: Vec<i32>) -> i32 {
-        let mut res = std::usize::MAX;
+        let mut res = usize::MAX;
         let mut sum = 0;
         let mut i = 0;
         for j in 0..nums.len() {
@@ -198,7 +198,7 @@ impl SlidingWindow {
                 i += 1;
             }
         }
-        if res == std::usize::MAX {
+        if res == usize::MAX {
             0
         } else {
             res as i32
