@@ -1,8 +1,6 @@
 #![allow(dead_code)]
 
-pub struct MathSolution {}
-
-impl MathSolution {
+pub mod math_solution {
     pub fn reverse(x: i32) -> i32 {
         let mut x = x;
         let mut ans: i32 = 0;
@@ -35,7 +33,7 @@ impl MathSolution {
         let (mut left, mut right) = (0i64, dividend);
         while left < right {
             let mid = left + ((right + 1 - left) >> 1);
-            if dividend >= Self::simulate_multiple(divisor, mid) {
+            if dividend >= simulate_multiple(divisor, mid) {
                 left = mid;
             } else {
                 right = mid - 1;
@@ -296,14 +294,14 @@ impl MathSolution {
         if jug1 == 0 || jug2 == 0 {
             return target_capacity == 0;
         }
-        target_capacity % Self::gcd(jug1, jug2) == 0
+        target_capacity % gcd(jug1, jug2) == 0
     }
 
     fn gcd(a: i32, b: i32) -> i32 {
         if b == 0 {
             return a;
         }
-        Self::gcd(b, a % b)
+        gcd(b, a % b)
     }
 
     /*
@@ -365,7 +363,7 @@ impl MathSolution {
 
     pub fn range_bitwise_and(left: i32, right: i32) -> i32 {
         if right > left {
-            Self::range_bitwise_and(left.wrapping_shr(1), right.wrapping_shr(1)).wrapping_shl(1)
+            range_bitwise_and(left.wrapping_shr(1), right.wrapping_shr(1)).wrapping_shl(1)
         } else {
             right
         }
@@ -403,6 +401,23 @@ impl MathSolution {
     pub fn hamming_weight(n: i32) -> i32 {
         (n as u32).count_ones() as i32
     }
+
+    pub fn convert_to_title(mut column_number: i32) -> String {
+        let mut res = String::new();
+        while column_number > 0 {
+            column_number -= 1;
+            res.push((column_number % 26 + b'A' as i32) as u8 as char);
+            column_number /= 26;
+        }
+        res.chars().rev().collect()
+    }
+
+    #[test]
+    fn test_convert_to_title() {
+        assert_eq!(convert_to_title(1), "A");
+        assert_eq!(convert_to_title(28), "AB");
+        assert_eq!(convert_to_title(701), "ZY");
+    }
 } // impl MathSolution
 
 #[cfg(test)]
@@ -412,62 +427,62 @@ mod tests {
 
     #[test]
     fn test_reverse() {
-        assert_eq!(MathSolution::reverse(123), 321);
-        assert_eq!(MathSolution::reverse(-123), -321);
-        assert_eq!(MathSolution::reverse(120), 21);
-        assert_eq!(MathSolution::reverse(0), 0);
-        assert_eq!(MathSolution::reverse(900000), 9);
+        assert_eq!(math_solution::reverse(123), 321);
+        assert_eq!(math_solution::reverse(-123), -321);
+        assert_eq!(math_solution::reverse(120), 21);
+        assert_eq!(math_solution::reverse(0), 0);
+        assert_eq!(math_solution::reverse(900000), 9);
     }
 
     #[test]
     fn test_divide() {
-        assert_eq!(MathSolution::divide(10, 3), 3);
-        assert_eq!(MathSolution::divide(7, -3), -2);
-        assert_eq!(MathSolution::divide(0, 1), 0);
-        assert_eq!(MathSolution::divide(1, 1), 1);
-        assert_eq!(MathSolution::divide(-1, 1), -1);
-        assert_eq!(MathSolution::divide(-2147483648, -1), 2147483647);
-        assert_eq!(MathSolution::divide(-1010369383, -2147483648), 0);
+        assert_eq!(math_solution::divide(10, 3), 3);
+        assert_eq!(math_solution::divide(7, -3), -2);
+        assert_eq!(math_solution::divide(0, 1), 0);
+        assert_eq!(math_solution::divide(1, 1), 1);
+        assert_eq!(math_solution::divide(-1, 1), -1);
+        assert_eq!(math_solution::divide(-2147483648, -1), 2147483647);
+        assert_eq!(math_solution::divide(-1010369383, -2147483648), 0);
     }
 
     #[test]
     fn test_pow() {
-        assert!(MathSolution::pow(2.0, 10) - 1024.0 < 0.00001);
-        assert!(MathSolution::pow(2.1, 3) - 9.261 < 0.00001);
-        assert!(MathSolution::pow(2.0, -2) - 0.25 < 0.00001);
-        assert!(MathSolution::pow(0.00001, 2147483647) - 0.0 < 0.00001);
-        assert!(MathSolution::pow(1.0, 2147483647) - 1.0 < 0.00001);
+        assert!(math_solution::pow(2.0, 10) - 1024.0 < 0.00001);
+        assert!(math_solution::pow(2.1, 3) - 9.261 < 0.00001);
+        assert!(math_solution::pow(2.0, -2) - 0.25 < 0.00001);
+        assert!(math_solution::pow(0.00001, 2147483647) - 0.0 < 0.00001);
+        assert!(math_solution::pow(1.0, 2147483647) - 1.0 < 0.00001);
 
-        assert!(MathSolution::pow(2.0, -2147483648) - 0.0 < 0.00001);
+        assert!(math_solution::pow(2.0, -2147483648) - 0.0 < 0.00001);
     }
 
     #[test]
     fn test_my_sqrt() {
-        assert_eq!(MathSolution::my_sqrt(0), 0);
-        assert_eq!(MathSolution::my_sqrt(1), 1);
-        assert_eq!(MathSolution::my_sqrt(4), 2);
-        assert_eq!(MathSolution::my_sqrt(8), 2);
-        assert_eq!(MathSolution::my_sqrt(9), 3);
-        assert_eq!(MathSolution::my_sqrt(2147395599), 46339);
+        assert_eq!(math_solution::my_sqrt(0), 0);
+        assert_eq!(math_solution::my_sqrt(1), 1);
+        assert_eq!(math_solution::my_sqrt(4), 2);
+        assert_eq!(math_solution::my_sqrt(8), 2);
+        assert_eq!(math_solution::my_sqrt(9), 3);
+        assert_eq!(math_solution::my_sqrt(2147395599), 46339);
     }
 
     #[test]
     fn test_distance_traveled() {
-        assert_eq!(MathSolution::distance_traveled(5, 10), 60);
-        assert_eq!(MathSolution::distance_traveled(1, 2), 10);
-        assert_eq!(MathSolution::distance_traveled(9, 2), 110);
+        assert_eq!(math_solution::distance_traveled(5, 10), 60);
+        assert_eq!(math_solution::distance_traveled(1, 2), 10);
+        assert_eq!(math_solution::distance_traveled(9, 2), 110);
     }
 
     #[test]
     fn test_is_happy() {
-        assert!(MathSolution::is_happy(19));
-        assert!(!MathSolution::is_happy(2));
+        assert!(math_solution::is_happy(19));
+        assert!(!math_solution::is_happy(2));
     }
 
     #[test]
     fn test_pascal_triangle() {
         assert_eq!(
-            MathSolution::gnerate_pascal_triangle(5),
+            math_solution::gnerate_pascal_triangle(5),
             vec![
                 vec![1],
                 vec![1, 1],
@@ -480,100 +495,100 @@ mod tests {
 
     #[test]
     fn test_get_row_in_pascal_triangle() {
-        assert_eq!(MathSolution::get_pascal_triangle_row(3), vec![1, 3, 3, 1]);
-        assert_eq!(MathSolution::get_pascal_triangle_row(0), vec![1]);
-        assert_eq!(MathSolution::get_pascal_triangle_row(1), vec![1, 1]);
+        assert_eq!(math_solution::get_pascal_triangle_row(3), vec![1, 3, 3, 1]);
+        assert_eq!(math_solution::get_pascal_triangle_row(0), vec![1]);
+        assert_eq!(math_solution::get_pascal_triangle_row(1), vec![1, 1]);
     }
 
     #[test]
     fn test_find_content_child() {
         assert_eq!(
-            MathSolution::find_content_child(vec![1, 2, 3], vec![1, 1]),
+            math_solution::find_content_child(vec![1, 2, 3], vec![1, 1]),
             1
         );
         assert_eq!(
-            MathSolution::find_content_child(vec![1, 2], vec![1, 2, 3]),
+            math_solution::find_content_child(vec![1, 2], vec![1, 2, 3]),
             2
         );
 
         assert_eq!(
-            MathSolution::find_content_child(vec![10, 9, 8, 7], vec![5, 6, 7, 8]),
+            math_solution::find_content_child(vec![10, 9, 8, 7], vec![5, 6, 7, 8]),
             2
         )
     }
 
     #[test]
     fn test_trailing_zeros() {
-        assert_eq!(MathSolution::trailing_zeroes(3), 0);
-        assert_eq!(MathSolution::trailing_zeroes(5), 1);
-        assert_eq!(MathSolution::trailing_zeroes(0), 0);
-        assert_eq!(MathSolution::trailing_zeroes(10), 2);
-        assert_eq!(MathSolution::trailing_zeroes(30), 7);
+        assert_eq!(math_solution::trailing_zeroes(3), 0);
+        assert_eq!(math_solution::trailing_zeroes(5), 1);
+        assert_eq!(math_solution::trailing_zeroes(0), 0);
+        assert_eq!(math_solution::trailing_zeroes(10), 2);
+        assert_eq!(math_solution::trailing_zeroes(30), 7);
     }
 
     #[test]
     fn test_gray_code() {
-        assert_eq!(MathSolution::gray_code(2), vec![0, 1, 3, 2]);
-        assert_eq!(MathSolution::gray_code(0), vec![0]);
+        assert_eq!(math_solution::gray_code(2), vec![0, 1, 3, 2]);
+        assert_eq!(math_solution::gray_code(0), vec![0]);
     }
 
     #[test]
     fn test_fraction_to_decimal() {
-        assert_eq!(MathSolution::fraction_to_decimal(1, 2), "0.5");
-        assert_eq!(MathSolution::fraction_to_decimal(2, 1), "2");
-        assert_eq!(MathSolution::fraction_to_decimal(2, 3), "0.(6)");
-        assert_eq!(MathSolution::fraction_to_decimal(4, 333), "0.(012)");
-        assert_eq!(MathSolution::fraction_to_decimal(1, 5), "0.2");
-        assert_eq!(MathSolution::fraction_to_decimal(1, 6), "0.1(6)");
-        assert_eq!(MathSolution::fraction_to_decimal(1, 7), "0.(142857)");
-        assert_eq!(MathSolution::fraction_to_decimal(1, 90), "0.0(1)");
-        assert_eq!(MathSolution::fraction_to_decimal(1, 99), "0.(01)");
-        assert_eq!(MathSolution::fraction_to_decimal(0, -5), "0");
-        assert_eq!(MathSolution::fraction_to_decimal(-22, -11), "2");
+        assert_eq!(math_solution::fraction_to_decimal(1, 2), "0.5");
+        assert_eq!(math_solution::fraction_to_decimal(2, 1), "2");
+        assert_eq!(math_solution::fraction_to_decimal(2, 3), "0.(6)");
+        assert_eq!(math_solution::fraction_to_decimal(4, 333), "0.(012)");
+        assert_eq!(math_solution::fraction_to_decimal(1, 5), "0.2");
+        assert_eq!(math_solution::fraction_to_decimal(1, 6), "0.1(6)");
+        assert_eq!(math_solution::fraction_to_decimal(1, 7), "0.(142857)");
+        assert_eq!(math_solution::fraction_to_decimal(1, 90), "0.0(1)");
+        assert_eq!(math_solution::fraction_to_decimal(1, 99), "0.(01)");
+        assert_eq!(math_solution::fraction_to_decimal(0, -5), "0");
+        assert_eq!(math_solution::fraction_to_decimal(-22, -11), "2");
     }
 
     #[test]
     fn test_get_permutation() {
-        assert_eq!(MathSolution::get_permutation(3, 3), "213");
-        assert_eq!(MathSolution::get_permutation(4, 9), "2314");
-        assert_eq!(MathSolution::get_permutation(3, 1), "123");
-        assert_eq!(MathSolution::get_permutation(3, 2), "132");
-        assert_eq!(MathSolution::get_permutation(3, 4), "231");
-        assert_eq!(MathSolution::get_permutation(3, 5), "312");
-        assert_eq!(MathSolution::get_permutation(3, 6), "321");
+        assert_eq!(math_solution::get_permutation(3, 3), "213");
+        assert_eq!(math_solution::get_permutation(4, 9), "2314");
+        assert_eq!(math_solution::get_permutation(3, 1), "123");
+        assert_eq!(math_solution::get_permutation(3, 2), "132");
+        assert_eq!(math_solution::get_permutation(3, 4), "231");
+        assert_eq!(math_solution::get_permutation(3, 5), "312");
+        assert_eq!(math_solution::get_permutation(3, 6), "321");
     }
 
     #[test]
     fn test_is_power_of_two() {
-        assert!(MathSolution::is_power_of_two(1));
-        assert!(MathSolution::is_power_of_two(16));
-        assert!(!MathSolution::is_power_of_two(218));
+        assert!(math_solution::is_power_of_two(1));
+        assert!(math_solution::is_power_of_two(16));
+        assert!(!math_solution::is_power_of_two(218));
     }
 
     #[test]
     fn test_range_bitwise_and() {
-        assert_eq!(MathSolution::range_bitwise_and(5, 7), 4);
-        assert_eq!(MathSolution::range_bitwise_and(0, 1), 0);
-        assert_eq!(MathSolution::range_bitwise_and(1, 2147483647), 0);
+        assert_eq!(math_solution::range_bitwise_and(5, 7), 4);
+        assert_eq!(math_solution::range_bitwise_and(0, 1), 0);
+        assert_eq!(math_solution::range_bitwise_and(1, 2147483647), 0);
     }
 
     #[test]
     fn test_arrange_coins() {
-        assert_eq!(MathSolution::arrange_coins(5), 2);
-        assert_eq!(MathSolution::arrange_coins(8), 3);
+        assert_eq!(math_solution::arrange_coins(5), 2);
+        assert_eq!(math_solution::arrange_coins(8), 3);
     }
 
     #[test]
     fn test_is_power_of_four() {
-        assert!(MathSolution::is_power_of_four(16));
-        assert!(!MathSolution::is_power_of_four(5));
-        assert!(MathSolution::is_power_of_four(1));
+        assert!(math_solution::is_power_of_four(16));
+        assert!(!math_solution::is_power_of_four(5));
+        assert!(math_solution::is_power_of_four(1));
     }
 
     #[test]
     fn test_hamming_weights() {
-        assert_eq!(MathSolution::hamming_weight(11), 3);
-        assert_eq!(MathSolution::hamming_weight(128), 1);
-        assert_eq!(MathSolution::hamming_weight(2147483645), 30);
+        assert_eq!(math_solution::hamming_weight(11), 3);
+        assert_eq!(math_solution::hamming_weight(128), 1);
+        assert_eq!(math_solution::hamming_weight(2147483645), 30);
     }
 }
