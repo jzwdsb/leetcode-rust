@@ -580,6 +580,50 @@ pub mod dpsolution {
         dp[cost.len() - 1].min(dp[cost.len() - 2])
     }
 
+    // Using bottom-up dynamic programming
+    pub fn calculate_minimum_hp(dungeon: Vec<Vec<i32>>) -> i32 {
+        use std::cmp::{max, min};
+        let (r, c) = (dungeon.len(), dungeon[0].len());
+        let mut dp = vec![vec![i32::MIN; c]; r];
+
+        for y in (0..r).rev() {
+            for x in (0..c).rev() {
+                let val = dungeon[y][x];
+                if x == c - 1 && y == r - 1 {
+                    // princess position
+                    dp[y][x] = val;
+                } else if x == c - 1 && y != r - 1 {
+                    // right
+                    let new_val = val + dp[y + 1][x];
+                    dp[y][x] = if new_val < 0 { new_val } else { 0 };
+                } else if x != c - 1 && y == r - 1 {
+                    // bottom
+                    let new_val = val + dp[y][x + 1];
+                    dp[y][x] = if new_val < 0 { new_val } else { 0 };
+                } else {
+                    let down = val + dp[y + 1][x];
+                    let right = val + dp[y][x + 1];
+                    dp[y][x] = max(down, right);
+                }
+                dp[y][x] = min(val, dp[y][x]);
+            }
+        }
+
+        if dp[0][0] < 0 {
+            -dp[0][0] + 1
+        } else {
+            1
+        }
+    }
+
+    #[test]
+    fn test_calculate_minimum_hp() {
+        assert_eq!(
+            calculate_minimum_hp(vec![vec![-2, -3, 3], vec![-5, -10, 1], vec![10, 30, -5]]),
+            7
+        );
+    }
+
     #[test]
     fn test_max_absolute_sum() {
         assert_eq!(max_absolute_sum(vec![1, -3, 2, 3, -4]), 5);

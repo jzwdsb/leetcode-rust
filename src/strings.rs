@@ -1224,7 +1224,7 @@ pub mod string_solution {
 
             let prev = res.pop().unwrap();
             if prev.is_ascii_uppercase() != c.is_ascii_uppercase()
-                && prev.to_ascii_lowercase() == c.to_ascii_lowercase()
+                && prev.eq_ignore_ascii_case(&c)
             {
                 continue;
             }
